@@ -21,7 +21,6 @@ async def create_user(
     if existing_user.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Bu username band!")
 
-
     user = users.User(
         username=body.username,
         full_name=body.full_name,
