@@ -46,6 +46,6 @@ class MonthlyTransaction(BaseModel):
         nullable=False,
     )
     seller_trans: Mapped['SellerTransactions'] = relationship(
-        back_populates="seller_transactions",
+        back_populates="tenant_monthly_transactions",
     )
 

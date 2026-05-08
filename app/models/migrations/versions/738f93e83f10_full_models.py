@@ -1,8 +1,8 @@
-"""adding a logical models
+"""full models
 
-Revision ID: e78706828e3f
+Revision ID: 738f93e83f10
 Revises: 
-Create Date: 2026-05-08 17:43:31.761709
+Create Date: 2026-05-08 17:59:10.422131
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'e78706828e3f'
+revision: str = '738f93e83f10'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

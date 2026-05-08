@@ -21,7 +21,7 @@ class SellerTransactions(BaseModel):
         ForeignKey('users.id', ondelete='CASCADE'),
     )
     seller: Mapped['User'] = relationship(
-        back_populates='users.id'
+        back_populates='seller_transactions'
     )
 
     amount: Mapped[Decimal] = mapped_column(
@@ -30,7 +30,7 @@ class SellerTransactions(BaseModel):
         server_default='0.00',
         comment="Amount of transaction",
     )
-    model: Mapped[str] = mapped_column(
+    model: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True,
         comment="Balance model",

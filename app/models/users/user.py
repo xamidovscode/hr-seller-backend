@@ -13,7 +13,7 @@ from app.models.choices import UserRoles
 
 
 if TYPE_CHECKING:
-    from app.models.tenants.tenant import Tenant
+    from app.models import Tenant, SellerTransactions
 
 
 class User(BaseModel):
@@ -67,6 +67,9 @@ class User(BaseModel):
     )
 
     tenants: Mapped[list['Tenant']] = relationship(
+        back_populates="seller",
+    )
+    seller_transactions: Mapped[list['SellerTransactions']] = relationship(
         back_populates="seller",
     )
 
