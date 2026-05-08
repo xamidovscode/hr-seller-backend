@@ -2,22 +2,23 @@ __all__ =(
     'User',
 )
 
-from sqlalchemy import String, Integer, Boolean, Enum as SqlEnum
-from sqlalchemy.orm import Mapped, mapped_column
+from decimal import Decimal
+from typing import TYPE_CHECKING
 
-from app.db.base import Base
+from sqlalchemy import String, Integer, Boolean, Enum as SQLEnum, Numeric
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.core.db import BaseModel
 from app.models.choices import UserRoles
 
 
-class User(Base):
+if TYPE_CHECKING:
+    from app.models.tenants.tenant import Tenant
+
+
+class User(BaseModel):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(
-        Integer,
-        primary_key=True,
-        autoincrement=True,
-        comment="The primary key of the user",
-    )
     username: Mapped[str] = mapped_column(
         String(255),
         unique=True,
@@ -40,7 +41,7 @@ class User(Base):
         comment="User's phone number",
     )
     role: Mapped[UserRoles] = mapped_column(
-        SqlEnum(UserRoles),
+        SQLEnum(UserRoles),
         default=UserRoles.seller,
         server_default='seller',
         nullable=False,
@@ -52,5 +53,24 @@ class User(Base):
         nullable=False,
         comment="Whether the user is active",
     )
+    percentage: Mapped[Decimal] = mapped_column(
+        Numeric(5, 2),
+        default=0,
+        nullable=False,
+        comment="User's percentage",
+    )
+    duration: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+        comment="The duration of the user",
+    )
+
+    tenants: Mapped[list['Tenant']] = relationship(
+        back_populates="seller",
+    )
+
+
+
 
 

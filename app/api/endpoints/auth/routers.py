@@ -3,8 +3,8 @@ from sqlalchemy import select
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.jwt import verify_password, create_access_token
-from app.db.get_session import get_session
+from app.utils import verify_password, create_access_token
+from app.core.db import get_session
 from app.models import users
 from app.resources.permissions.current_user import get_current_user
 from . import schemas
