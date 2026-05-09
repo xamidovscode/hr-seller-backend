@@ -1,7 +1,7 @@
 from fastapi import status
 from sqlalchemy import select
 
-from app.models import users
+from app.models import users, choices
 from app.resources import BaseService
 from app.utils import hash_password
 from . import schemas
@@ -21,7 +21,10 @@ class UserService(BaseService):
         return await self.save(
             model=users.User,
             schema=schema.model_copy(
-                update={'password': hash_password(schema.password)}
+                update={
+                    'password': hash_password(schema.password),
+                    'role': choices.UserRoles.seller
+                }
             ),
         )
 

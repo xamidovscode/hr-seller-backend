@@ -8,7 +8,8 @@ class SellerCreateSchema(BaseModel):
     full_name: str
     password: str = Field(min_length=6, max_length=72)
     phone: str
-    role: UserRoles = UserRoles.seller
+    percentage: float
+    duration: int
 
 
 class SellersListSchema(BaseModel):
@@ -18,4 +19,5 @@ class SellersListSchema(BaseModel):
     password: str
     phone: str
     is_active: bool
+    role: str
 

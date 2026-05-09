@@ -13,4 +13,8 @@ class TransTypes(IntEnum):
     INCOME = 1
     EXPENSE = -1
 
+class RequestConditions(str, Enum):
+    PENDING = 'pending'
+    CONFIRMED = 'confirmed'
+    REJECTED = 'rejected'
 

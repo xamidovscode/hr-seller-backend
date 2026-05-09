@@ -3,7 +3,7 @@ __all__ = (
 )
 
 from decimal import Decimal
-from datetime import date
+from datetime import date as date_field
 from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, Integer, Date, Numeric
@@ -29,7 +29,7 @@ class MonthlyTransaction(BaseModel):
         nullable=False,
         comment="Core service, MonthlyTransaction ID",
     )
-    date: Mapped[date] = mapped_column(
+    month: Mapped[date_field] = mapped_column(
         Date,
         nullable=False,
         comment="Month: format YEAR-MONTH-01",

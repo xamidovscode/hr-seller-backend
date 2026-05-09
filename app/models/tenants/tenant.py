@@ -24,7 +24,7 @@ class Tenant(BaseModel):
     tenant_id: Mapped[int] = mapped_column(
         Integer,
         default=0,
-        comment="The id of the tenant",
+        comment="Tenant id: in core service!",
     )
     type: Mapped[choices.TenantTypes] = mapped_column(
         SQLEnum(choices.TenantTypes),

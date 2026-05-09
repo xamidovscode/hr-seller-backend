@@ -5,13 +5,24 @@ __all__ = (
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Numeric, ForeignKey, String, Integer, CheckConstraint
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import (
+    Numeric,
+    ForeignKey,
+    String,
+    Integer,
+    Enum as SQLEnum,
+)
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+    relationship,
+)
 
 from app.core.db import BaseModel
+from .. import choices
 
 if TYPE_CHECKING:
-    from app.models import User, MonthlyTransaction
+    from app.models import User, MonthlyTransaction, SellerRequest
 
 
 class SellerTransactions(BaseModel):
@@ -42,18 +53,15 @@ class SellerTransactions(BaseModel):
         comment="Instance ID",
     )
 
-    type: Mapped[int] = mapped_column(
-        Integer,
-        default=1,
-        server_default='1',
-        comment="Transaction type",
+    type: Mapped[choices.TransTypes] = mapped_column(
+        SQLEnum(choices.TransTypes)
     )
 
     tenant_monthly_transactions: Mapped[list['MonthlyTransaction']] = relationship(
         back_populates="seller_trans",
     )
-
-    __table_args__ = (
-        CheckConstraint('type IN (1, -1)'),
+    seller_requests: Mapped[list['SellerRequest']] = relationship(
+        back_populates="seller_transaction",
     )
+
 

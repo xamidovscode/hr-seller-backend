@@ -5,15 +5,29 @@ __all__ =(
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String, Integer, Boolean, Enum as SQLEnum, Numeric
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import (
+    String,
+    Integer,
+    Boolean,
+    Enum as SQLEnum,
+    Numeric,
+)
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+    relationship,
+)
 
 from app.core.db import BaseModel
 from app.models.choices import UserRoles
 
 
 if TYPE_CHECKING:
-    from app.models import Tenant, SellerTransactions
+    from app.models import (
+        Tenant,
+        SellerTransactions,
+        SellerRequest,
+    )
 
 
 class User(BaseModel):
@@ -70,6 +84,9 @@ class User(BaseModel):
         back_populates="seller",
     )
     seller_transactions: Mapped[list['SellerTransactions']] = relationship(
+        back_populates="seller",
+    )
+    seller_requests: Mapped[list['SellerRequest']] = relationship(
         back_populates="seller",
     )
 
