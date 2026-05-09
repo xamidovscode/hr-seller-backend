@@ -23,12 +23,10 @@ from sqlalchemy.orm import (
 from app.core.db import BaseModel
 from app.models.choices import UserRoles
 
-
 if TYPE_CHECKING:
     from app.models import (
         Tenant,
         SellerTransactions,
-        SellerRequest,
     )
 
 
