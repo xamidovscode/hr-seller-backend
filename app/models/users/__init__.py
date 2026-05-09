@@ -1,3 +1,3 @@
 from .user import *
-from .seller_trans import *
+from .transactions import *
 from .requests import *

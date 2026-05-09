@@ -19,13 +19,6 @@ if TYPE_CHECKING:
 class SellerRequest(BaseModel):
     __tablename__ = "seller_requests"
 
-    seller_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"),
-    )
-    seller: Mapped['User'] = relationship(
-        back_populates="seller_requests",
-    )
-
     amount: Mapped[Decimal] = mapped_column(
         Numeric(36, 2),
         default=0,
@@ -47,6 +40,6 @@ class SellerRequest(BaseModel):
         ForeignKey("seller_transactions.id", ondelete="CASCADE"),
     )
     seller_transaction: Mapped['SellerTransactions'] = relationship(
-        back_populates="seller_transactions",
+        back_populates="seller_requests",
     )
 

@@ -2,6 +2,7 @@ __all__ =(
     'User',
 )
 
+from datetime import date as date_field
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
@@ -10,7 +11,7 @@ from sqlalchemy import (
     Integer,
     Boolean,
     Enum as SQLEnum,
-    Numeric,
+    Numeric, ForeignKey, Date,
 )
 from sqlalchemy.orm import (
     Mapped,
@@ -86,11 +87,52 @@ class User(BaseModel):
     seller_transactions: Mapped[list['SellerTransactions']] = relationship(
         back_populates="seller",
     )
-    seller_requests: Mapped[list['SellerRequest']] = relationship(
+
+    supervised_sellers: Mapped[list['Supervisor']] = relationship(
+        foreign_keys="Supervisor.supervisor_id",
+        back_populates="supervisor",
+    )
+    my_supervisors: Mapped[list['Supervisor']] = relationship(
+        foreign_keys="Supervisor.seller_id",
         back_populates="seller",
     )
 
 
+class Supervisor(BaseModel):
+    __tablename__ = "supervisors"
+
+    supervisor_id: Mapped[int] = mapped_column(
+        ForeignKey('users.id', ondelete='CASCADE'),
+    )
+    seller_id: Mapped[int] = mapped_column(
+        ForeignKey('users.id', ondelete='CASCADE'),
+    )
+
+    supervisor: Mapped[User] = relationship(
+        foreign_keys=[supervisor_id],
+        back_populates="supervised_sellers",
+    )
+    seller: Mapped[User] = relationship(
+        foreign_keys=[seller_id],
+        back_populates="my_supervisors",
+    )
+
+    from_date: Mapped[date_field] = mapped_column(
+        Date,
+        nullable=False,
+        comment="The start date of the supervisor deadline",
+    )
+    to_date: Mapped[date_field] = mapped_column(
+        Date,
+        nullable=False,
+        comment="The end date of the supervisor deadline",
+    )
+    percentage: Mapped[Decimal] = mapped_column(
+        Numeric(5, 2),
+        default=0,
+        nullable=False,
+        comment="The percentage of the supervisor deadline",
+    )
 
 
 
