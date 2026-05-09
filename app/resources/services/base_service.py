@@ -7,11 +7,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
 from .mixins import SessionMixin, QueryMixin
+from ..permissions.current_user import get_current_user
+from ...models import User
 
 T = TypeVar("T", bound="BaseService")
 
 ARGS_TYPE: Dict[str, Any] = {
     "db": Annotated[AsyncSession, Depends(get_session)],
+    "current_user": Annotated[User, Depends(get_current_user)],
 }
 
 
