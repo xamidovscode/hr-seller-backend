@@ -13,7 +13,7 @@ app = FastAPI(
 app.include_router(base_v1_router, prefix="/api/v1")
 
 
-@app.get("/")
+@app.get("/health")
 async def root():
     return {"message": "Hello World"}
 
