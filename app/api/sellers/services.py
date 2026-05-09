@@ -31,3 +31,4 @@ class UserService(BaseService):
 
 user_service = UserService.annotated('db')
 
+

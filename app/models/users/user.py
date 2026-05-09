@@ -1,5 +1,6 @@
 __all__ =(
     'User',
+    'Supervisor',
 )
 
 from datetime import date as date_field
