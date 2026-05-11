@@ -6,11 +6,11 @@ from .services import AuthService
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/login")
+@router.post("/login/")
 async def login(schema: schemas.LoginSchema, auth_service: AuthService.annotated('db')):
     return await auth_service.login(schema)
 
 
-@router.get("/profile")
+@router.get("/profile/")
 async def get_profile(auth_service: AuthService.annotated('db', 'current_user')):
     return await auth_service.get_profile()

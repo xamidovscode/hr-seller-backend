@@ -15,3 +15,6 @@ def down(c):
 def migrate(c):
     c.run("docker exec hr-seller-api alembic upgrade head")
 
+@task
+def run(c):
+    c.run("uvicorn app.main:app --reload")
