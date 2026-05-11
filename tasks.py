@@ -13,5 +13,5 @@ def down(c):
 
 @task
 def migrate(c):
-    c.run("docker compose exec hr-seller-api alembic upgrade head")
+    c.run("docker exec hr-seller-api alembic upgrade head")
 
