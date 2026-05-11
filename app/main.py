@@ -1,5 +1,7 @@
-from fastapi import FastAPI
-from sqladmin import Admin, ModelView
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from sqladmin import Admin
 
 from app.api.base_route import base_v1_router
 from app.core.db import engine
@@ -19,6 +21,24 @@ for view in all_views:
 
 app.include_router(base_v1_router, prefix="/api/v1")
 
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(
+    request: Request,
+    exc: RequestValidationError
+):
+    errors = {}
+
+    for error in exc.errors():
+        field = error["loc"][-1]
+        errors[field] = error["msg"]
+
+    return JSONResponse(
+        status_code=422,
+        content={
+            "success": False,
+            "errors": errors
+        }
+    )
 
 @app.get("/health")
 async def root():
