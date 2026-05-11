@@ -24,6 +24,7 @@ services:
 
     networks:
       - backend-net
+      - hr_shared_net
 
     volumes:
       - app-logs:/app/logs
@@ -78,3 +79,5 @@ volumes:
 networks:
   backend-net:
     driver: bridge
+  hr_shared_net:
+    external: true
