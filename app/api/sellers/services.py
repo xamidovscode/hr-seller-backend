@@ -1,10 +1,9 @@
-from collections import defaultdict
 from typing import List, Any
 
 from fastapi import status
 from sqlalchemy import select, func
 
-from app.models import users, choices, tenants, Supervisor, User
+from app.models import users, choices, tenants
 from app.resources import BaseService
 from app.utils import hash_password
 from . import schemas
@@ -33,68 +32,59 @@ class UserService(BaseService):
 
     async def get_sellers_count_by_supervisor(self) -> List[dict[str, Any]]:
 
+        seller_count_sq = (
+            select(
+                users.Supervisor.supervisor_id.label('supervisor_id'),
+                func.count(users.Supervisor.id).label('seller_count')
+            )
+            .group_by(users.Supervisor.supervisor_id)
+        ).subquery()
+
+        tenants_count_sq = (
+            select(
+                tenants.Tenant.seller_id.label('seller_id'),
+                func.count(tenants.Tenant.id).label('tenant_count')
+            )
+            .group_by(tenants.Tenant.seller_id)
+        ).subquery()
+
         stmt = (
             select(
-                users.Supervisor.id.label("supervisor_id"),
-                Supervisor.username.label("username"),
-                Supervisor.full_name.label("full_name"),
-
-                users.Supervisor.id.label("relation_id"),
-
-                User.id.label("seller_id"),
-                Us.username.label("seller_username"),
-
-                users.Supervisor.from_date,
-                users.Supervisor.to_date,
-                users.Supervisor.percentage,
-            )
-            .select_from(SupervisorUser)
-            .outerjoin(
-                users.Supervisor,
-                users.Supervisor.supervisor_id == SupervisorUser.id
+                users.User,
+                seller_count_sq.c.seller_count,
+                tenants_count_sq.c.tenant_count,
             )
             .outerjoin(
-                SellerUser,
-                users.Supervisor.seller_id == SellerUser.id
+                seller_count_sq,
+                seller_count_sq.c.supervisor_id == users.User.id
+            )
+            .outerjoin(
+                tenants_count_sq,
+                tenants_count_sq.c.seller_id == users.User.id
             )
             .where(
-                SupervisorUser.role == choices.UserRoles.supervisor
+                users.User.role == choices.UserRoles.seller
             )
         )
 
-        result = await self.execute(stmt)
+        sellers = await self.execute(stmt)
+        result = []
 
-        data = defaultdict(lambda: {
-            "id": None,
-            "username": None,
-            "full_name": None,
-            "seller_count": 0,
-            "tenant_count": 0,
-            "sellers": []
-        })
+        for user, seller_count, tenant_count in sellers.all():
+            result.append({
+                "id": user.id,
+                "username": user.username,
+                "full_name": user.full_name,
+                "phone": user.phone,
+                "role": user.role,
+                "is_active": user.is_active,
+                "percentage": user.percentage,
+                "duration": user.duration,
+                "seller_count": seller_count or 0,
+                "tenant_count": tenant_count or 0,
+            })
 
-        for row in result.all():
-            sup_id = row.supervisor_id
-
-            # initialize supervisor
-            if data[sup_id]["id"] is None:
-                data[sup_id]["id"] = row.supervisor_id
-                data[sup_id]["username"] = row.username
-                data[sup_id]["full_name"] = row.full_name
-
-            # agar seller bo‘lsa
-            if row.seller_id is not None:
-                data[sup_id]["sellers"].append({
-                    "id": row.seller_id,
-                    "username": row.seller_username,
-                    "from_date": row.from_date,
-                    "to_date": row.to_date,
-                    "percentage": row.percentage,
-                })
-
-                data[sup_id]["seller_count"] += 1
-
-        return list(data.values())
+        return result
 
 user_service = UserService.annotated('db')
 
