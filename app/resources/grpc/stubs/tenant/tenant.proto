@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package tenant;
+
+service TenantService {
+  rpc GetTenants (GetTenantsRequest) returns (GetTenantsResponse);
+}
+
+message GetTenantsRequest {}
+
+message TenantResponse {
+  int32 id = 1;
+  string name = 2;
+  string schema_name = 3;
+}
+
+message GetTenantsResponse {
+  repeated TenantResponse tenants = 1;
+}

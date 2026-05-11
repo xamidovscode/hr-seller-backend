@@ -19,8 +19,9 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60
 
-    # App settings
+    # PORTS
     APP_PORT: int = 8015
+    HR_CORE_GRPC_HOST: str = 500051
 
     class Config:
         env_file = ".env"

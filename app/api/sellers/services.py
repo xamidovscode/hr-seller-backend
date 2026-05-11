@@ -1,12 +1,15 @@
+from collections import defaultdict
 from typing import List, Any
 
 from fastapi import status
 from sqlalchemy import select, func
+from sqlalchemy.orm import aliased, selectinload
 
-from app.models import users, choices, tenants
+from app.models import users, choices, tenants, User, Supervisor
 from app.resources import BaseService
 from app.utils import hash_password
 from . import schemas
+from ...models.choices import UserRoles
 
 
 class UserService(BaseService):
@@ -32,14 +35,6 @@ class UserService(BaseService):
 
     async def get_sellers_count_by_supervisor(self) -> List[dict[str, Any]]:
 
-        seller_count_sq = (
-            select(
-                users.Supervisor.supervisor_id.label('supervisor_id'),
-                func.count(users.Supervisor.id).label('seller_count')
-            )
-            .group_by(users.Supervisor.supervisor_id)
-        ).subquery()
-
         tenants_count_sq = (
             select(
                 tenants.Tenant.seller_id.label('seller_id'),
@@ -51,12 +46,7 @@ class UserService(BaseService):
         stmt = (
             select(
                 users.User,
-                seller_count_sq.c.seller_count,
                 tenants_count_sq.c.tenant_count,
-            )
-            .outerjoin(
-                seller_count_sq,
-                seller_count_sq.c.supervisor_id == users.User.id
             )
             .outerjoin(
                 tenants_count_sq,
@@ -65,12 +55,31 @@ class UserService(BaseService):
             .where(
                 users.User.role == choices.UserRoles.seller
             )
+            .options(
+                selectinload(users.User.supervised_sellers).selectinload(users.Supervisor.seller)
+            )
         )
 
         sellers = await self.execute(stmt)
         result = []
 
-        for user, seller_count, tenant_count in sellers.all():
+        for user, tenant_count in sellers.unique().all():
+            supervised_list = []
+            for supervisor_record in user.supervised_sellers:
+                supervised_list.append({
+                    "supervisor_record_id": supervisor_record.id,
+                    "seller_id": supervisor_record.seller_id,
+                    "seller_username": supervisor_record.seller.username,
+                    "seller_full_name": supervisor_record.seller.full_name,
+                    "seller_phone": supervisor_record.seller.phone,
+                    "seller_is_active": supervisor_record.seller.is_active,
+                    "seller_percentage": supervisor_record.seller.percentage,
+                    "seller_duration": supervisor_record.seller.duration,
+                    "from_date": supervisor_record.from_date,
+                    "to_date": supervisor_record.to_date,
+                    "percentage": supervisor_record.percentage,
+                })
+
             result.append({
                 "id": user.id,
                 "username": user.username,
@@ -80,8 +89,10 @@ class UserService(BaseService):
                 "is_active": user.is_active,
                 "percentage": user.percentage,
                 "duration": user.duration,
-                "seller_count": seller_count or 0,
                 "tenant_count": tenant_count or 0,
+                "seller_count": len(supervised_list),
+                "supervised_sellers": supervised_list,
+                'balance': 0
             })
 
         return result
