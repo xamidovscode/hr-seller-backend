@@ -3,7 +3,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqladmin import Admin
 
-from app.api.base_route import base_v1_router
+from app.endpoints.base_route import base_v1_router
 from app.core.db import engine
 from app.models.admin import all_views
 

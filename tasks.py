@@ -13,7 +13,7 @@ def down(c):
 
 @task
 def migrate(c):
-    c.run("docker exec hr-seller-api alembic upgrade head")
+    c.run("docker exec hr-seller-endpoints alembic upgrade head")
 
 @task
 def run(c):

@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: hr-seller-api
+    container_name: hr-seller-endpoints
     restart: unless-stopped
 
     env_file:
