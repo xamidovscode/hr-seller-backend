@@ -12,6 +12,13 @@ message TenantResponse {
   int32 id = 1;
   string name = 2;
   string schema_name = 3;
+  string created_on = 4;
+  string activated_at = 5;
+  string deadline = 6;
+  repeated string permissions = 7;
+  bool on_trial = 8;
+  bool is_active = 9;
+  bool is_deleted = 10;
 }
 
 message GetTenantsResponse {
