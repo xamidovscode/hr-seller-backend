@@ -2,5 +2,8 @@ from pydantic import BaseModel
 
 
 class TenantCreateSchema(BaseModel):
-    success: bool
+    domain: str
+    name: str
+
+
 

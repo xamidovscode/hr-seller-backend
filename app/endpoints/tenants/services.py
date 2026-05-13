@@ -1,8 +1,9 @@
 import asyncio
 
+from app.endpoints.tenants.schemas import TenantCreateSchema
 from app.resources.services import BaseService
 from app.resources.grpc.tenant import get_tenants
-
+from app.core.settings import settings
 
 
 class TenantService(BaseService):
@@ -25,6 +26,12 @@ class TenantService(BaseService):
             })
 
         return result
+
+    async def create_tenant(self, schema: TenantCreateSchema):
+        url = f'{settings.HR_CORE_URL}/api/v1/common/tenants/'
+        response = await self.httpx_post(url=url, data=schema.dict())
+        print(response)
+        return response
 
 
 tenant_service = TenantService.annotated('db')

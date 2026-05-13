@@ -6,7 +6,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_session
-from .mixins import SessionMixin, QueryMixin
+from .mixins import SessionMixin, QueryMixin, HttpMixin
 from ..permissions.current_user import get_current_user
 from ...models import User
 
@@ -18,7 +18,7 @@ ARGS_TYPE: Dict[str, Any] = {
 }
 
 
-class BaseService(SessionMixin, QueryMixin):
+class BaseService(SessionMixin, QueryMixin, HttpMixin):
 
     def __init__(self, db: AsyncSession = None, **kwargs):
         self.db: AsyncSession = db

@@ -23,8 +23,13 @@ class Settings(BaseSettings):
     APP_PORT: int = 8015
     HR_CORE_GRPC_HOST: str = 500051
 
+    # CORE SERVICE
+    HR_CORE_URL: str
+    HR_API_SECRET_KEY: str
+
     class Config:
         env_file = ".env"
+
 
 settings = Settings()
 
