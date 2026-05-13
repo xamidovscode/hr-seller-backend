@@ -1,7 +1,7 @@
 import asyncio
 
 from fastapi import APIRouter
-from app.resources.grpc.client import get_tenants
+from app.resources.grpc.tenant import get_tenants
 
 router = APIRouter(prefix='/tenants', tags=["tenants"])
 
