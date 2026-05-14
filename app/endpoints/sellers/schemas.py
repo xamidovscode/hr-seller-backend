@@ -18,6 +18,5 @@ class SellerCreateResponseSchema(BaseModel):
     phone: str
     is_active: bool
     role: str
-    seller_count: int
 
 

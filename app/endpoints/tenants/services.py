@@ -29,8 +29,12 @@ class TenantService(BaseService):
 
     async def create_tenant(self, schema: TenantCreateSchema):
         url = f'{settings.HR_CORE_URL}/api/v1/common/tenants/'
-        response = await self.httpx_post(url=url, data=schema.dict())
-        print(response)
+        data = schema.model_dump()
+        seller_id = data.pop('seller_id')
+
+        response = await self.httpx_post(url=url, data=data)
+
+        tenant_id = response['id']
         return response
 
 
