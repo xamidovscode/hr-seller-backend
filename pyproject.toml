@@ -17,6 +17,7 @@ dependencies = [
     "psycopg2-binary>=2.9.12",
     "pydantic-settings>=2.14.0",
     "pyjwt>=2.12.1",
+    "python-dateutil>=2.9.0.post0",
     "python-decouple>=3.8",
     "sqladmin>=0.25.0",
     "sqlalchemy>=2.0.49",

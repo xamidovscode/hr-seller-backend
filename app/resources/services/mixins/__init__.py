@@ -1,3 +1,3 @@
 from .session import SessionMixin
-from .query import QueryMixin
+from .query import SessionQueryMixin
 from .http_client import HttpMixin

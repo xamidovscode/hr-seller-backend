@@ -1,5 +1,14 @@
+from typing import Optional
+
 from pydantic import BaseModel, Field
 from app.resources.fields import UsernameField
+
+
+
+class SupervisorCreateSchema(BaseModel):
+    seller_id: int
+    percentage: float
+    duration: int
 
 
 class SellerCreateSchema(BaseModel):
@@ -9,6 +18,7 @@ class SellerCreateSchema(BaseModel):
     phone: str
     percentage: float
     duration: int
+    supervisor: Optional[SupervisorCreateSchema] = None
 
 
 class SellerCreateResponseSchema(BaseModel):

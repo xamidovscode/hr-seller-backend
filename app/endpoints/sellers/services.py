@@ -1,37 +1,53 @@
-from collections import defaultdict
 from typing import List, Any
 
-from fastapi import status
+from dateutil.relativedelta import relativedelta
 from sqlalchemy import select, func
-from sqlalchemy.orm import aliased, selectinload
+from sqlalchemy.orm import selectinload
 
-from app.models import users, choices, tenants, User, Supervisor
+from app.models import users, choices, tenants
 from app.resources import BaseService
 from app.utils import hash_password
 from . import schemas
-from ...models.choices import UserRoles
+from ...utils.time import now
 
 
 class UserService(BaseService):
 
     async def create_user(self, schema: schemas.SellerCreateSchema) -> users.User:
 
+        data = schema.model_copy(
+            update={
+                'password': hash_password(schema.password),
+                'role': choices.UserRoles.seller
+            }
+        ).model_dump()
+        supervisor_data = data.pop("supervisor", None)
+
         existing = await self.get_object_or_none(
-            select(users.User).where(users.User.username == schema.username)
+            select(users.User).where(users.User.username == data['username'])
         )
 
         if existing:
-            raise self.error("Bu username band!", status.HTTP_400_BAD_REQUEST)
+            raise self.error("Bu username band!")
 
-        return await self.save(
-            model=users.User,
-            schema=schema.model_copy(
-                update={
-                    'password': hash_password(schema.password),
-                    'role': choices.UserRoles.seller
-                }
-            ),
-        )
+        async with self.atomic():
+            seller = await self.save(model=users.User, **data)
+
+            if supervisor_data:
+                super_seller = await self.get_object_or_404(
+                    select(users.User).where(users.User.id == supervisor_data['seller_id'])
+                )
+
+                await self.save(
+                    model=users.Supervisor,
+                    supervisor=super_seller,
+                    seller=seller,
+                    from_date=now().date(),
+                    to_date=now().date() + relativedelta(months=supervisor_data['duration']),
+                    percentage=supervisor_data['percentage'],
+                )
+
+        return seller
 
     async def get_sellers_count_by_supervisor(self) -> List[dict[str, Any]]:
 
@@ -96,6 +112,7 @@ class UserService(BaseService):
             })
 
         return result
+
 
 user_service = UserService.annotated('db')
 

@@ -3,11 +3,14 @@ from typing import Any, List, Type, TypeVar, Optional
 from fastapi import HTTPException, status
 from pydantic import BaseModel
 
+from ..mixins import SessionMixin
+
 ModelT = TypeVar("ModelT")
 SchemaT = TypeVar("SchemaT", bound=BaseModel)
 
 
-class QueryMixin:
+
+class SessionQueryMixin(SessionMixin):
     success: dict = {"msg": "Muvaffaqiyatli o'chirildi"}
 
     @classmethod
@@ -28,47 +31,46 @@ class QueryMixin:
         result = await self.execute(stmt)
         return result.scalars().all()
 
-    async def save(self, model: Type[ModelT], schema: Optional[SchemaT] = None, **extra) -> ModelT:
-        """
-        Modelni saqlaydi.
-
-        Faqat extra bilan:
-            await self.save(User, username="ali", password="hash")
-
-        Faqat schema bilan:
-            await self.save(User, schema=body)
-
-        Schema + extra (extra ustunlik qiladi):
-            await self.save(User, schema=body, is_active=True, role="admin")
-        """
+    async def save(
+        self, model: Type[ModelT], schema: Optional[SchemaT] = None, **extra,
+    ) -> ModelT:
         data = schema.model_dump() if schema else {}
         data.update(extra)
         obj = model(**data)
         self.add(obj)
-        await self.commit()
+        if self._in_transaction:
+            await self.flush([obj])
+        else:
+            await self.commit()
         await self.refresh(obj)
         return obj
 
     async def update(
-            self,
-            obj: ModelT,
-            schema: Optional[SchemaT] = None,
-            **extra,
+        self, obj: ModelT, schema: Optional[SchemaT] = None, **extra,
     ) -> ModelT:
         data = schema.model_dump(exclude_unset=True) if schema else {}
         data.update(extra)
         for field, value in data.items():
             setattr(obj, field, value)
-        await self.commit()
+        if self._in_transaction:
+            await self.flush([obj])
+        else:
+            await self.commit()
         await self.refresh(obj)
         return obj
 
     async def remove(self, obj: Any) -> dict:
         await self.delete(obj)
-        await self.commit()
+        if self._in_transaction:
+            await self.flush()
+        else:
+            await self.commit()
         return self.success
 
     async def save_all(self, objects: List[Any]) -> List[Any]:
         self.add_all(objects)
-        await self.commit()
+        if self._in_transaction:
+            await self.flush()
+        else:
+            await self.commit()
         return objects

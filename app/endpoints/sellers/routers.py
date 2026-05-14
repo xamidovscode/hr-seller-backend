@@ -7,7 +7,7 @@ router = APIRouter(prefix="/sellers", tags=["sellers"])
 
 
 @router.post('/create/', response_model=schemas.SellerCreateResponseSchema)
-async def seller_user(schema: schemas.SellerCreateSchema, service: user_service):
+async def seller_create(schema: schemas.SellerCreateSchema, service: user_service):
     return await service.create_user(schema)
 
 
