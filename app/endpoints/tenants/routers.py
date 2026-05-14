@@ -14,3 +14,8 @@ async def get_all_tenants(service: tenant_service):
 async def create_tenant(service: tenant_service, schema: TenantCreateSchema):
     return await service.create_tenant(schema)
 
+
+@router.get('/{tenant_id}/')
+async def get_tenant_detail(tenant_id: int, service: tenant_service):
+    return await service.tenant_detail(tenant_id=tenant_id)
+

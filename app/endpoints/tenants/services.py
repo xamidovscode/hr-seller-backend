@@ -1,5 +1,6 @@
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from app.core.settings import settings
 from app.endpoints.tenants.schemas import TenantCreateSchema
@@ -15,7 +16,7 @@ class TenantService(BaseService, TenantGrpcService):
         local_tenants = await self.get_all(select(tenants.Tenant))
         core_tenants = await self.get_grpc_tenants()
 
-        local_tenant_data = {tenant.tenant_id: tenant for tenant in local_tenants}
+        local_tenant_data = {tenant.core_tenant_id: tenant for tenant in local_tenants}
 
         return [
             {
@@ -40,7 +41,7 @@ class TenantService(BaseService, TenantGrpcService):
 
                 tenant = await self.save(
                     model=tenants.Tenant,
-                    tenant_id=0,
+                    core_tenant_id=0,
                     type=TenantTypes.IMB_HR,
                     from_date=now().date(),
                     to_date=now().date() + relativedelta(months=seller.duration),
@@ -53,9 +54,50 @@ class TenantService(BaseService, TenantGrpcService):
             if tenant:
                 await self.update(
                     obj=tenant,
-                    tenant_id=response['id'],
+                    core_tenant_id=response['id'],
                 )
         return response
 
+    async def tenant_detail(self, tenant_id: int):
+
+        core_tenants_list = await self.get_grpc_tenants_by_ids(ids=[tenant_id])
+
+        if not core_tenants_list:
+            raise self.error('Bunday mijoz mavjud emas')
+
+        core_tenant_data = core_tenants_list[0]
+        local_tenant = await self.get_object_or_none(
+            select(tenants.Tenant)
+            .options(selectinload(tenants.Tenant.seller))
+            .where(tenants.Tenant.core_tenant_id == tenant_id)
+        )
+
+        if local_tenant:
+            from_date = local_tenant.from_date
+            to_date = local_tenant.to_date
+            percentage = local_tenant.percentage
+
+            monthly_transactions = await self.get_all(
+                select(tenants.MonthlyTransaction)
+                .where(tenants.MonthlyTransaction.tenant_id == local_tenant.id)
+            )
+
+            for mt in monthly_transactions:
+
+                if from_date <= mt.month <= to_date:
+                    mt.seller_amount = mt.amount * (percentage / 100)
+                else:
+                    mt.seller_amount = 0
+
+            core_tenant_data.update({
+                'seller_id': local_tenant.seller_id,
+                'seller_name': local_tenant.seller.full_name,
+                'from_date': from_date,
+                'to_date': to_date,
+                'percentage': percentage,
+                'monthly_transactions': monthly_transactions,
+            })
+
+        return core_tenant_data
 
 tenant_service = TenantService.annotated('db')

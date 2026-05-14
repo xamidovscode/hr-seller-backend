@@ -67,7 +67,7 @@ class TenantAdmin(ModelView, model=Tenant):
     name = "Tenant"
     name_plural = "Tenantlar"
     column_list = [
-        Tenant.id, Tenant.tenant_id, Tenant.type,
+        Tenant.id, Tenant.core_tenant_id, Tenant.type,
         Tenant.from_date, Tenant.to_date,
         Tenant.percentage, Tenant.seller_id,
     ]

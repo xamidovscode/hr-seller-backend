@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class Tenant(BaseModel):
     __tablename__ = "tenants"
 
-    tenant_id: Mapped[int] = mapped_column(
+    core_tenant_id: Mapped[int] = mapped_column(
         Integer,
         default=0,
         comment="Tenant id: in core service!",

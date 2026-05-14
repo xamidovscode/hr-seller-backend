@@ -51,7 +51,7 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_seller_transactions_id'), 'seller_transactions', ['id'], unique=False)
     op.create_table('tenants',
-    sa.Column('tenant_id', sa.Integer(), nullable=False, comment='Tenant id: in core service!'),
+    sa.Column('core_tenant_id', sa.Integer(), nullable=False, comment='Tenant id: in core service!'),
     sa.Column('type', sa.Enum('IMB_EDU', 'IMB_HR', name='tenanttypes'), nullable=False, comment='The type of the tenant'),
     sa.Column('from_date', sa.Date(), nullable=False, comment='The start date of the tenant'),
     sa.Column('to_date', sa.Date(), nullable=False, comment='The end date of the tenant'),

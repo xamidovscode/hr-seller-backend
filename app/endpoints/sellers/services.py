@@ -139,7 +139,7 @@ class UserService(BaseService, TenantGrpcService):
         )
 
         tenants_query = await self.execute(
-            select(tenants.Tenant.tenant_id).where(tenants.Tenant.seller_id == seller_id)
+            select(tenants.Tenant.core_tenant_id).where(tenants.Tenant.seller_id == seller_id)
         )
 
         tenants_data = await self.get_grpc_tenants_by_ids(ids=tenants_query.scalars().all())
