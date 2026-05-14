@@ -27,6 +27,13 @@ class Settings(BaseSettings):
     HR_CORE_URL: str
     HR_API_SECRET_KEY: str
 
+    # CORS
+    ALLOW_ORIGINS: list[str] = [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:3002",
+    ]
+
     class Config:
         env_file = ".env"
 
