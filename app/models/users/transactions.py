@@ -2,6 +2,7 @@ __all__ = (
     'SellerTransactions',
 )
 
+from datetime import date
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
@@ -10,7 +11,7 @@ from sqlalchemy import (
     ForeignKey,
     String,
     Integer,
-    Enum as SQLEnum,
+    Enum as SQLEnum, Date,
 )
 from sqlalchemy.orm import (
     Mapped,
@@ -51,6 +52,11 @@ class SellerTransactions(BaseModel):
         default=0,
         server_default='0',
         comment="Instance ID",
+    )
+    month: Mapped[date] = mapped_column(
+        Date,
+        nullable=False,
+        comment="Transaction Month",
     )
 
     type: Mapped[choices.TransTypes] = mapped_column(
