@@ -34,19 +34,19 @@ class TenantService(BaseService, TenantGrpcService):
         async with self.atomic():
 
             if seller_id:
-                    seller = await self.get_object_or_404(
-                        select(users.User).where(users.User.id == seller_id)
-                    )
+                seller = await self.get_object_or_404(
+                    select(users.User).where(users.User.id == seller_id)
+                )
 
-                    tenant = await self.save(
-                        model=tenants.Tenant,
-                        tenant_id=0,
-                        type=TenantTypes.IMB_HR,
-                        from_date=now().date(),
-                        to_date=now().date() + relativedelta(months=seller.duration),
-                        percentage=seller.percentage,
-                        seller=seller,
-                    )
+                tenant = await self.save(
+                    model=tenants.Tenant,
+                    tenant_id=0,
+                    type=TenantTypes.IMB_HR,
+                    from_date=now().date(),
+                    to_date=now().date() + relativedelta(months=seller.duration),
+                    percentage=seller.percentage,
+                    seller=seller,
+                )
 
             response = await self.httpx_post(url=url, data=data)
 
