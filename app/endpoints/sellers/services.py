@@ -21,7 +21,7 @@ class UserService(BaseService):
                 'role': choices.UserRoles.seller
             }
         ).model_dump()
-        supervisor_data = data.pop("supervisor", None)
+        supervisor_data = data.pop("assistants", None)
 
         existing = await self.get_object_or_none(
             select(users.User).where(users.User.username == data['username'])

@@ -119,18 +119,18 @@ class Supervisor(BaseModel):
     from_date: Mapped[date_field] = mapped_column(
         Date,
         nullable=False,
-        comment="The start date of the supervisor deadline",
+        comment="The start date of the assistants deadline",
     )
     to_date: Mapped[date_field] = mapped_column(
         Date,
         nullable=False,
-        comment="The end date of the supervisor deadline",
+        comment="The end date of the assistants deadline",
     )
     percentage: Mapped[Decimal] = mapped_column(
         Numeric(5, 2),
         default=0,
         nullable=False,
-        comment="The percentage of the supervisor deadline",
+        comment="The percentage of the assistants deadline",
     )
 
 
