@@ -1,1 +1,2 @@
-from .base_service import *
+from .base import *
+from .tenant_grpc import TenantGrpcService

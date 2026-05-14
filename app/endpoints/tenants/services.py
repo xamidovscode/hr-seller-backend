@@ -1,30 +1,24 @@
-import asyncio
-
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import select
 
-from app.endpoints.tenants.schemas import TenantCreateSchema
-from app.models.choices import TenantTypes
-from app.resources.services import BaseService
-from app.resources.grpc.tenant import get_tenants
 from app.core.settings import settings
+from app.endpoints.tenants.schemas import TenantCreateSchema
 from app.models import tenants, users
+from app.models.choices import TenantTypes
+from app.resources.services import BaseService, TenantGrpcService
 from app.utils.time import now
 
 
-class TenantService(BaseService):
+class TenantService(BaseService, TenantGrpcService):
 
     async def get_all_tenants(self):
-        core_tenants = await asyncio.to_thread(get_tenants)
         local_tenants = await self.get_all(select(tenants.Tenant))
-        local_tenant_data = {}
+        core_tenants = await self.get_grpc_tenants()
 
-        for tenant in local_tenants:
-            local_tenant_data[tenant.tenant_id] = tenant
-        print(local_tenants)
-        result = []
-        for tenant in core_tenants:
-            result.append({
+        local_tenant_data = {tenant.tenant_id: tenant for tenant in local_tenants}
+
+        return [
+            {
                 "id": tenant.id,
                 "name": tenant.name,
                 "schema_name": tenant.schema_name,
@@ -34,10 +28,10 @@ class TenantService(BaseService):
                 "is_active": tenant.is_active,
                 "on_trial": tenant.on_trial,
                 "is_deleted": tenant.is_deleted,
-                'seller_info': local_tenant_data.get(tenant.id, {}),
-            })
-
-        return result
+                "seller_info": local_tenant_data.get(tenant.id, {}),
+            }
+            for tenant in core_tenants
+        ]
 
     async def create_tenant(self, schema: TenantCreateSchema):
         url = f'{settings.HR_CORE_URL}/api/v1/common/tenants/'

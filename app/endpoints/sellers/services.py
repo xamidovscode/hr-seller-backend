@@ -1,17 +1,18 @@
 from typing import List, Any
 
 from dateutil.relativedelta import relativedelta
-from sqlalchemy import select, func
+from sqlalchemy import select, func, and_
 from sqlalchemy.orm import selectinload
 
-from app.models import users, choices, tenants
-from app.resources import BaseService
+from app.models import users, choices, tenants, transactions
+from app.resources import BaseService, TenantGrpcService
 from app.utils import hash_password
 from . import schemas
+from ...models.choices import TransTypes
 from ...utils.time import now
 
 
-class UserService(BaseService):
+class UserService(BaseService, TenantGrpcService):
 
     async def create_user(self, schema: schemas.SellerCreateSchema) -> users.User:
 
@@ -49,7 +50,7 @@ class UserService(BaseService):
 
         return seller
 
-    async def get_sellers_count_by_supervisor(self) -> List[dict[str, Any]]:
+    async def sellers_list(self) -> List[dict[str, Any]]:
 
         tenants_count_sq = (
             select(
@@ -113,6 +114,61 @@ class UserService(BaseService):
 
         return result
 
+    async def seller_detail(self, seller_id: int) -> Any:
+
+        seller = await self.get_object_or_404(
+            select(users.User).where(users.User.id == seller_id)
+        )
+
+        assistants = await self.execute(
+            select(
+                users.Supervisor,
+                func.coalesce(func.sum(transactions.SellerTransactions.amount), 0).label('income'),
+            )
+            .outerjoin(
+                transactions.SellerTransactions,
+                and_(
+                    transactions.SellerTransactions.seller_id == users.Supervisor.seller_id,
+                    transactions.SellerTransactions.month >= users.Supervisor.from_date,
+                    transactions.SellerTransactions.month <= users.Supervisor.to_date,
+                    transactions.SellerTransactions.type == TransTypes.INCOME
+                )
+            )
+            .where(users.Supervisor.supervisor_id == seller_id)
+            .group_by(users.Supervisor.id)
+        )
+
+        tenants_query = await self.execute(
+            select(tenants.Tenant.tenant_id).where(tenants.Tenant.seller_id == seller_id)
+        )
+
+        tenants_data = await self.get_grpc_tenants_by_ids(ids=tenants_query.scalars().all())
+
+        assistants_data = [
+            {
+                'id': row.Supervisor.id,
+                'seller_id': row.Supervisor.seller_id,
+                'from_date': row.Supervisor.from_date,
+                'to_date': row.Supervisor.to_date,
+                'percentage': row.Supervisor.percentage,
+                'amount_portion': row.income * (row.Supervisor.percentage / 100),
+            }
+            for row in assistants.mappings().all()
+        ]
+
+        return {
+            'id': seller.id,
+            'username': seller.username,
+            'full_name': seller.full_name,
+            'password': seller.password,
+            'phone': seller.phone,
+            'role': seller.role,
+            'is_active': seller.is_active,
+            'percentage': seller.percentage,
+            'duration': seller.duration,
+            'tenants': tenants_data,
+            'assistants': assistants_data,
+        }
 
 user_service = UserService.annotated('db')
 

@@ -4,9 +4,14 @@ package tenant;
 
 service TenantService {
   rpc GetTenants (GetTenantsRequest) returns (GetTenantsResponse);
+  rpc GetTenantsByIds (GetTenantsByIdsRequest) returns (GetTenantsResponse);
 }
 
 message GetTenantsRequest {}
+
+message GetTenantsByIdsRequest {
+  repeated int32 ids = 1;
+}
 
 message TenantResponse {
   int32 id = 1;

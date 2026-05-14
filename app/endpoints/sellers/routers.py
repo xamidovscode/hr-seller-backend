@@ -13,6 +13,10 @@ async def seller_create(schema: schemas.SellerCreateSchema, service: user_servic
 
 @router.get('/list/')
 async def get_all_sellers(service: user_service):
-    return await service.get_sellers_count_by_supervisor()
+    return await service.sellers_list()
 
+
+@router.get('/{seller_id}/')
+async def get_all_sellers(seller_id: int, service: user_service):
+    return await service.seller_detail(seller_id=seller_id)
 
