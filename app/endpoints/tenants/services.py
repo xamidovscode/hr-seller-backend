@@ -98,6 +98,8 @@ class TenantService(BaseService, TenantGrpcService):
                 'monthly_transactions': monthly_transactions,
             })
 
+
+
         return core_tenant_data
 
 tenant_service = TenantService.annotated('db')
