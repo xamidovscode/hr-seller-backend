@@ -1,18 +1,29 @@
 import asyncio
 
+from dateutil.relativedelta import relativedelta
+from sqlalchemy import select
+
 from app.endpoints.tenants.schemas import TenantCreateSchema
+from app.models.choices import TenantTypes
 from app.resources.services import BaseService
 from app.resources.grpc.tenant import get_tenants
 from app.core.settings import settings
+from app.models import tenants, users
+from app.utils.time import now
 
 
 class TenantService(BaseService):
 
     async def get_all_tenants(self):
-        tenants = await asyncio.to_thread(get_tenants)
-        result = []
+        core_tenants = await asyncio.to_thread(get_tenants)
+        local_tenants = await self.get_all(select(tenants.Tenant))
+        local_tenant_data = {}
 
-        for tenant in tenants:
+        for tenant in local_tenants:
+            local_tenant_data[tenant.tenant_id] = tenant
+        print(local_tenants)
+        result = []
+        for tenant in core_tenants:
             result.append({
                 "id": tenant.id,
                 "name": tenant.name,
@@ -23,6 +34,7 @@ class TenantService(BaseService):
                 "is_active": tenant.is_active,
                 "on_trial": tenant.on_trial,
                 "is_deleted": tenant.is_deleted,
+                'seller_info': local_tenant_data.get(tenant.id, {}),
             })
 
         return result
@@ -30,11 +42,33 @@ class TenantService(BaseService):
     async def create_tenant(self, schema: TenantCreateSchema):
         url = f'{settings.HR_CORE_URL}/api/v1/common/tenants/'
         data = schema.model_dump()
-        seller_id = data.pop('seller_id')
+        seller_id = data.pop('seller_id', None)
+        tenant = None
 
-        response = await self.httpx_post(url=url, data=data)
+        async with self.atomic():
 
-        tenant_id = response['id']
+            if seller_id:
+                    seller = await self.get_object_or_404(
+                        select(users.User).where(users.User.id == seller_id)
+                    )
+
+                    tenant = await self.save(
+                        model=tenants.Tenant,
+                        tenant_id=0,
+                        type=TenantTypes.IMB_HR,
+                        from_date=now().date(),
+                        to_date=now().date() + relativedelta(months=seller.duration),
+                        percentage=seller.percentage,
+                        seller=seller,
+                    )
+
+            response = await self.httpx_post(url=url, data=data)
+
+            if tenant:
+                await self.update(
+                    obj=tenant,
+                    tenant_id=response['id'],
+                )
         return response
 
 
