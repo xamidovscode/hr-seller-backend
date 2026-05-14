@@ -19,16 +19,8 @@ class TenantService(BaseService, TenantGrpcService):
 
         return [
             {
-                "id": tenant.id,
-                "name": tenant.name,
-                "schema_name": tenant.schema_name,
-                "created_on": tenant.created_on,
-                "activated_at": tenant.activated_at,
-                "deadline": tenant.deadline,
-                "is_active": tenant.is_active,
-                "on_trial": tenant.on_trial,
-                "is_deleted": tenant.is_deleted,
-                "seller_info": local_tenant_data.get(tenant.id, {}),
+                **tenant,
+                "seller_info": local_tenant_data.get(tenant['id'], {}),
             }
             for tenant in core_tenants
         ]
