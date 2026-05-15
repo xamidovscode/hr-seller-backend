@@ -10,6 +10,7 @@ message GetTenantActivePlanRequest {
     int32 tenant_id = 1;
 }
 
+
 message ActivePlanResponse {
   int32 id = 1;
   string date = 2;

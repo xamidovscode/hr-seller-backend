@@ -19,3 +19,4 @@ async def create_tenant(service: tenant_service, schema: TenantCreateSchema):
 async def get_tenant_detail(tenant_id: int, service: tenant_service):
     return await service.tenant_detail(tenant_id=tenant_id)
 
+

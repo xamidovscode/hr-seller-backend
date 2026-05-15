@@ -26,6 +26,7 @@ class TenantService(BaseService):
         return [
             {
                 **tenant,
+                'tenant_type': "imb_hr",
                 "seller_info": local_tenant_data.get(tenant['id'], {}),
             }
             for tenant in core_tenants
