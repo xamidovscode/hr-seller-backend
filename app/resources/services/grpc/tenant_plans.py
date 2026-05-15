@@ -16,3 +16,4 @@ class PlansGrpcClient(GrpcClient):
         stub = await self._get_stub()
         response = await stub.GetTenantActivePlan(plans_pb2.GetTenantActivePlanRequest(tenant_id=tenant_id))
         return [self._message_to_dict(tp) for tp in response.active_plans]
+

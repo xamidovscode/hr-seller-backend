@@ -30,4 +30,4 @@ class GrpcClient(ABC):
 
     @staticmethod
     def _message_to_dict(instance) -> dict:
-        return MessageToDict(instance, preserving_proto_field_name=True)
+        return MessageToDict(instance, preserving_proto_field_name=True, always_print_fields_with_no_presence=True)
