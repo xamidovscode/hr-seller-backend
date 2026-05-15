@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from app.core.settings import settings
-from app.endpoints.tenants.schemas import TenantCreateSchema
+from app.endpoints.tenants.schemas import TenantCreateSchema, TenantUpdateSchema
 from app.models import tenants, users
 from app.models.choices import TenantTypes
 from app.resources.services import BaseService, TenantGrpcClient, PlansGrpcClient
@@ -105,6 +105,12 @@ class TenantService(BaseService):
 
 
         return core_tenant_data
+
+    async def tenant_update(self, tenant_id: int, schema: TenantUpdateSchema):
+        url = f'{settings.HR_CORE_URL}/api/v1/common/tenants/{tenant_id}/'
+        data = schema.model_dump()
+        response = await self.httpx_patch(url=url, data=data)
+        return response
 
 tenant_service = TenantService.annotated('db')
 

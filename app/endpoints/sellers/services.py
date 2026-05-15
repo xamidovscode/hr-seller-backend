@@ -66,12 +66,10 @@ class UserService(BaseService):
 
         stmt = (
             select(
-                users.User,
-                tenants_count_sq.c.tenant_count,
+                users.User, tenants_count_sq.c.tenant_count,
             )
             .outerjoin(
-                tenants_count_sq,
-                tenants_count_sq.c.seller_id == users.User.id
+                tenants_count_sq, tenants_count_sq.c.seller_id == users.User.id
             )
             .where(
                 users.User.role == choices.UserRoles.seller
@@ -86,6 +84,7 @@ class UserService(BaseService):
 
         for user, tenant_count in sellers.unique().all():
             supervised_list = []
+
             for supervisor_record in user.supervised_sellers:
                 supervised_list.append({
                     "supervisor_record_id": supervisor_record.id,
@@ -105,6 +104,7 @@ class UserService(BaseService):
                 "id": user.id,
                 "username": user.username,
                 "full_name": user.full_name,
+                'balance': 0,
                 "phone": user.phone,
                 "role": user.role,
                 "is_active": user.is_active,
@@ -113,7 +113,6 @@ class UserService(BaseService):
                 "tenant_count": tenant_count or 0,
                 "seller_count": len(supervised_list),
                 "supervised_sellers": supervised_list,
-                'balance': 0
             })
 
         return result

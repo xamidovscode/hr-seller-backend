@@ -1,9 +1,6 @@
-from datetime import date
 from typing import Optional
 
 from pydantic import BaseModel
-
-from app.models.choices import TenantTypes
 
 
 class TenantCreateSchema(BaseModel):
@@ -12,3 +9,5 @@ class TenantCreateSchema(BaseModel):
     seller_id: Optional[int] = None
 
 
+class TenantUpdateSchema(BaseModel):
+    is_active: bool

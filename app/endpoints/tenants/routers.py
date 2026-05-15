@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.endpoints.tenants.schemas import TenantCreateSchema
+from app.endpoints.tenants.schemas import TenantCreateSchema, TenantUpdateSchema
 from app.endpoints.tenants.services import tenant_service
 
 router = APIRouter(prefix='/tenants', tags=["tenants"])
@@ -20,3 +20,6 @@ async def get_tenant_detail(tenant_id: int, service: tenant_service):
     return await service.tenant_detail(tenant_id=tenant_id)
 
 
+@router.patch('/{tenant_id}/')
+async def get_tenant_detail(tenant_id: int, service: tenant_service, schema: TenantUpdateSchema):
+    return await service.tenant_update(tenant_id=tenant_id, schema=schema)

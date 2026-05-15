@@ -32,6 +32,30 @@ class HttpMixin:
             raise HTTPException(status_code=400, detail=f"So'rov xatosi: {str(e)}")
 
     @staticmethod
+    async def httpx_patch(
+        url: str,
+        data: dict = None,
+        headers: dict = None,
+        timeout: httpx.Timeout = None
+    ) -> dict:
+        try:
+            async with httpx.AsyncClient(
+                timeout=timeout or HttpMixin.DEFAULT_TIMEOUT
+            ) as client:
+                response = await client.patch(
+                    url,
+                    json=data or {},
+                    headers=headers or {}
+                )
+                return HttpMixin._handle_response(response)
+        except httpx.TimeoutException:
+            raise HTTPException(status_code=408, detail="Tashqi server javob bermadi (timeout)")
+        except httpx.ConnectError:
+            raise HTTPException(status_code=400, detail="Tashqi serverga ulanib bo'lmadi")
+        except httpx.RequestError as e:
+            raise HTTPException(status_code=400, detail=f"So'rov xatosi: {str(e)}")
+
+    @staticmethod
     async def httpx_get(
         url: str,
         params: dict = None,
