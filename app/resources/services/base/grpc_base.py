@@ -1,6 +1,8 @@
 import grpc.aio
 from abc import ABC, abstractmethod
 
+from google.protobuf.json_format import MessageToDict
+
 
 class GrpcService(ABC):
 
@@ -27,4 +29,8 @@ class GrpcService(ABC):
             await self._channel.close()
             self._channel = None
             self._stub = None
+
+    @staticmethod
+    def _message_to_dict(tenant) -> dict:
+        return MessageToDict(tenant, preserving_proto_field_name=True)
 
