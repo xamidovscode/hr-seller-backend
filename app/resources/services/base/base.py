@@ -13,7 +13,7 @@ T = TypeVar("T", bound="BaseService")
 
 ARGS_TYPE: Dict[str, Any] = {
     "db": Annotated[AsyncSession, Depends(get_session)],
-    "current_user": Annotated[User, Depends(get_current_user)],
+    "user": Annotated[User, Depends(get_current_user)],
 }
 
 
@@ -23,7 +23,7 @@ class BaseService(SessionQueryMixin, HttpMixin):
         self.db: AsyncSession = db
         for key, value in kwargs.items():
             setattr(self, key, value)
-        super().__init__(**kwargs)
+        super().__init__()
 
     @classmethod
     def __get_parameters(cls, fields: tuple):

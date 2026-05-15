@@ -7,7 +7,7 @@ from app.utils import BadRequest, verify_password, create_access_token
 
 
 class AuthService(BaseService):
-    current_user: User
+    user: User
 
     async def login(self, schema: schemas.LoginSchema):
 
@@ -37,7 +37,7 @@ class AuthService(BaseService):
         }
 
     async def get_profile(self):
-        user = self.current_user
+        user = self.user
         return {
             'user_id': user.id,
             'username': user.username,

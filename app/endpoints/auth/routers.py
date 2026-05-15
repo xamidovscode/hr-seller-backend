@@ -12,5 +12,5 @@ async def login(schema: schemas.LoginSchema, auth_service: AuthService.annotated
 
 
 @router.get("/profile/")
-async def get_profile(auth_service: AuthService.annotated('db', 'current_user')):
+async def get_profile(auth_service: AuthService.annotated('db', 'user')):
     return await auth_service.get_profile()
