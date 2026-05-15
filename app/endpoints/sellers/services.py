@@ -129,6 +129,7 @@ class UserService(BaseService):
                 users.Supervisor,
                 func.coalesce(func.sum(transactions.SellerTransactions.amount), 0).label('income'),
             )
+            .options(selectinload(users.Supervisor.seller))
             .outerjoin(
                 transactions.SellerTransactions,
                 and_(
@@ -142,12 +143,6 @@ class UserService(BaseService):
             .group_by(users.Supervisor.id)
         )
 
-        tenants_query = await self.execute(
-            select(tenants.Tenant.core_tenant_id).where(tenants.Tenant.seller_id == seller_id)
-        )
-
-        tenants_data = await self._tenant_grpc.get_tenants_by_ids(ids=list(tenants_query.scalars().all()))
-
         assistants_data = [
             {
                 'id': row.Supervisor.id,
@@ -156,9 +151,15 @@ class UserService(BaseService):
                 'to_date': row.Supervisor.to_date,
                 'percentage': row.Supervisor.percentage,
                 'amount_portion': row.income * (row.Supervisor.percentage / 100),
+                'full_name': row.Supervisor.seller.full_name,
             }
             for row in assistants.mappings().all()
         ]
+
+        tenants_query = await self.execute(
+            select(tenants.Tenant.core_tenant_id).where(tenants.Tenant.seller_id == seller_id)
+        )
+        tenants_data = await self._tenant_grpc.get_tenants_by_ids(ids=list(tenants_query.scalars().all()))
 
         return {
             'id': seller.id,
@@ -170,8 +171,8 @@ class UserService(BaseService):
             'is_active': seller.is_active,
             'percentage': seller.percentage,
             'duration': seller.duration,
-            'tenants': tenants_data,
             'assistants': assistants_data,
+            'tenants': tenants_data,
         }
 
 user_service = UserService.annotated('db')
