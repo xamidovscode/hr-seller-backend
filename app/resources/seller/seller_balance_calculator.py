@@ -25,102 +25,8 @@ class SellerBalanceCalculator:
            − (CONFIRMED yechib olishlar)
     """
 
-    def __init__(self, session: AsyncSession):
-        self.session = session
-
-    async def earned_as_seller(self, seller_id: int) -> Decimal:
-        stmt = (
-            select(
-                func.coalesce(
-                    func.sum(
-                        MonthlyTransaction.amount * Tenant.percentage / Decimal('100')
-                    ),
-                    Decimal('0'),
-                )
-            )
-            .select_from(MonthlyTransaction)
-            .join(Tenant, Tenant.id == MonthlyTransaction.tenant_id)
-            .where(
-                Tenant.seller_id == seller_id,
-                MonthlyTransaction.month >= Tenant.from_date,
-                MonthlyTransaction.month <= Tenant.to_date,
-            )
-        )
-        return (await self.session.scalar(stmt)) or Decimal('0.00')
-
-    async def earned_as_supervisor(self, seller_id: int) -> Decimal:
-        stmt = (
-            select(
-                func.coalesce(
-                    func.sum(
-                        MonthlyTransaction.amount * Supervisor.percentage / Decimal('100')
-                    ),
-                    Decimal('0'),
-                )
-            )
-            .select_from(MonthlyTransaction)
-            .join(Tenant, Tenant.id == MonthlyTransaction.tenant_id)
-            .join(Supervisor, Supervisor.seller_id == Tenant.seller_id)
-            .where(
-                Supervisor.supervisor_id == seller_id,
-                MonthlyTransaction.month >= Tenant.from_date,
-                MonthlyTransaction.month <= Tenant.to_date,
-                MonthlyTransaction.month >= Supervisor.from_date,
-                MonthlyTransaction.month <= Supervisor.to_date,
-            )
-        )
-        return (await self.session.scalar(stmt)) or Decimal('0.00')
-
-    async def withdrawn(self, seller_id: int) -> Decimal:
-        stmt = (
-            select(func.coalesce(func.sum(SellerRequest.amount), Decimal('0')))
-            .join(
-                SellerTransactions,
-                SellerTransactions.id == SellerRequest.seller_transaction_id,
-            )
-            .where(
-                SellerTransactions.seller_id == seller_id,
-                SellerRequest.condition == RequestConditions.CONFIRMED,
-            )
-        )
-        return (await self.session.scalar(stmt)) or Decimal('0.00')
-
-    async def balance(self, seller_id: int) -> Decimal:
-        as_seller = await self.earned_as_seller(seller_id)
-        as_supervisor = await self.earned_as_supervisor(seller_id)
-        withdrawn = await self.withdrawn(seller_id)
-        return as_seller + as_supervisor - withdrawn
-
-    async def tenants_count(self, seller_id: int) -> int:
-        """Seller olib kelgan tenantlar soni."""
-        stmt = (
-            select(func.count(Tenant.id))
-            .where(Tenant.seller_id == seller_id)
-        )
-        return await self.session.scalar(stmt) or 0
-
-    async def supervised_count(self, seller_id: int) -> int:
-        """Seller supervisor bo'lgan boshqa sellerlar soni."""
-        stmt = (
-            select(func.count(Supervisor.id))
-            .where(Supervisor.supervisor_id == seller_id)
-        )
-        return await self.session.scalar(stmt) or 0
-
-    async def breakdown(self, seller_id: int) -> dict:
-        as_seller = await self.earned_as_seller(seller_id)
-        as_supervisor = await self.earned_as_supervisor(seller_id)
-        withdrawn = await self.withdrawn(seller_id)
-        return {
-            # Pul
-            'as_seller': as_seller,
-            'as_supervisor': as_supervisor,
-            'withdrawn': withdrawn,
-            'balance': as_seller + as_supervisor - withdrawn,
-            # Statistika
-            'tenants_count': await self.tenants_count(seller_id),
-            'supervised_count': await self.supervised_count(seller_id),
-        }
+    def __init__(self, db: AsyncSession):
+        self.db = db
 
     async def bulk_breakdown(
             self, seller_ids: list[int],
@@ -154,7 +60,7 @@ class SellerBalanceCalculator:
         )
         earned_seller = {
             row.sid: row.amount
-            for row in await self.session.execute(earned_seller_stmt)
+            for row in await self.db.execute(earned_seller_stmt)
         }
 
         # 2. Supervisor sifatida
@@ -182,7 +88,7 @@ class SellerBalanceCalculator:
         )
         earned_super = {
             row.sid: row.amount
-            for row in await self.session.execute(earned_super_stmt)
+            for row in await self.db.execute(earned_super_stmt)
         }
 
         # 3. Withdrawn
@@ -203,7 +109,7 @@ class SellerBalanceCalculator:
         )
         withdrawn = {
             row.sid: row.amount
-            for row in await self.session.execute(withdrawn_stmt)
+            for row in await self.db.execute(withdrawn_stmt)
         }
 
         # 4. Tenants count
@@ -214,7 +120,7 @@ class SellerBalanceCalculator:
         )
         tenants_cnt = {
             row.sid: row.cnt
-            for row in await self.session.execute(tenants_cnt_stmt)
+            for row in await self.db.execute(tenants_cnt_stmt)
         }
 
         # 5. O'zi supervisor bo'lganlari (ixtiyoriy, kerak bo'lsa)
@@ -228,7 +134,7 @@ class SellerBalanceCalculator:
         )
         supervised_cnt = {
             row.sid: row.cnt
-            for row in await self.session.execute(supervised_cnt_stmt)
+            for row in await self.db.execute(supervised_cnt_stmt)
         }
 
         # Yig'amiz
