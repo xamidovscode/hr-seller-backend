@@ -5,14 +5,18 @@ from sqlalchemy import select, func, and_
 from sqlalchemy.orm import selectinload
 
 from app.models import users, choices, tenants, transactions
-from app.resources import BaseService, TenantGrpcService
+from app.resources import BaseService, TenantGrpcClient
 from app.utils import hash_password
 from . import schemas
 from ...models.choices import TransTypes
 from ...utils.time import now
 
 
-class UserService(BaseService, TenantGrpcService):
+class UserService(BaseService):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._tenant_grpc = TenantGrpcClient()
 
     async def create_user(self, schema: schemas.SellerCreateSchema) -> users.User:
 
@@ -142,7 +146,7 @@ class UserService(BaseService, TenantGrpcService):
             select(tenants.Tenant.core_tenant_id).where(tenants.Tenant.seller_id == seller_id)
         )
 
-        tenants_data = await self.get_grpc_tenants_by_ids(ids=tenants_query.scalars().all())
+        tenants_data = await self._tenant_grpc.get_tenants_by_ids(ids=list(tenants_query.scalars().all()))
 
         assistants_data = [
             {

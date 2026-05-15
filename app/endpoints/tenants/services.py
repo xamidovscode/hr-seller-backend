@@ -6,15 +6,20 @@ from app.core.settings import settings
 from app.endpoints.tenants.schemas import TenantCreateSchema
 from app.models import tenants, users
 from app.models.choices import TenantTypes
-from app.resources.services import BaseService, TenantGrpcService
+from app.resources.services import BaseService, TenantGrpcClient, PlansGrpcClient
 from app.utils.time import now
 
 
-class TenantService(BaseService, TenantGrpcService):
+class TenantService(BaseService):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._tenant_grpc = TenantGrpcClient()
+        self._plans_grpc = PlansGrpcClient()
 
     async def get_all_tenants(self):
         local_tenants = await self.get_all(select(tenants.Tenant))
-        core_tenants = await self.get_grpc_tenants()
+        core_tenants = await self._tenant_grpc.get_tenants()
 
         local_tenant_data = {tenant.core_tenant_id: tenant for tenant in local_tenants}
 
@@ -60,7 +65,8 @@ class TenantService(BaseService, TenantGrpcService):
 
     async def tenant_detail(self, tenant_id: int):
 
-        core_tenant_data = await self.get_grpc_tenant_by_id(pk=tenant_id)
+        core_tenant_data = await self._tenant_grpc.get_tenant_by_id(pk=tenant_id)
+        active_plans_data = await self._plans_grpc.get_tenant_active_plan(tenant_id=tenant_id)
 
         local_tenant = await self.get_object_or_none(
             select(tenants.Tenant)
@@ -92,6 +98,7 @@ class TenantService(BaseService, TenantGrpcService):
                 'to_date': to_date,
                 'percentage': percentage,
                 'monthly_transactions': monthly_transactions,
+                'active_plans': active_plans_data,
             })
 
 
