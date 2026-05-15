@@ -217,18 +217,7 @@ class SellerBalanceCalculator:
             for row in await self.session.execute(tenants_cnt_stmt)
         }
 
-        # 5. Supervisorlar soni (unga supervisor bo'lganlar)
-        supervisors_cnt_stmt = (
-            select(Supervisor.seller_id.label('sid'), func.count(Supervisor.id).label('cnt'))
-            .where(Supervisor.seller_id.in_(seller_ids))
-            .group_by(Supervisor.seller_id)
-        )
-        supervisors_cnt = {
-            row.sid: row.cnt
-            for row in await self.session.execute(supervisors_cnt_stmt)
-        }
-
-        # 6. O'zi supervisor bo'lganlari (ixtiyoriy, kerak bo'lsa)
+        # 5. O'zi supervisor bo'lganlari (ixtiyoriy, kerak bo'lsa)
         supervised_cnt_stmt = (
             select(
                 Supervisor.supervisor_id.label('sid'),
@@ -254,7 +243,6 @@ class SellerBalanceCalculator:
                 'withdrawn': w,
                 'balance': a + s - w,
                 'tenants_count': tenants_cnt.get(sid, 0),
-                'supervisors_count': supervisors_cnt.get(sid, 0),
                 'supervised_count': supervised_cnt.get(sid, 0),
             }
         return result

@@ -116,7 +116,8 @@ class UserService(BaseService):
         ]
 
         tenants_query = await self.execute(
-            select(tenants.Tenant.core_tenant_id).where(tenants.Tenant.seller_id == seller_id)
+            select(tenants.Tenant.core_tenant_id)
+            .where(tenants.Tenant.seller_id == seller_id)
         )
         tenants_data = await self._tenant_grpc.get_tenants_by_ids(ids=list(tenants_query.scalars().all()))
 
