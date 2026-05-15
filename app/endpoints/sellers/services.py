@@ -10,6 +10,7 @@ from app.utils import hash_password
 from . import schemas
 from ...models.choices import TransTypes
 from ...resources.seller.seller_balance_calculator import SellerBalanceCalculator
+from ...resources.seller.seller_balance_detail import SellerBalanceDetail
 from ...utils.time import now
 
 
@@ -83,56 +84,23 @@ class UserService(BaseService):
             select(users.User).where(users.User.id == seller_id)
         )
 
-        assistants = await self.execute(
-            select(
-                users.Supervisor,
-                func.coalesce(func.sum(transactions.SellerTransactions.amount), 0).label('income'),
-            )
-            .options(selectinload(users.Supervisor.seller))
-            .outerjoin(
-                transactions.SellerTransactions,
-                and_(
-                    transactions.SellerTransactions.seller_id == users.Supervisor.seller_id,
-                    transactions.SellerTransactions.month >= users.Supervisor.from_date,
-                    transactions.SellerTransactions.month <= users.Supervisor.to_date,
-                    transactions.SellerTransactions.type == TransTypes.INCOME
-                )
-            )
-            .where(users.Supervisor.supervisor_id == seller_id)
-            .group_by(users.Supervisor.id)
-        )
+        sbd = SellerBalanceDetail(db=self.db, seller_id=seller_id)
 
-        assistants_data = [
-            {
-                'id': row.Supervisor.id,
-                'seller_id': row.Supervisor.seller_id,
-                'from_date': row.Supervisor.from_date,
-                'to_date': row.Supervisor.to_date,
-                'percentage': row.Supervisor.percentage,
-                'amount_portion': row.income * (row.Supervisor.percentage / 100),
-                'full_name': row.Supervisor.seller.full_name,
-            }
-            for row in assistants.mappings().all()
-        ]
-
-        tenants_query = await self.execute(
-            select(tenants.Tenant.core_tenant_id)
-            .where(tenants.Tenant.seller_id == seller_id)
-        )
-        tenants_data = await self._tenant_grpc.get_tenants_by_ids(ids=list(tenants_query.scalars().all()))
+        calc = SellerBalanceCalculator(self.db)
+        balance_info = await calc.bulk_breakdown([seller_id])
 
         return {
             'id': seller.id,
             'username': seller.username,
             'full_name': seller.full_name,
-            'password': seller.password,
             'phone': seller.phone,
-            'role': seller.role,
-            'is_active': seller.is_active,
             'percentage': seller.percentage,
             'duration': seller.duration,
-            'assistants': assistants_data,
-            'tenants': tenants_data,
+            'is_active': seller.is_active,
+            # 'assistants': await sbd.assistants_data(),
+            # 'tenants': await sbd.tenants_data(),
+            'requests': await sbd.seller_requests(),
+            'balance_info': balance_info[seller_id],
         }
 
 user_service = UserService.annotated('db')
