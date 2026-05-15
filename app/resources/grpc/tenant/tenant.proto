@@ -15,6 +15,15 @@ message GetTenantByIdRequest {
     int32 id = 1;
 }
 
+message TenantPlansResponse {
+    int32 id = 1;
+    double plan_price = 2;
+    int32 users_count = 3;
+    double per_user_price = 4;
+    string module = 5;
+    int32 current_users_count = 6;
+}
+
 message TenantResponse {
   int32 id = 1;
   string name = 2;
@@ -26,6 +35,7 @@ message TenantResponse {
   bool on_trial = 8;
   bool is_active = 9;
   bool is_deleted = 10;
+  repeated TenantPlansResponse plans = 11;
 }
 
 message GetTenantsResponse {
