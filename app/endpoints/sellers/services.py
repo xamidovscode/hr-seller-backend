@@ -9,6 +9,7 @@ from app.resources import BaseService, TenantGrpcClient
 from app.utils import hash_password
 from . import schemas
 from ...models.choices import TransTypes
+from ...resources.seller.seller_balance_calculator import SellerBalanceCalculator
 from ...utils.time import now
 
 
@@ -17,6 +18,28 @@ class UserService(BaseService):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._tenant_grpc = TenantGrpcClient()
+
+    async def sellers_list(self) -> List[dict[str, Any]]:
+        sellers = await self.get_all(
+            select(users.User).where(users.User.role == choices.UserRoles.seller)
+        )
+
+        calc = SellerBalanceCalculator(self.db)
+        stats = await calc.bulk_breakdown([s.id for s in sellers])
+
+        return [
+            {
+                'id': s.id,
+                'username': s.username,
+                'full_name': s.full_name,
+                'phone': s.phone,
+                'percentage': s.percentage,
+                'duration': s.duration,
+                'is_active': s.is_active,
+                **stats[s.id],
+            }
+            for s in sellers
+        ]
 
     async def create_user(self, schema: schemas.SellerCreateSchema) -> users.User:
 
@@ -53,69 +76,6 @@ class UserService(BaseService):
                 )
 
         return seller
-
-    async def sellers_list(self) -> List[dict[str, Any]]:
-
-        tenants_count_sq = (
-            select(
-                tenants.Tenant.seller_id.label('seller_id'),
-                func.count(tenants.Tenant.id).label('tenant_count')
-            )
-            .group_by(tenants.Tenant.seller_id)
-        ).subquery()
-
-        stmt = (
-            select(
-                users.User, tenants_count_sq.c.tenant_count,
-            )
-            .outerjoin(
-                tenants_count_sq, tenants_count_sq.c.seller_id == users.User.id
-            )
-            .where(
-                users.User.role == choices.UserRoles.seller
-            )
-            .options(
-                selectinload(users.User.supervised_sellers).selectinload(users.Supervisor.seller)
-            )
-        )
-
-        sellers = await self.execute(stmt)
-        result = []
-
-        for user, tenant_count in sellers.unique().all():
-            supervised_list = []
-
-            for supervisor_record in user.supervised_sellers:
-                supervised_list.append({
-                    "supervisor_record_id": supervisor_record.id,
-                    "seller_id": supervisor_record.seller_id,
-                    "seller_username": supervisor_record.seller.username,
-                    "seller_full_name": supervisor_record.seller.full_name,
-                    "seller_phone": supervisor_record.seller.phone,
-                    "seller_is_active": supervisor_record.seller.is_active,
-                    "seller_percentage": supervisor_record.seller.percentage,
-                    "seller_duration": supervisor_record.seller.duration,
-                    "from_date": supervisor_record.from_date,
-                    "to_date": supervisor_record.to_date,
-                    "percentage": supervisor_record.percentage,
-                })
-
-            result.append({
-                "id": user.id,
-                "username": user.username,
-                "full_name": user.full_name,
-                'balance': 0,
-                "phone": user.phone,
-                "role": user.role,
-                "is_active": user.is_active,
-                "percentage": user.percentage,
-                "duration": user.duration,
-                "tenant_count": tenant_count or 0,
-                "seller_count": len(supervised_list),
-                "supervised_sellers": supervised_list,
-            })
-
-        return result
 
     async def seller_detail(self, seller_id: int) -> Any:
 
