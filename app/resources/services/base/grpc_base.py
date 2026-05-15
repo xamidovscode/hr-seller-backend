@@ -4,7 +4,6 @@ from google.protobuf.json_format import MessageToDict
 
 
 class GrpcClient(ABC):
-    """Standalone gRPC client. Har biri o'z channel/stub'iga ega."""
 
     def __init__(self):
         self._channel: grpc.aio.Channel | None = None

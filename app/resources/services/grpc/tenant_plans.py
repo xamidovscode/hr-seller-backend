@@ -7,14 +7,12 @@ class PlansGrpcClient(GrpcClient):
 
     @property
     def host(self) -> str:
-        return settings.HR_CORE_GRPC_HOST  # ertaga boshqa host bo'lsa — shu yerda o'zgartiring
+        return settings.HR_CORE_GRPC_HOST
 
     def _create_stub(self, channel):
         return plans_pb2_grpc.TenantPlanServiceStub(channel)
 
     async def get_tenant_active_plan(self, tenant_id: int) -> list[dict]:
         stub = await self._get_stub()
-        response = await stub.GetTenantActivePlan(
-            plans_pb2.GetTenantActivePlanRequest(tenant_id=tenant_id)
-        )
+        response = await stub.GetTenantActivePlan(plans_pb2.GetTenantActivePlanRequest(tenant_id=tenant_id))
         return [self._message_to_dict(tp) for tp in response.active_plans]
