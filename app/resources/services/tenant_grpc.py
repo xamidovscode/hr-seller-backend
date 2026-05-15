@@ -28,4 +28,9 @@ class TenantGrpcService(GrpcService):
         response = await stub.GetTenantsByIds(tenant_pb2.GetTenantsByIdsRequest(ids=ids))
         return [_tenant_to_dict(t) for t in response.tenants]
 
+    async def get_grpc_tenant_by_id(self, pk: int):
+        stub = await self.get_stub()
+        response = await stub.GetTenantById(tenant_pb2.GetTenantByIdRequest(id=pk))
+        return _tenant_to_dict(response)
+
 

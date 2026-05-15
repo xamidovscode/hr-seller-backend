@@ -60,12 +60,8 @@ class TenantService(BaseService, TenantGrpcService):
 
     async def tenant_detail(self, tenant_id: int):
 
-        core_tenants_list = await self.get_grpc_tenants_by_ids(ids=[tenant_id])
+        core_tenant_data = await self.get_grpc_tenant_by_id(pk=tenant_id)
 
-        if not core_tenants_list:
-            raise self.error('Bunday mijoz mavjud emas')
-
-        core_tenant_data = core_tenants_list[0]
         local_tenant = await self.get_object_or_none(
             select(tenants.Tenant)
             .options(selectinload(tenants.Tenant.seller))
@@ -103,3 +99,5 @@ class TenantService(BaseService, TenantGrpcService):
         return core_tenant_data
 
 tenant_service = TenantService.annotated('db')
+
+

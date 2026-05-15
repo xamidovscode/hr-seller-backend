@@ -1,16 +1,19 @@
 syntax = "proto3";
-
 package tenant;
+
 
 service TenantService {
   rpc GetTenants (GetTenantsRequest) returns (GetTenantsResponse);
   rpc GetTenantsByIds (GetTenantsByIdsRequest) returns (GetTenantsResponse);
+  rpc GetTenantById (GetTenantByIdRequest) returns (TenantResponse);
 }
 
 message GetTenantsRequest {}
-
 message GetTenantsByIdsRequest {
   repeated int32 ids = 1;
+}
+message GetTenantByIdRequest {
+    int32 id = 1;
 }
 
 message TenantResponse {
@@ -29,3 +32,8 @@ message TenantResponse {
 message GetTenantsResponse {
   repeated TenantResponse tenants = 1;
 }
+
+
+
+
+

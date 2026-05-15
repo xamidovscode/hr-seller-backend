@@ -27,3 +27,4 @@ class GrpcService(ABC):
             await self._channel.close()
             self._channel = None
             self._stub = None
+
