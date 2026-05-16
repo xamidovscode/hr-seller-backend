@@ -1,4 +1,27 @@
+import subprocess
 from invoke import task
+
+
+DOCKER_CONTAINER = "hr-seller-endpoints"
+
+
+def _is_docker_running():
+    try:
+        result = subprocess.run(
+            ["docker", "inspect", "-f", "{{.State.Running}}", DOCKER_CONTAINER],
+            capture_output=True, text=True
+        )
+        return result.stdout.strip() == "true"
+    except FileNotFoundError:
+        return False
+
+
+def _run_script(c, args: str):
+    cmd = f"python scripts/create_user.py {args}"
+    if _is_docker_running():
+        c.run(f"docker exec {DOCKER_CONTAINER} {cmd}")
+    else:
+        c.run(cmd)
 
 
 @task
@@ -21,70 +44,13 @@ def run(c):
     c.run("uvicorn app.main:app --reload")
 
 
-def _user_cmd(role, username, full_name, password, phone, percentage, duration):
-    cmd = (
-        f"python scripts/create_user.py {role}"
-        f" --username {username}"
-        f' --full-name "{full_name}"'
-        f" --password {password}"
-    )
-    if phone:
-        cmd += f" --phone {phone}"
-    if role == "seller":
-        cmd += f" --percentage {percentage} --duration {duration}"
-    return cmd
+@task
+def create_seller(c):
+    """seller/seller username va parol bilan seller yaratish."""
+    _run_script(c, 'seller --username seller --full-name "Seller User" --password seller')
 
 
-@task(
-    help={
-        "username": "Login uchun username",
-        "full-name": "To'liq ismi",
-        "password": "Parol",
-        "phone": "Telefon raqam (ixtiyoriy)",
-        "percentage": "Foiz (default: 0)",
-        "duration": "Muddat oyda (default: 0)",
-        "docker": "Docker konteyner ichida ishlatish",
-    }
-)
-def create_seller(
-    c,
-    username,
-    full_name,
-    password,
-    phone=None,
-    percentage=0,
-    duration=0,
-    docker=False,
-):
-    """Yangi seller yaratish."""
-    cmd = _user_cmd("seller", username, full_name, password, phone, percentage, duration)
-    if docker:
-        c.run(f"docker exec hr-seller-endpoints {cmd}")
-    else:
-        c.run(cmd)
-
-
-@task(
-    help={
-        "username": "Login uchun username",
-        "full-name": "To'liq ismi",
-        "password": "Parol",
-        "phone": "Telefon raqam (ixtiyoriy)",
-        "docker": "Docker konteyner ichida ishlatish",
-    }
-)
-def create_admin(
-    c,
-    username,
-    full_name,
-    password,
-    phone=None,
-    docker=False,
-):
-    """Yangi admin yaratish."""
-    cmd = _user_cmd("admin", username, full_name, password, phone, 0, 0)
-    if docker:
-        c.run(f"docker exec hr-seller-endpoints {cmd}")
-    else:
-        c.run(cmd)
-
+@task
+def create_admin(c):
+    """admin/admin username va parol bilan admin yaratish."""
+    _run_script(c, 'admin --username admin --full-name "Admin User" --password admin')

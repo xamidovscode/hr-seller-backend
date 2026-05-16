@@ -4,6 +4,8 @@ from app.resources import BaseService
 from . import schemas
 from app.models import User
 from app.utils import BadRequest, verify_password, create_access_token
+from ...models.choices import UserRoles
+from ...resources.seller.seller_balance_calculator import SellerBalanceCalculator
 
 
 class AuthService(BaseService):
@@ -38,7 +40,7 @@ class AuthService(BaseService):
 
     async def get_profile(self):
         user = self.user
-        return {
+        data = {
             'user_id': user.id,
             'username': user.username,
             'full_name': user.full_name,
@@ -46,4 +48,12 @@ class AuthService(BaseService):
             'is_active': user.is_active,
             'role': user.role,
         }
+        seller_cal = SellerBalanceCalculator(self.db)
+        balance_info = await seller_cal.bulk_breakdown(seller_ids=[user.id])
+
+        if user.role == UserRoles.seller:
+            data.update({
+                'balance_info': balance_info.get(user.id, None),
+            })
+        return data
 
