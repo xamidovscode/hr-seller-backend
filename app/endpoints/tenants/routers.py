@@ -21,7 +21,7 @@ async def get_tenant_detail(tenant_id: int, service: tenant_service):
 
 
 @router.patch('/{tenant_id}/')
-async def get_tenant_detail(tenant_id: int, service: tenant_service, schema: TenantUpdateSchema):
+async def update_tenant(tenant_id: int, service: tenant_service, schema: TenantUpdateSchema):
     return await service.tenant_update(tenant_id=tenant_id, schema=schema)
 
 

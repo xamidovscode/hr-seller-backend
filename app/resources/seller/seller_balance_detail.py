@@ -1,6 +1,7 @@
+from decimal import Decimal
 from typing import List
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -25,6 +26,10 @@ class SelleDetail:
         self.seller_id = seller_id
 
     async def tenants_data(self, tenant_grpc):
+        payments_sum_expr = func.coalesce(
+            func.sum(MonthlyTransaction.amount), Decimal("0.00")
+        )
+
         stmt = (
             select(
                 Tenant.id,
@@ -33,8 +38,26 @@ class SelleDetail:
                 Tenant.from_date,
                 Tenant.to_date,
                 Tenant.percentage,
+                payments_sum_expr.label("payments_sum"),
+                (payments_sum_expr * (Tenant.percentage / 100)).label("seller_debit"),
+            )
+            .outerjoin(
+                MonthlyTransaction,
+                and_(
+                    MonthlyTransaction.tenant_id == Tenant.id,
+                    MonthlyTransaction.month >= Tenant.from_date,
+                    MonthlyTransaction.month <= Tenant.to_date,
+                ),
             )
             .where(Tenant.seller_id == self.seller_id)
+            .group_by(
+                Tenant.id,
+                Tenant.core_tenant_id,
+                Tenant.type,
+                Tenant.from_date,
+                Tenant.to_date,
+                Tenant.percentage,
+            )
         )
         result = await self.db.execute(stmt)
         core_tenants_map = await self.get_core_tenants_map(tenant_grpc)

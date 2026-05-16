@@ -10,7 +10,7 @@ from alembic import context
 from app.core.settings import settings
 from app.core.db import Base
 
-from app.models import users
+from app.models import users, tenants
 
 config = context.config
 
