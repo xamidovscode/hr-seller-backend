@@ -12,7 +12,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.core.db import BaseModel
 
 if TYPE_CHECKING:
-    from app.models import Tenant, SellerTransactions
+    from app.models import Tenant
 
 
 class MonthlyTransaction(BaseModel):
@@ -41,11 +41,4 @@ class MonthlyTransaction(BaseModel):
         comment="Month: amount of monthly transaction",
     )
 
-    seller_trans_id: Mapped[int] = mapped_column(
-        ForeignKey('seller_transactions.id', ondelete="CASCADE"),
-        nullable=False,
-    )
-    seller_trans: Mapped['SellerTransactions'] = relationship(
-        back_populates="tenant_monthly_transactions",
-    )
 

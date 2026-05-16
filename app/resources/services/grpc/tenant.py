@@ -1,3 +1,8 @@
+from select import select
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models import Tenant
 from app.resources.grpc.tenant import tenant_pb2_grpc, tenant_pb2
 from app.core.settings import settings
 from app.resources.services.base.grpc_base import GrpcClient

@@ -1,5 +1,5 @@
 from sqladmin import ModelView
-from app.models import User, Supervisor, SellerRequest, SellerTransactions, MonthlyTransaction, Tenant
+from app.models import User, Supervisor, SellerRequest, MonthlyTransaction, Tenant
 
 
 class UserAdmin(ModelView, model=User):
@@ -31,23 +31,11 @@ class SellerRequestAdmin(ModelView, model=SellerRequest):
     name = "Seller So'rovi"
     name_plural = "Seller So'rovlari"
     column_list = [
-        SellerRequest.id, SellerRequest.amount,
+        SellerRequest.id, SellerRequest.seller_id, SellerRequest.amount,
         SellerRequest.date, SellerRequest.condition,
-        SellerRequest.seller_transaction_id,
     ]
     column_sortable_list = [SellerRequest.id, SellerRequest.date, SellerRequest.amount]
 
-
-class SellerTransactionsAdmin(ModelView, model=SellerTransactions):
-    icon = "fa-solid fa-money-bill-transfer"
-    name = "Seller Tranzaksiya"
-    name_plural = "Seller Tranzaksiyalari"
-    column_list = [
-        SellerTransactions.id, SellerTransactions.seller_id,
-        SellerTransactions.amount, SellerTransactions.model,
-        SellerTransactions.instance_id, SellerTransactions.type,
-    ]
-    column_sortable_list = [SellerTransactions.id, SellerTransactions.amount]
 
 
 class MonthlyTransactionAdmin(ModelView, model=MonthlyTransaction):
@@ -57,7 +45,7 @@ class MonthlyTransactionAdmin(ModelView, model=MonthlyTransaction):
     column_list = [
         MonthlyTransaction.id, MonthlyTransaction.tenant_id,
         MonthlyTransaction.service_id, MonthlyTransaction.month,
-        MonthlyTransaction.amount, MonthlyTransaction.seller_trans_id,
+        MonthlyTransaction.amount,
     ]
     column_sortable_list = [MonthlyTransaction.id, MonthlyTransaction.month, MonthlyTransaction.amount]
 
@@ -78,7 +66,6 @@ all_views = [
     UserAdmin,
     SupervisorAdmin,
     SellerRequestAdmin,
-    SellerTransactionsAdmin,
     MonthlyTransactionAdmin,
     TenantAdmin,
 ]

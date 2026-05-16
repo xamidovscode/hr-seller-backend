@@ -11,7 +11,6 @@ from app.models import (
     Tenant,
     Supervisor,
     MonthlyTransaction,
-    SellerTransactions,
     SellerRequest,
 )
 from app.models.choices import RequestConditions
@@ -94,18 +93,14 @@ class SellerBalanceCalculator:
         # 3. Withdrawn
         withdrawn_stmt = (
             select(
-                SellerTransactions.seller_id.label('sid'),
+                SellerRequest.seller_id.label('sid'),
                 func.coalesce(func.sum(SellerRequest.amount), Decimal('0')).label('amount'),
             )
-            .join(
-                SellerTransactions,
-                SellerTransactions.id == SellerRequest.seller_transaction_id,
-            )
             .where(
-                SellerTransactions.seller_id.in_(seller_ids),
+                SellerRequest.seller_id.in_(seller_ids),
                 SellerRequest.condition == RequestConditions.CONFIRMED,
             )
-            .group_by(SellerTransactions.seller_id)
+            .group_by(SellerRequest.seller_id)
         )
         withdrawn = {
             row.sid: row.amount

@@ -13,11 +13,18 @@ from app.core.db import BaseModel
 from .. import choices
 
 if TYPE_CHECKING:
-    from app.models import User, SellerTransactions
+    from app.models import User
 
 
 class SellerRequest(BaseModel):
     __tablename__ = "seller_requests"
+
+    seller_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+    )
+    seller: Mapped['User'] = relationship(
+        back_populates="seller_requests",
+    )
 
     amount: Mapped[Decimal] = mapped_column(
         Numeric(36, 2),
@@ -34,12 +41,5 @@ class SellerRequest(BaseModel):
         SQLEnum(choices.RequestConditions),
         default=choices.RequestConditions.PENDING,
         comment="The condition of the seller request",
-    )
-
-    seller_transaction_id: Mapped[int] = mapped_column(
-        ForeignKey("seller_transactions.id", ondelete="CASCADE"),
-    )
-    seller_transaction: Mapped['SellerTransactions'] = relationship(
-        back_populates="seller_requests",
     )
 

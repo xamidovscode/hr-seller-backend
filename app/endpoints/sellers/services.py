@@ -4,13 +4,13 @@ from dateutil.relativedelta import relativedelta
 from sqlalchemy import select, func, and_
 from sqlalchemy.orm import selectinload
 
-from app.models import users, choices, tenants, transactions
+from app.models import users, choices, tenants
 from app.resources import BaseService, TenantGrpcClient
 from app.utils import hash_password
 from . import schemas
 from ...models.choices import TransTypes
 from ...resources.seller.seller_balance_calculator import SellerBalanceCalculator
-from ...resources.seller.seller_balance_detail import SellerBalanceDetail
+from ...resources.seller.seller_balance_detail import SelleDetail
 from ...utils.time import now
 
 
@@ -84,10 +84,7 @@ class UserService(BaseService):
             select(users.User).where(users.User.id == seller_id)
         )
 
-        sbd = SellerBalanceDetail(db=self.db, seller_id=seller_id)
-
-        calc = SellerBalanceCalculator(self.db)
-        balance_info = await calc.bulk_breakdown([seller_id])
+        sbd = SelleDetail(db=self.db, seller_id=seller_id)
 
         return {
             'id': seller.id,
@@ -97,10 +94,10 @@ class UserService(BaseService):
             'percentage': seller.percentage,
             'duration': seller.duration,
             'is_active': seller.is_active,
-            # 'assistants': await sbd.assistants_data(),
-            # 'tenants': await sbd.tenants_data(),
+            'assistants': await sbd.assistants_data(),
+            'tenants': await sbd.tenants_data(tenant_grpc=self._tenant_grpc),
             'requests': await sbd.seller_requests(),
-            'balance_info': balance_info[seller_id],
+            'balance_info': await sbd.detail_balance(),
         }
 
 user_service = UserService.annotated('db')
