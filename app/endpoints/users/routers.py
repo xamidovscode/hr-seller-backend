@@ -5,7 +5,7 @@ from .services import user_service
 from ...models.choices import UserRoles
 from ...resources.permissions.dependencies import require_roles
 
-router = APIRouter(prefix="/sellers", tags=["sellers"])
+router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.post(
