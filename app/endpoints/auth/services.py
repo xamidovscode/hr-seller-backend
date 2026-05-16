@@ -48,10 +48,11 @@ class AuthService(BaseService):
             'is_active': user.is_active,
             'role': user.role,
         }
-        seller_cal = SellerBalanceCalculator(self.db)
-        balance_info = await seller_cal.bulk_breakdown(seller_ids=[user.id])
 
         if user.role == UserRoles.seller:
+            seller_cal = SellerBalanceCalculator(self.db)
+            balance_info = await seller_cal.bulk_breakdown(seller_ids=[user.id])
+
             data.update({
                 'balance_info': balance_info.get(user.id, None),
             })
