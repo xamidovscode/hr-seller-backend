@@ -21,6 +21,7 @@ COPY --chown=appuser:appgroup app/ ./app/
 COPY --chown=appuser:appgroup scripts/ ./scripts/
 COPY --chown=appuser:appgroup alembic.ini ./
 COPY --chown=appuser:appgroup pyproject.toml ./
+COPY --chown=appuser:appgroup tasks.py ./
 
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
