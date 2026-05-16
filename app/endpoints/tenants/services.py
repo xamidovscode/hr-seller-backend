@@ -10,12 +10,16 @@ from app.resources.services import BaseService, TenantGrpcClient, PlansGrpcClien
 from app.utils.time import now
 
 
+_tenant_grpc = TenantGrpcClient()
+_plans_grpc = PlansGrpcClient()
+
+
 class TenantService(BaseService):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._tenant_grpc = TenantGrpcClient()
-        self._plans_grpc = PlansGrpcClient()
+        self._tenant_grpc = _tenant_grpc
+        self._plans_grpc = _plans_grpc
 
     async def get_all_tenants(self):
         local_tenants = await self.get_all(select(tenants.Tenant))

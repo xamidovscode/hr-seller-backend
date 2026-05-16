@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 class SessionMixin:
     db: AsyncSession
-    _in_transaction: bool = False
 
     async def execute(self, stmt, *args, **kwargs) -> Result[Any]:
         return await self.db.execute(stmt, *args, **kwargs)

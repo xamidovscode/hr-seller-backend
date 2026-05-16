@@ -21,6 +21,7 @@ class BaseService(SessionQueryMixin, HttpMixin):
 
     def __init__(self, db: AsyncSession = None, **kwargs):
         self.db: AsyncSession = db
+        self._in_transaction: bool = False
         for key, value in kwargs.items():
             setattr(self, key, value)
         super().__init__()

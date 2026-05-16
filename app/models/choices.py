@@ -6,15 +6,15 @@ class UserRoles(str, Enum):
     super_admin = 'super_admin'
 
 class TenantTypes(str, Enum):
-    IMB_EDU = 'imb_edu'
-    IMB_HR = 'imb_hr'
+    IMB_EDU = 'IMB_EDU'
+    IMB_HR = 'IMB_HR'
 
 class TransTypes(IntEnum):
     INCOME = 1
     EXPENSE = -1
 
 class RequestConditions(str, Enum):
-    PENDING = 'pending'
-    CONFIRMED = 'confirmed'
-    REJECTED = 'rejected'
+    PENDING = 'PENDING'
+    CONFIRMED = 'CONFIRMED'
+    REJECTED = 'REJECTED'
 

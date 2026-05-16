@@ -7,12 +7,15 @@ from app.resources.services import BaseService
 from app.models import Tenant, Supervisor, MonthlyTransaction, User
 
 
+_tenant_grpc = TenantGrpcClient()
+
+
 class SellerService(BaseService):
     user: User
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._tenant_grpc = TenantGrpcClient()
+        self._tenant_grpc = _tenant_grpc
 
     async def get_seller_tenants(self):
         payments_sum_exp = func.coalesce(
@@ -48,7 +51,7 @@ class SellerService(BaseService):
         response = []
         for row in result.mappings().all():
             row_dict = dict(row)
-            row_dict['core_tenant_data'] = core_tenants_map[row.core_tenant_id]
+            row_dict['core_tenant_data'] = core_tenants_map.get(row.core_tenant_id, {})
             response.append(row_dict)
 
         return response

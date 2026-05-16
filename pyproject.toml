@@ -13,6 +13,7 @@ dependencies = [
     "grpcio-tools>=1.80.0",
     "httpx>=0.28.1",
     "invoke>=3.0.3",
+    "itsdangerous>=2.2.0",
     "passlib[argon2]>=1.7.4",
     "psycopg2-binary>=2.9.12",
     "pydantic-settings>=2.14.0",

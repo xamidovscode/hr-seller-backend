@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     HR_CORE_URL: str
     HR_API_SECRET_KEY: str
 
+    # Admin panel
+    ADMIN_USERNAME: str = "admin"
+    ADMIN_PASSWORD: str = "admin"
+
     # CORS
     ALLOW_ORIGINS: list[str] = [
         "http://localhost:3000",

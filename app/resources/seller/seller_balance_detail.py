@@ -14,7 +14,7 @@ from app.models import (
 from app.resources.seller.seller_balance_calculator import SellerBalanceCalculator
 
 
-class SelleDetail:
+class SellerDetail:
     """
     Seller ning balansi detail ko'rinishda hamma datalar bilan birgalikda
 
@@ -65,7 +65,7 @@ class SelleDetail:
         response = []
         for row in result.mappings().all():
             row_dict = dict(row)
-            row_dict['core_tenant_data'] = core_tenants_map[row.core_tenant_id]
+            row_dict['core_tenant_data'] = core_tenants_map.get(row.core_tenant_id, {})
             response.append(row_dict)
 
         return response

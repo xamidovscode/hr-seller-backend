@@ -10,15 +10,18 @@ from app.utils import hash_password
 from . import schemas
 from ...models.choices import TransTypes
 from ...resources.seller.seller_balance_calculator import SellerBalanceCalculator
-from ...resources.seller.seller_balance_detail import SelleDetail
+from ...resources.seller.seller_balance_detail import SellerDetail
 from ...utils.time import now
+
+
+_tenant_grpc = TenantGrpcClient()
 
 
 class UserService(BaseService):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._tenant_grpc = TenantGrpcClient()
+        self._tenant_grpc = _tenant_grpc
 
     async def sellers_list(self) -> List[dict[str, Any]]:
         sellers = await self.get_all(
@@ -81,10 +84,13 @@ class UserService(BaseService):
     async def seller_detail(self, seller_id: int) -> Any:
 
         seller = await self.get_object_or_404(
-            select(users.User).where(users.User.id == seller_id)
+            select(users.User).where(
+                users.User.id == seller_id,
+                users.User.role == choices.UserRoles.seller,
+            )
         )
 
-        sbd = SelleDetail(db=self.db, seller_id=seller_id)
+        sbd = SellerDetail(db=self.db, seller_id=seller_id)
 
         return {
             'id': seller.id,
