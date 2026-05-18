@@ -30,7 +30,17 @@ class TenantService(BaseService):
         local_tenants = await self.get_all(select(Tenant))
         core_tenants = await self._tenant_grpc.get_tenants()
 
-        local_tenant_data = {tenant.core_tenant_id: tenant for tenant in local_tenants}
+        local_tenant_data = {
+            tenant.core_tenant_id: {
+                'id': tenant.id,
+                'type': tenant.type,
+                'from_date': tenant.from_date,
+                'to_date': tenant.to_date,
+                'percentage': tenant.percentage,
+                'seller_id': tenant.seller_id,
+            }
+            for tenant in local_tenants
+        }
 
         return [
             {
@@ -40,6 +50,10 @@ class TenantService(BaseService):
             }
             for tenant in core_tenants
         ]
+
+    @property
+    def _auth_headers(self) -> dict:
+        return {'X-Api-Secret-Key': settings.HR_API_SECRET_KEY}
 
     async def create_tenant(self, schema: schemas.TenantCreateSchema):
         url = f'{settings.HR_CORE_URL}/api/v1/common/tenants/'
@@ -70,7 +84,7 @@ class TenantService(BaseService):
                     percentage=Decimal("0.00"),
                 )
 
-            response = await self.httpx_post(url=url, data=data)
+            response = await self.httpx_post(url=url, data=data, headers=self._auth_headers)
             await self.update(obj=tenant, core_tenant_id=response['id'])
 
         return response
@@ -78,7 +92,7 @@ class TenantService(BaseService):
     async def tenant_update(self, core_tenant_id: int, schema: schemas.TenantUpdateSchema):
         url = f'{settings.HR_CORE_URL}/api/v1/common/tenants/{core_tenant_id}/'
         data = schema.model_dump()
-        response = await self.httpx_patch(url=url, data=data)
+        response = await self.httpx_patch(url=url, data=data, headers=self._auth_headers)
         return response
 
 

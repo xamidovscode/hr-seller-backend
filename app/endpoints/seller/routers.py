@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
 from app.endpoints.seller.services import seller_service
 from app.models.choices import UserRoles

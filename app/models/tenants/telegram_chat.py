@@ -30,7 +30,7 @@ class TelegramChat(BaseModel):
     is_active: Mapped[bool] = mapped_column(
         Boolean,
         default=True,
-        server_default='false',
+        server_default='true',
         comment="Is active?",
     )
 
