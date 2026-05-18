@@ -21,6 +21,14 @@ class SellerCreateSchema(BaseModel):
     supervisor: Optional[SupervisorCreateSchema] = None
 
 
+class SellerUpdateSchema(BaseModel):
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+    percentage: Optional[float] = None
+    duration: Optional[int] = None
+    is_active: Optional[bool] = None
+
+
 class SellerCreateResponseSchema(BaseModel):
     id: int
     username: str

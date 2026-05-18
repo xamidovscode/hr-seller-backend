@@ -106,6 +106,25 @@ class UserService(BaseService):
             'balance_info': await sbd.detail_balance(),
         }
 
+    async def update_seller(self, seller_id: int, schema: schemas.SellerUpdateSchema) -> users.User:
+        seller = await self.get_object_or_404(
+            select(users.User).where(
+                users.User.id == seller_id,
+                users.User.role == choices.UserRoles.seller,
+            )
+        )
+        return await self.update(obj=seller, schema=schema)
+
+    async def delete_seller(self, seller_id: int) -> dict:
+        seller = await self.get_object_or_404(
+            select(users.User).where(
+                users.User.id == seller_id,
+                users.User.role == choices.UserRoles.seller,
+            )
+        )
+        await self.update(obj=seller, is_active=False)
+        return {'detail': 'Seller deactivated successfully'}
+
 user_service = UserService.annotated('db')
 
 

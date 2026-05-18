@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
-from sqlalchemy import select, case, and_
+from sqlalchemy import select, case, and_, literal
 from sqlalchemy.orm import selectinload
 
 from app.core.settings import settings
@@ -101,6 +101,20 @@ class TenantDetailService(BaseService):
         local_tenant = await self.get_object_or_404(
             select(tenants.Tenant).where(tenants.Tenant.core_tenant_id == core_tenant_id)
         )
+
+        if local_tenant.seller_id is not None:
+            amount_expr = case(
+                (
+                    tenants.MonthlyTransaction.month.between(
+                        local_tenant.from_date, local_tenant.to_date
+                    ),
+                    tenants.MonthlyTransaction.amount * (local_tenant.percentage / 100),
+                ),
+                else_=0,
+            )
+        else:
+            amount_expr = literal(0)
+
         stmt = (
             select(
                 tenants.MonthlyTransaction.id,
@@ -108,6 +122,7 @@ class TenantDetailService(BaseService):
                 tenants.MonthlyTransaction.service_id,
                 tenants.MonthlyTransaction.month,
                 tenants.MonthlyTransaction.amount,
+                amount_expr.label('seller_amount')
             )
             .where(tenants.MonthlyTransaction.tenant_id == local_tenant.id)
         )
