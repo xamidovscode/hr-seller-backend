@@ -120,10 +120,15 @@ tenant_service = TenantService.annotated('db')
 class MonthlyTransactionService(BaseService):
 
     async def create_transaction(self, schema: MonthlyTransactionCreateSchema) -> tenants.MonthlyTransaction:
-        await self.get_object_or_404(
+        local_tenant = await self.get_object_or_404(
             select(tenants.Tenant).where(tenants.Tenant.core_tenant_id == schema.tenant_id)
         )
-        return await self.save(model=tenants.MonthlyTransaction, schema=schema)
+        data = {
+            'month': schema.month,
+            'amount': schema.amount,
+            'tenant_id': local_tenant.id,
+        }
+        return await self.save(model=tenants.MonthlyTransaction, **data)
 
     async def update_transaction(self, pk: int, schema: MonthlyTransactionUpdateSchema) -> tenants.MonthlyTransaction:
         obj = await self.get_object_or_404(
