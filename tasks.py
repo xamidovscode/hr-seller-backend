@@ -71,7 +71,7 @@ def worker(c):
 @task
 def beat(c):
     """Celery beat'ni local'da ishga tushirish."""
-    c.run("celery -A app.core.celery.celery_app beat --loglevel=info")
+    c.run("celery -A app.core.celery.celery_app beat --loglevel=info --schedule /tmp/celerybeat-schedule")
 
 
 @task

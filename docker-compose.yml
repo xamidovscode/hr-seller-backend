@@ -44,7 +44,7 @@ services:
       target: production
     container_name: hr-seller-celery-beat
     restart: unless-stopped
-    command: celery -A app.core.celery.celery_app beat --loglevel=info
+    command: celery -A app.core.celery.celery_app beat --loglevel=info --schedule /tmp/celerybeat-schedule
     env_file:
       - .env
     environment:
