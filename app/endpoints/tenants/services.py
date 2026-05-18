@@ -3,7 +3,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from app.core.settings import settings
-from app.endpoints.tenants.schemas import TenantCreateSchema, TenantUpdateSchema
+from app.endpoints.tenants.schemas import (
+    TenantCreateSchema, TenantUpdateSchema,
+    MonthlyTransactionCreateSchema, MonthlyTransactionUpdateSchema,
+)
 from app.models import tenants, users
 from app.models.choices import TenantTypes
 from app.resources.services import BaseService, TenantGrpcClient, PlansGrpcClient
@@ -117,5 +120,29 @@ class TenantService(BaseService):
         return response
 
 tenant_service = TenantService.annotated('db')
+
+
+class MonthlyTransactionService(BaseService):
+
+    async def create_transaction(self, schema: MonthlyTransactionCreateSchema) -> tenants.MonthlyTransaction:
+        await self.get_object_or_404(
+            select(tenants.Tenant).where(tenants.Tenant.id == schema.tenant_id)
+        )
+        return await self.save(model=tenants.MonthlyTransaction, schema=schema)
+
+    async def update_transaction(self, pk: int, schema: MonthlyTransactionUpdateSchema) -> tenants.MonthlyTransaction:
+        obj = await self.get_object_or_404(
+            select(tenants.MonthlyTransaction).where(tenants.MonthlyTransaction.id == pk)
+        )
+        return await self.update(obj=obj, schema=schema)
+
+    async def delete_transaction(self, pk: int) -> dict:
+        obj = await self.get_object_or_404(
+            select(tenants.MonthlyTransaction).where(tenants.MonthlyTransaction.id == pk)
+        )
+        return await self.remove(obj)
+
+
+monthly_trans_service = MonthlyTransactionService.annotated('db')
 
 
