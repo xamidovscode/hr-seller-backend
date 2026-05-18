@@ -138,6 +138,29 @@ class MonthlyTransactionService(BaseService):
         return await self.remove(obj)
 
 
+class TelegramChatService(BaseService):
+
+    async def get_all_chats(self):
+        stmt = select(tenants.TelegramChat).where(tenants.TelegramChat.is_active == True)
+        return await self.get_all(stmt)
+
+    async def create_chat(self, schema: schemas.TelegramChatCreateSchema) -> tenants.TelegramChat:
+        return await self.save(model=tenants.TelegramChat, schema=schema)
+
+    async def update_chat(self, pk: int, schema: schemas.TelegramChatUpdateSchema) -> tenants.TelegramChat:
+        obj = await self.get_object_or_404(
+            select(tenants.TelegramChat).where(tenants.TelegramChat.id == pk)
+        )
+        return await self.update(obj=obj, schema=schema)
+
+    async def delete_chat(self, pk: int) -> dict:
+        obj = await self.get_object_or_404(
+            select(tenants.TelegramChat).where(tenants.TelegramChat.id == pk)
+        )
+        return await self.update(obj=obj, is_active=False)
+
+
 monthly_trans_service = MonthlyTransactionService.annotated('db')
 tenant_service = TenantService.annotated('db')
 tenant_detail_service = TenantDetailService.annotated('db')
+telegram_chat_service = TelegramChatService.annotated('db')

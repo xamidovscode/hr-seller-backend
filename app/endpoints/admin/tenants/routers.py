@@ -2,14 +2,15 @@ from fastapi import APIRouter, Depends
 
 from app.models.choices import UserRoles
 from app.resources.permissions.dependencies import require_roles
-from .schemas import TenantCreateSchema, TenantUpdateSchema, MonthlyTransactionCreateSchema, MonthlyTransactionUpdateSchema
-from .services import tenant_service, monthly_trans_service, tenant_detail_service
+from .schemas import TenantCreateSchema, TenantUpdateSchema, MonthlyTransactionCreateSchema, MonthlyTransactionUpdateSchema, TelegramChatCreateSchema, TelegramChatUpdateSchema
+from .services import tenant_service, monthly_trans_service, tenant_detail_service, telegram_chat_service
 
 _admin = [Depends(require_roles(UserRoles.admin, UserRoles.super_admin))]
 
 tenants_router = APIRouter(prefix="/tenants", tags=["Admin | Tenants"])
 tenant_detail_router = APIRouter(prefix="/tenants", tags=["Admin | Tenant Detail"])
 monthly_trans_router = APIRouter(prefix="/tenants", tags=["Admin | Monthly Transactions"])
+telegram_chat_router = APIRouter(prefix="/telegram-chats", tags=["Admin | Telegram Chats"])
 
 
 # ---------- tenants crud ----------
@@ -58,3 +59,24 @@ async def update_monthly_transaction(pk: int, schema: MonthlyTransactionUpdateSc
 @monthly_trans_router.delete('/monthly-transactions/{pk}/', dependencies=_admin)
 async def delete_monthly_transaction(pk: int, service: monthly_trans_service):
     return await service.delete_transaction(pk=pk)
+
+
+# ---------- telegram chats ----------
+@telegram_chat_router.get('/list/', dependencies=_admin)
+async def list_telegram_chats(service: telegram_chat_service):
+    return await service.get_all_chats()
+
+
+@telegram_chat_router.post('/create/', dependencies=_admin)
+async def create_telegram_chat(schema: TelegramChatCreateSchema, service: telegram_chat_service):
+    return await service.create_chat(schema=schema)
+
+
+@telegram_chat_router.patch('/{pk}/', dependencies=_admin)
+async def update_telegram_chat(pk: int, schema: TelegramChatUpdateSchema, service: telegram_chat_service):
+    return await service.update_chat(pk=pk, schema=schema)
+
+
+@telegram_chat_router.delete('/{pk}/', dependencies=_admin)
+async def delete_telegram_chat(pk: int, service: telegram_chat_service):
+    return await service.delete_chat(pk=pk)
