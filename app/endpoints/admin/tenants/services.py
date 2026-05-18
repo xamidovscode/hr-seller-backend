@@ -157,7 +157,8 @@ class TelegramChatService(BaseService):
         obj = await self.get_object_or_404(
             select(tenants.TelegramChat).where(tenants.TelegramChat.id == pk)
         )
-        return await self.update(obj=obj, is_active=False)
+        await self.update(obj=obj, is_active=False)
+        return self.success
 
 
 monthly_trans_service = MonthlyTransactionService.annotated('db')
