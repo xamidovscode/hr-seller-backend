@@ -127,6 +127,7 @@ class MonthlyTransactionService(BaseService):
             'month': schema.month,
             'amount': schema.amount,
             'tenant_id': local_tenant.id,
+            'tenant': local_tenant,
         }
         return await self.save(model=tenants.MonthlyTransaction, **data)
 
