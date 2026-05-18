@@ -36,8 +36,10 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:3001",
         "http://localhost:3002",
-        ""
     ]
+
+    # TG BOTS
+    SUPPORT_BOT_TOKEN: str
 
     class Config:
         env_file = ".env"
