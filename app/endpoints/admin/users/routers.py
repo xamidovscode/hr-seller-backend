@@ -5,7 +5,7 @@ from app.resources.permissions.dependencies import require_roles
 from . import schemas
 from .services import user_service
 
-router = APIRouter(prefix="/users", tags=["Admin | Sellers"])
+router = APIRouter(prefix="/sellers", tags=["Admin | Sellers"])
 
 _admin = [Depends(require_roles(UserRoles.admin, UserRoles.super_admin))]
 
