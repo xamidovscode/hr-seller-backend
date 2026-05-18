@@ -7,11 +7,11 @@ from sqlalchemy.orm import selectinload
 from app.models import users, choices, tenants
 from app.resources import BaseService, TenantGrpcClient
 from app.utils import hash_password
+from app.utils.time import now
+from app.models.choices import TransTypes
+from app.resources.seller.seller_balance_calculator import SellerBalanceCalculator
+from app.resources.seller.seller_balance_detail import SellerDetail
 from . import schemas
-from ...models.choices import TransTypes
-from ...resources.seller.seller_balance_calculator import SellerBalanceCalculator
-from ...resources.seller.seller_balance_detail import SellerDetail
-from ...utils.time import now
 
 
 _tenant_grpc = TenantGrpcClient()
@@ -126,5 +126,3 @@ class UserService(BaseService):
         return {'detail': 'Seller deactivated successfully'}
 
 user_service = UserService.annotated('db')
-
-

@@ -1,18 +1,15 @@
 from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
-from sqlalchemy import select, case, and_, literal
+from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from app.core.settings import settings
-from app.endpoints.tenants.schemas import (
-    TenantCreateSchema, TenantUpdateSchema,
-    MonthlyTransactionCreateSchema, MonthlyTransactionUpdateSchema,
-)
 from app.models import tenants, users
 from app.models.choices import TenantTypes
 from app.resources.services import BaseService, TenantGrpcClient, PlansGrpcClient
 from app.utils.time import now
+from . import schemas
 
 
 _tenant_grpc = TenantGrpcClient()
@@ -40,7 +37,7 @@ class TenantService(BaseService):
             for tenant in core_tenants
         ]
 
-    async def create_tenant(self, schema: TenantCreateSchema):
+    async def create_tenant(self, schema: schemas.TenantCreateSchema):
         url = f'{settings.HR_CORE_URL}/api/v1/common/tenants/'
         data = schema.model_dump()
         seller_id = data.pop('seller_id', None)
@@ -70,12 +67,11 @@ class TenantService(BaseService):
                 )
 
             response = await self.httpx_post(url=url, data=data)
-
             await self.update(obj=tenant, core_tenant_id=response['id'])
 
         return response
 
-    async def tenant_update(self, core_tenant_id: int, schema: TenantUpdateSchema):
+    async def tenant_update(self, core_tenant_id: int, schema: schemas.TenantUpdateSchema):
         url = f'{settings.HR_CORE_URL}/api/v1/common/tenants/{core_tenant_id}/'
         data = schema.model_dump()
         response = await self.httpx_patch(url=url, data=data)
@@ -101,20 +97,6 @@ class TenantDetailService(BaseService):
         local_tenant = await self.get_object_or_404(
             select(tenants.Tenant).where(tenants.Tenant.core_tenant_id == core_tenant_id)
         )
-
-        if local_tenant.seller_id is not None:
-            amount_expr = case(
-                (
-                    tenants.MonthlyTransaction.month.between(
-                        local_tenant.from_date, local_tenant.to_date
-                    ),
-                    tenants.MonthlyTransaction.amount * (local_tenant.percentage / 100),
-                ),
-                else_=0,
-            )
-        else:
-            amount_expr = literal(0)
-
         stmt = (
             select(
                 tenants.MonthlyTransaction.id,
@@ -122,7 +104,6 @@ class TenantDetailService(BaseService):
                 tenants.MonthlyTransaction.service_id,
                 tenants.MonthlyTransaction.month,
                 tenants.MonthlyTransaction.amount,
-                amount_expr.label('seller_amount')
             )
             .where(tenants.MonthlyTransaction.tenant_id == local_tenant.id)
         )
@@ -132,7 +113,7 @@ class TenantDetailService(BaseService):
 
 class MonthlyTransactionService(BaseService):
 
-    async def create_transaction(self, schema: MonthlyTransactionCreateSchema) -> tenants.MonthlyTransaction:
+    async def create_transaction(self, schema: schemas.MonthlyTransactionCreateSchema) -> tenants.MonthlyTransaction:
         local_tenant = await self.get_object_or_404(
             select(tenants.Tenant).where(tenants.Tenant.core_tenant_id == schema.tenant_id)
         )
@@ -144,7 +125,7 @@ class MonthlyTransactionService(BaseService):
         }
         return await self.save(model=tenants.MonthlyTransaction, **data)
 
-    async def update_transaction(self, pk: int, schema: MonthlyTransactionUpdateSchema) -> tenants.MonthlyTransaction:
+    async def update_transaction(self, pk: int, schema: schemas.MonthlyTransactionUpdateSchema) -> tenants.MonthlyTransaction:
         obj = await self.get_object_or_404(
             select(tenants.MonthlyTransaction).where(tenants.MonthlyTransaction.id == pk)
         )
@@ -160,4 +141,3 @@ class MonthlyTransactionService(BaseService):
 monthly_trans_service = MonthlyTransactionService.annotated('db')
 tenant_service = TenantService.annotated('db')
 tenant_detail_service = TenantDetailService.annotated('db')
-
