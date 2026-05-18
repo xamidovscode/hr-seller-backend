@@ -49,3 +49,6 @@ async def seller_detail(seller_id: int, service: seller_detail_service):
     return await service.seller_tenants(seller_id=seller_id)
 
 
+@router.get('/{seller_id}/assistants/', dependencies=_admin, tags=seller_detail_tag)
+async def seller_detail(seller_id: int, service: seller_detail_service):
+    return await service.seller_tenants(seller_id=seller_id)
