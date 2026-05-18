@@ -21,7 +21,7 @@ class Settings(BaseSettings):
 
     # PORTS
     APP_PORT: int = 8015
-    HR_CORE_GRPC_HOST: str = 500051
+    HR_CORE_GRPC_HOST: str = 'http://localhost:500051'
 
     # CORE SERVICE
     HR_CORE_URL: str

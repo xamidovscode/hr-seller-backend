@@ -1,14 +1,18 @@
 from typing import Optional
 
 from pydantic import BaseModel, Field
-from app.resources.fields import UsernameField
+from app.resources.fields import (
+    UsernameField,
+    PercentageField,
+    PositiveIntField,
+)
 
 
 
 class SupervisorCreateSchema(BaseModel):
-    seller_id: int
-    percentage: float
-    duration: int
+    seller_id: PositiveIntField
+    percentage: PercentageField
+    duration: PositiveIntField
 
 
 class SellerCreateSchema(BaseModel):

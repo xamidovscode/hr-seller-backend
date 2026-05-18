@@ -81,7 +81,7 @@ class HttpMixin:
 
     @staticmethod
     def _handle_response(response: httpx.Response) -> dict:
-        if response.status_code == 200:
+        if response.status_code in (200, 201, 204):
             return response.json()
 
         try:

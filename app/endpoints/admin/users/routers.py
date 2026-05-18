@@ -35,20 +35,20 @@ async def seller_delete(seller_id: int, service: user_service):
 
 # ---------- seller detail apis ---------
 @router.get('/{seller_id}/', dependencies=_admin, tags=seller_detail_tag)
-async def seller_detail(seller_id: int, service: seller_detail_service):
+async def get_seller_detail(seller_id: int, service: seller_detail_service):
     return await service.seller_detail(seller_id=seller_id)
 
 
 @router.get('/{seller_id}/requests/', dependencies=_admin, tags=seller_detail_tag)
-async def seller_detail(seller_id: int, service: seller_detail_service):
+async def get_seller_requests(seller_id: int, service: seller_detail_service):
     return await service.seller_requests(seller_id=seller_id)
 
 
 @router.get('/{seller_id}/tenants/', dependencies=_admin, tags=seller_detail_tag)
-async def seller_detail(seller_id: int, service: seller_detail_service):
+async def get_seller_tenants(seller_id: int, service: seller_detail_service):
     return await service.seller_tenants(seller_id=seller_id)
 
 
 @router.get('/{seller_id}/assistants/', dependencies=_admin, tags=seller_detail_tag)
-async def seller_detail(seller_id: int, service: seller_detail_service):
-    return await service.seller_tenants(seller_id=seller_id)
+async def get_seller_assistants(seller_id: int, service: seller_detail_service):
+    return await service.seller_assistants(seller_id=seller_id)

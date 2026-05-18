@@ -14,7 +14,6 @@ from app.models import (
 )
 from app.resources import BaseService, TenantGrpcClient
 from app.resources.seller.seller_balance_calculator import SellerBalanceCalculator
-from app.resources.seller.seller_balance_detail import SellerDetail
 from app.utils import hash_password
 from app.utils.time import now
 from . import schemas
@@ -117,7 +116,6 @@ class SellerDetailService(BaseService):
         core_tenants_data = await self._tenant_grpc.get_tenants_by_ids(ids=tenants_id)
         return {t['id']: t for t in core_tenants_data}
 
-
     async def seller_detail(self, seller_id: int) -> Any:
 
         seller = await self.get_object_or_404(
@@ -138,9 +136,6 @@ class SellerDetailService(BaseService):
             'percentage': seller.percentage,
             'duration': seller.duration,
             'is_active': seller.is_active,
-            # 'assistants': await sbd.assistants_data(),
-            # 'tenants': await sbd.tenants_data(tenant_grpc=self._tenant_grpc),
-            # 'requests': await sbd.seller_requests(),
             'balance_info': balance_info[seller_id]
         }
 

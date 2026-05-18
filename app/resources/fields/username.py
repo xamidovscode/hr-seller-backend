@@ -1,7 +1,6 @@
 from typing import Annotated
 
-from pydantic import BaseModel, StringConstraints
-
+from pydantic import StringConstraints
 
 UsernameField = Annotated[
     str,
