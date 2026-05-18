@@ -17,7 +17,6 @@ class TenantUpdateSchema(BaseModel):
 
 class MonthlyTransactionCreateSchema(BaseModel):
     tenant_id: int
-    service_id: int
     month: date
     amount: Decimal = Field(default=Decimal("0.00"), ge=0)
 

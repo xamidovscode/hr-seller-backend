@@ -71,43 +71,38 @@ class TenantService(BaseService):
                 )
         return response
 
-    async def tenant_detail(self, tenant_id: int):
-
-        core_tenant_data = await self._tenant_grpc.get_tenant_by_id(pk=tenant_id)
-        active_plans_data = await self._plans_grpc.get_tenant_active_plan(tenant_id=tenant_id)
-
-        local_tenant = await self.get_object_or_none(
-            select(tenants.Tenant)
-            .options(selectinload(tenants.Tenant.seller))
-            .where(tenants.Tenant.core_tenant_id == tenant_id)
+    async def tenant_detail(self, core_tenant_id: int):
+        local_tenant = await self.get_object_or_404(
+            select(tenants.Tenant).where(tenants.Tenant.core_tenant_id == core_tenant_id)
         )
 
-        if local_tenant:
-            from_date = local_tenant.from_date
-            to_date = local_tenant.to_date
-            percentage = local_tenant.percentage
+        core_tenant_data = await self._tenant_grpc.get_tenant_by_id(pk=core_tenant_id)
+        active_plans_data = await self._plans_grpc.get_tenant_active_plan(tenant_id=core_tenant_id)
 
-            monthly_transactions = await self.get_all(
-                select(tenants.MonthlyTransaction)
-                .where(tenants.MonthlyTransaction.tenant_id == local_tenant.id)
-            )
+        from_date = local_tenant.from_date
+        to_date = local_tenant.to_date
+        percentage = local_tenant.percentage
 
-            for mt in monthly_transactions:
+        monthly_transactions = await self.get_all(
+            select(tenants.MonthlyTransaction).where(tenants.MonthlyTransaction.tenant_id == local_tenant.id)
+        )
 
-                if from_date <= mt.month <= to_date:
-                    mt.seller_amount = mt.amount * (percentage / 100)
-                else:
-                    mt.seller_amount = 0
+        for mt in monthly_transactions:
 
-            core_tenant_data.update({
-                'seller_id': local_tenant.seller_id,
-                'seller_name': local_tenant.seller.full_name,
-                'from_date': from_date,
-                'to_date': to_date,
-                'percentage': percentage,
-                'monthly_transactions': monthly_transactions,
-                'active_plans': active_plans_data,
-            })
+            if from_date <= mt.month <= to_date:
+                mt.seller_amount = mt.amount * (percentage / 100)
+            else:
+                mt.seller_amount = 0
+
+        core_tenant_data.update({
+            'seller_id': local_tenant.seller_id,
+            'seller_name': local_tenant.seller.full_name,
+            'from_date': from_date,
+            'to_date': to_date,
+            'percentage': percentage,
+            'monthly_transactions': monthly_transactions,
+            'active_plans': active_plans_data,
+        })
 
 
 
@@ -126,7 +121,7 @@ class MonthlyTransactionService(BaseService):
 
     async def create_transaction(self, schema: MonthlyTransactionCreateSchema) -> tenants.MonthlyTransaction:
         await self.get_object_or_404(
-            select(tenants.Tenant).where(tenants.Tenant.id == schema.tenant_id)
+            select(tenants.Tenant).where(tenants.Tenant.core_tenant_id == schema.tenant_id)
         )
         return await self.save(model=tenants.MonthlyTransaction, schema=schema)
 

@@ -27,11 +27,11 @@ async def create_tenant(service: tenant_service, schema: TenantCreateSchema):
 
 
 @router.get(
-    '/{tenant_id}/',
+    '/{core_tenant_id}/',
     dependencies=[Depends(require_roles(UserRoles.admin, UserRoles.super_admin))]
 )
-async def get_tenant_detail(tenant_id: int, service: tenant_service):
-    return await service.tenant_detail(tenant_id=tenant_id)
+async def get_tenant_detail(core_tenant_id: int, service: tenant_service):
+    return await service.tenant_detail(core_tenant_id=core_tenant_id)
 
 
 @router.patch(
