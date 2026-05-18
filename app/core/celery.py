@@ -18,7 +18,7 @@ BEAT_SCHEDULES = {
     },
     "db-backup-hourly": {
         "task": "app.jobs.send_db_backup",
-        "schedule": crontab(minute=0),
+        "schedule": crontab(minute=10),
     },
 }
 
