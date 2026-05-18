@@ -24,7 +24,7 @@ from app.core.db import BaseModel
 from app.models.choices import UserRoles
 
 if TYPE_CHECKING:
-    from app.models import Tenant, SellerRequest
+    from app.models import Tenant, SellerRequest, MessageHistory
 
 
 class User(BaseModel):
@@ -91,6 +91,9 @@ class User(BaseModel):
     my_supervisors: Mapped[list['Supervisor']] = relationship(
         foreign_keys="Supervisor.seller_id",
         back_populates="seller",
+    )
+    sent_messages: Mapped[list['MessageHistory']] = relationship(
+        back_populates="sender",
     )
 
 
