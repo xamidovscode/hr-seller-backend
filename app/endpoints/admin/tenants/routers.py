@@ -45,6 +45,16 @@ async def get_tenant_monthly_transactions(core_tenant_id: int, service: tenant_d
     return await service.get_monthly_transactions(core_tenant_id=core_tenant_id)
 
 
+@tenant_detail_router.get('/{core_tenant_id}/telegram-chats/', dependencies=_admin)
+async def get_tenant_telegram_chats(core_tenant_id: int, service: tenant_detail_service):
+    return await service.get_telegram_chats(core_tenant_id=core_tenant_id)
+
+
+@tenant_detail_router.get('/{core_tenant_id}/message-history/', dependencies=_admin)
+async def get_tenant_messages_history(core_tenant_id: int, service: tenant_detail_service):
+    return await service.get_messages_history(core_tenant_id=core_tenant_id)
+
+
 # ---------- monthly transactions ----------
 @monthly_trans_router.post('/monthly-transactions/create/', dependencies=_admin)
 async def create_monthly_transaction(schema: MonthlyTransactionCreateSchema, service: monthly_trans_service):
@@ -62,11 +72,6 @@ async def delete_monthly_transaction(pk: int, service: monthly_trans_service):
 
 
 # ---------- telegram chats ----------
-@telegram_chat_router.get('/list/', dependencies=_admin)
-async def list_telegram_chats(service: telegram_chat_service):
-    return await service.get_all_chats()
-
-
 @telegram_chat_router.post('/create/', dependencies=_admin)
 async def create_telegram_chat(schema: TelegramChatCreateSchema, service: telegram_chat_service):
     return await service.create_chat(schema=schema)

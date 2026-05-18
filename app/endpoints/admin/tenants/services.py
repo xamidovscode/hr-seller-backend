@@ -2,15 +2,19 @@ from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 
 from app.core.settings import settings
-from app.models import tenants, users
+from app.models import (
+    Tenant,
+    MonthlyTransaction,
+    TelegramChat,
+    MessageHistory,
+    User,
+)
 from app.models.choices import TenantTypes
 from app.resources.services import BaseService, TenantGrpcClient, PlansGrpcClient
 from app.utils.time import now
 from . import schemas
-
 
 _tenant_grpc = TenantGrpcClient()
 _plans_grpc = PlansGrpcClient()
@@ -23,7 +27,7 @@ class TenantService(BaseService):
         self._tenant_grpc = _tenant_grpc
 
     async def get_all_tenants(self):
-        local_tenants = await self.get_all(select(tenants.Tenant))
+        local_tenants = await self.get_all(select(Tenant))
         core_tenants = await self._tenant_grpc.get_tenants()
 
         local_tenant_data = {tenant.core_tenant_id: tenant for tenant in local_tenants}
@@ -45,10 +49,10 @@ class TenantService(BaseService):
         async with self.atomic():
             if seller_id:
                 seller = await self.get_object_or_404(
-                    select(users.User).where(users.User.id == seller_id)
+                    select(User).where(User.id == seller_id)
                 )
                 tenant = await self.save(
-                    model=tenants.Tenant,
+                    model=Tenant,
                     core_tenant_id=0,
                     type=TenantTypes.IMB_HR,
                     from_date=now().date(),
@@ -58,7 +62,7 @@ class TenantService(BaseService):
                 )
             else:
                 tenant = await self.save(
-                    model=tenants.Tenant,
+                    model=Tenant,
                     core_tenant_id=0,
                     type=TenantTypes.IMB_HR,
                     from_date=now().date(),
@@ -95,27 +99,47 @@ class TenantDetailService(BaseService):
 
     async def get_monthly_transactions(self, core_tenant_id: int):
         local_tenant = await self.get_object_or_404(
-            select(tenants.Tenant).where(tenants.Tenant.core_tenant_id == core_tenant_id)
+            select(Tenant).where(Tenant.core_tenant_id == core_tenant_id)
         )
         stmt = (
             select(
-                tenants.MonthlyTransaction.id,
-                tenants.MonthlyTransaction.created_at,
-                tenants.MonthlyTransaction.service_id,
-                tenants.MonthlyTransaction.month,
-                tenants.MonthlyTransaction.amount,
+                MonthlyTransaction.id,
+                MonthlyTransaction.created_at,
+                MonthlyTransaction.service_id,
+                MonthlyTransaction.month,
+                MonthlyTransaction.amount,
             )
-            .where(tenants.MonthlyTransaction.tenant_id == local_tenant.id)
+            .where(MonthlyTransaction.tenant_id == local_tenant.id)
         )
         result = await self.execute(stmt)
         return result.mappings().all()
 
+    async def get_telegram_chats(self, core_tenant_id: int):
+        stmt = (
+            select(TelegramChat)
+            .where(
+                TelegramChat.is_active == True,
+                TelegramChat.core_tenant_id == core_tenant_id,
+            )
+        )
+        return await self.get_all(stmt)
+
+    async def get_messages_history(self, core_tenant_id: int):
+        stmt = (
+            select(MessageHistory)
+            .join(TelegramChat, MessageHistory.chat_id == TelegramChat.id)
+            .where(
+                TelegramChat.core_tenant_id == core_tenant_id
+            )
+        )
+        return await self.get_all(stmt)
+
 
 class MonthlyTransactionService(BaseService):
 
-    async def create_transaction(self, schema: schemas.MonthlyTransactionCreateSchema) -> tenants.MonthlyTransaction:
+    async def create_transaction(self, schema: schemas.MonthlyTransactionCreateSchema) -> MonthlyTransaction:
         local_tenant = await self.get_object_or_404(
-            select(tenants.Tenant).where(tenants.Tenant.core_tenant_id == schema.tenant_id)
+            select(Tenant).where(Tenant.core_tenant_id == schema.tenant_id)
         )
         data = {
             'month': schema.month,
@@ -123,39 +147,35 @@ class MonthlyTransactionService(BaseService):
             'tenant_id': local_tenant.id,
             'service_id': 0,
         }
-        return await self.save(model=tenants.MonthlyTransaction, **data)
+        return await self.save(model=MonthlyTransaction, **data)
 
-    async def update_transaction(self, pk: int, schema: schemas.MonthlyTransactionUpdateSchema) -> tenants.MonthlyTransaction:
+    async def update_transaction(self, pk: int, schema: schemas.MonthlyTransactionUpdateSchema) -> MonthlyTransaction:
         obj = await self.get_object_or_404(
-            select(tenants.MonthlyTransaction).where(tenants.MonthlyTransaction.id == pk)
+            select(MonthlyTransaction).where(MonthlyTransaction.id == pk)
         )
         return await self.update(obj=obj, schema=schema)
 
     async def delete_transaction(self, pk: int) -> dict:
         obj = await self.get_object_or_404(
-            select(tenants.MonthlyTransaction).where(tenants.MonthlyTransaction.id == pk)
+            select(MonthlyTransaction).where(MonthlyTransaction.id == pk)
         )
         return await self.remove(obj)
 
 
 class TelegramChatService(BaseService):
 
-    async def get_all_chats(self):
-        stmt = select(tenants.TelegramChat).where(tenants.TelegramChat.is_active == True)
-        return await self.get_all(stmt)
+    async def create_chat(self, schema: schemas.TelegramChatCreateSchema) -> TelegramChat:
+        return await self.save(model=TelegramChat, schema=schema)
 
-    async def create_chat(self, schema: schemas.TelegramChatCreateSchema) -> tenants.TelegramChat:
-        return await self.save(model=tenants.TelegramChat, schema=schema)
-
-    async def update_chat(self, pk: int, schema: schemas.TelegramChatUpdateSchema) -> tenants.TelegramChat:
+    async def update_chat(self, pk: int, schema: schemas.TelegramChatUpdateSchema) -> TelegramChat:
         obj = await self.get_object_or_404(
-            select(tenants.TelegramChat).where(tenants.TelegramChat.id == pk)
+            select(TelegramChat).where(TelegramChat.id == pk)
         )
         return await self.update(obj=obj, schema=schema)
 
     async def delete_chat(self, pk: int) -> dict:
         obj = await self.get_object_or_404(
-            select(tenants.TelegramChat).where(tenants.TelegramChat.id == pk)
+            select(TelegramChat).where(TelegramChat.id == pk)
         )
         await self.update(obj=obj, is_active=False)
         return self.success
