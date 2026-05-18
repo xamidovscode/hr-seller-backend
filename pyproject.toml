@@ -25,6 +25,7 @@ dependencies = [
     "uvicorn>=0.46.0",
 ]
 
+
 [dependency-groups]
 dev = [
     "black>=26.3.1",
