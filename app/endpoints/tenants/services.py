@@ -73,7 +73,9 @@ class TenantService(BaseService):
 
     async def tenant_detail(self, core_tenant_id: int):
         local_tenant = await self.get_object_or_404(
-            select(tenants.Tenant).where(tenants.Tenant.core_tenant_id == core_tenant_id)
+            select(tenants.Tenant)
+            .options(selectinload(tenants.Tenant.seller))
+            .where(tenants.Tenant.core_tenant_id == core_tenant_id)
         )
 
         core_tenant_data = await self._tenant_grpc.get_tenant_by_id(pk=core_tenant_id)
@@ -103,8 +105,6 @@ class TenantService(BaseService):
             'monthly_transactions': monthly_transactions,
             'active_plans': active_plans_data,
         })
-
-
 
         return core_tenant_data
 
