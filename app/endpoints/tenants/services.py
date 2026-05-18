@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
@@ -43,15 +45,12 @@ class TenantService(BaseService):
         url = f'{settings.HR_CORE_URL}/api/v1/common/tenants/'
         data = schema.model_dump()
         seller_id = data.pop('seller_id', None)
-        tenant = None
 
         async with self.atomic():
-
             if seller_id:
                 seller = await self.get_object_or_404(
                     select(users.User).where(users.User.id == seller_id)
                 )
-
                 tenant = await self.save(
                     model=tenants.Tenant,
                     core_tenant_id=0,
@@ -61,14 +60,20 @@ class TenantService(BaseService):
                     percentage=seller.percentage,
                     seller=seller,
                 )
+            else:
+                tenant = await self.save(
+                    model=tenants.Tenant,
+                    core_tenant_id=0,
+                    type=TenantTypes.IMB_HR,
+                    from_date=now().date(),
+                    to_date=now().date(),
+                    percentage=Decimal("0.00"),
+                )
 
             response = await self.httpx_post(url=url, data=data)
 
-            if tenant:
-                await self.update(
-                    obj=tenant,
-                    core_tenant_id=response['id'],
-                )
+            await self.update(obj=tenant, core_tenant_id=response['id'])
+
         return response
 
     async def tenant_detail(self, core_tenant_id: int):
@@ -98,7 +103,7 @@ class TenantService(BaseService):
 
         core_tenant_data.update({
             'seller_id': local_tenant.seller_id,
-            'seller_name': local_tenant.seller.full_name,
+            'seller_name': local_tenant.seller.full_name if local_tenant.seller else None,
             'from_date': from_date,
             'to_date': to_date,
             'percentage': percentage,

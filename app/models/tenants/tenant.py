@@ -2,7 +2,7 @@ __all__ = (
     'Tenant',
 )
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from datetime import date
 from decimal import Decimal
@@ -48,10 +48,11 @@ class Tenant(BaseModel):
         comment="The percentage of the tenant",
     )
 
-    seller_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"),
+    seller_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
     )
-    seller: Mapped['User'] = relationship(
+    seller: Mapped[Optional['User']] = relationship(
         back_populates="tenants",
     )
 
