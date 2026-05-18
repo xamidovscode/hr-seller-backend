@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-from sqlalchemy import Integer, Boolean, String, ForeignKey, BigInteger
+from sqlalchemy import Integer, Boolean, String, ForeignKey, BigInteger, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import BaseModel
@@ -71,6 +71,11 @@ class MessageHistory(BaseModel):
         Boolean,
         default=False,
         comment="Is delivered?",
+    )
+    tg_response: Mapped[dict | None] = mapped_column(
+        JSON,
+        nullable=True,
+        comment="Telegram API response payload",
     )
 
 
