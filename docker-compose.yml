@@ -1,5 +1,63 @@
 services:
 
+  redis:
+    image: redis:7-alpine
+    container_name: hr-seller-redis
+    restart: unless-stopped
+    expose:
+      - "6379"
+    networks:
+      - backend-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  celery-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: hr-seller-celery-worker
+    restart: unless-stopped
+    command: celery -A app.core.celery.celery_app worker --loglevel=info --concurrency=4
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    networks:
+      - backend-net
+      - hr_shared_net
+    volumes:
+      - app-logs:/app/logs
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: hr-seller-celery-beat
+    restart: unless-stopped
+    command: celery -A app.core.celery.celery_app beat --loglevel=info
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    networks:
+      - backend-net
+      - hr_shared_net
+
   api:
     build:
       context: .
@@ -20,6 +78,8 @@ services:
 
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
 
     networks:

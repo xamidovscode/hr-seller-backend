@@ -38,6 +38,11 @@ class Settings(BaseSettings):
         "http://localhost:3002",
     ]
 
+    # Redis / Celery
+    REDIS_URL: str = "redis://localhost:6379/0"
+    CELERY_BROKER_URL: str = "redis://localhost:6379/0"
+    CELERY_RESULT_BACKEND: str = "redis://localhost:6379/0"
+
     # TG BOTS
     SUPPORT_BOT_TOKEN: str
 
