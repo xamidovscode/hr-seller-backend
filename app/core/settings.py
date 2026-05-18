@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     # DB settings
     DATABASE_URL: str
 
+    DB_HOST: str = "localhost"
+    DB_PORT: int = 5432
     DB_NAME: str
     DB_USER: str
     DB_PASSWORD: str

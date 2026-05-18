@@ -16,6 +16,10 @@ BEAT_SCHEDULES = {
         "task": "app.jobs.health",
         "schedule": 5.0,
     },
+    "db-backup-hourly": {
+        "task": "app.jobs.send_db_backup",
+        "schedule": crontab(minute=0),
+    },
 }
 
 celery_app.conf.update(

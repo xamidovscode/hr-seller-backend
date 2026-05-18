@@ -10,6 +10,10 @@ RUN uv sync --frozen --no-dev --no-install-project
 
 FROM python:3.12-slim AS production
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN groupadd --gid 1001 appgroup && \
     useradd --uid 1001 --gid appgroup --no-create-home appuser
 

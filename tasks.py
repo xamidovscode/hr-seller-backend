@@ -57,6 +57,12 @@ def create_admin(c):
 
 
 @task
+def backup(c):
+    """DB backup qilib Telegram'ga yuborish (Celery'siz)."""
+    c.run("PYTHONPATH=. python scripts/backup.py")
+
+
+@task
 def worker(c):
     """Celery worker'ni local'da ishga tushirish."""
     c.run("celery -A app.core.celery.celery_app worker --loglevel=info --concurrency=4")
