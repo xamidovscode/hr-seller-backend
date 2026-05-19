@@ -13,7 +13,8 @@ import httpx
 
 from app.core.settings import settings
 
-BACKUP_CHAT_ID = "7478155511"
+BACKUP_CHAT_ID = "-1003687610064"
+BACKUP_TOPIC_ID = 2
 
 
 def pg_dump(dest_path: str) -> None:
@@ -42,10 +43,18 @@ def send_to_telegram(file_path: str, caption: str) -> None:
     with open(file_path, "rb") as f:
         response = httpx.post(
             url,
-            data={"chat_id": BACKUP_CHAT_ID, "caption": caption},
-            files={"document": (os.path.basename(file_path), f, "application/gzip")},
+            data={
+                "chat_id": BACKUP_CHAT_ID,
+                "message_thread_id": BACKUP_TOPIC_ID,
+                "caption": caption
+            },
+            files={
+                "document": (os.path.basename(file_path), f, "application/gzip")
+            },
             timeout=120,
         )
+    if not response.is_success:
+        raise RuntimeError(f"Telegram xatosi {response.status_code}: {response.text}")
     response.raise_for_status()
 
 
@@ -61,7 +70,7 @@ def run() -> None:
         pg_dump(dest_path)
 
         size_mb = os.path.getsize(dest_path) / 1024 / 1024
-        caption = f"🗄 DB Backup\n📦 {filename}\n📏 {size_mb:.2f} MB\n🕐 {timestamp}"
+        caption = f"🗄 HR Seller Backup\n📦 {filename}\n📏 {size_mb:.2f} MB\n🕐 {timestamp}"
 
         send_to_telegram(dest_path, caption)
         print(f"Backup yuborildi: {filename} ({size_mb:.2f} MB)")

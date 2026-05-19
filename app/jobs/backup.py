@@ -4,12 +4,16 @@ import subprocess
 import sys
 
 from app.core.celery import celery_app
+from app.core.settings import settings
 
 logger = logging.getLogger(__name__)
 
 
 @celery_app.task(bind=True, name="app.jobs.send_db_backup")
 def send_db_backup(self) -> dict:
+    if settings.IS_DEMO:
+        logger.info("IS_DEMO=True: backup o'tkazib yuborildi")
+        return {"status": "skipped", "reason": "demo server"}
     try:
         env = os.environ.copy()
         env.setdefault("PYTHONPATH", os.getcwd())

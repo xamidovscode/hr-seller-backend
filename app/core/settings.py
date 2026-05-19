@@ -48,6 +48,9 @@ class Settings(BaseSettings):
     # TG BOTS
     SUPPORT_BOT_TOKEN: str
 
+    # Environment
+    IS_DEMO: bool = False
+
     class Config:
         env_file = ".env"
 
