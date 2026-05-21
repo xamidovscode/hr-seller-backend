@@ -151,17 +151,32 @@ class SellerDetailService(BaseService):
         }
 
     async def seller_requests(self, seller_id: int) -> Any:
-        stmt = (
-            select(
-                SellerRequest.id,
-                SellerRequest.amount,
-                SellerRequest.date,
-                SellerRequest.condition,
-            )
-            .where(SellerRequest.seller_id == seller_id)
-        )
-        result = await self.db.execute(stmt)
-        return result.mappings().all()
+        return [
+            {
+                'id': 1,
+                'date': '2026-01-01',
+                'amount': Decimal('76543210.50'),
+                'balance': Decimal('152340000.75'),
+            },
+            {
+                'id': 2,
+                'date': '2026-02-01',
+                'amount': Decimal('81245000.00'),
+                'balance': Decimal('71115000.75'),
+            },
+            {
+                'id': 3,
+                'date': '2026-03-01',
+                'amount': Decimal('68990540.25'),
+                'balance': Decimal('21450000.50'),
+            },
+            {
+                'id': 4,
+                'date': '2026-04-01',
+                'amount': Decimal('21450000.50'),
+                'balance': Decimal('0.00'),
+            },
+        ]
 
     async def seller_tenants(self, seller_id: int) -> Any:
         payments_sum_expr = func.coalesce(
@@ -198,48 +213,48 @@ class SellerDetailService(BaseService):
             )
         )
         result = await self.db.execute(stmt)
-        # core_tenants_map = await self.get_core_tenants_map(seller_id)
 
         fake_plans_data = [
             {
                 'id': 92,
                 'name': "IMB TECH Mchj",
                 'active_plan_amount': Decimal('1500000'),
-                'plans_history': [
-                    {
-                        'id': 92,
-                        "month": '2026-01-01',
-                        'amount': Decimal('1500000'),
-                        'status': 1,
-                    },
-                    {
-                        'id': 92,
-                        "month": '2026-02-01',
-                        'amount': Decimal('3500000'),
-                        'status': 2,
-                    },
-                    {
-                        'id': 92,
-                        "month": '2026-03-01',
-                        'amount': Decimal('2500000'),
-                        'status': 3,
-                    },
-                    {
-                        'id': 92,
-                        "month": '2026-04-01',
-                        'amount': Decimal('1500000'),
-                        'status': 4,
-                    },
-
-                ]
+                'employee_count': 88,
             }
+        ]
+
+        plans_history = [
+                {
+                    'id': 92,
+                    "month": '2026-01-01',
+                    'amount': Decimal('1500000'),
+                    'status': 'paid',
+                },
+                {
+                    'id': 93,
+                    "month": '2026-02-01',
+                    'amount': Decimal('3500000'),
+                    'status': '',
+                },
+                {
+                    'id': 94,
+                    "month": '2026-03-01',
+                    'amount': Decimal('2500000'),
+                    'status': 'invoice',
+                },
+                {
+                    'id': 95,
+                    "month": '2026-04-01',
+                    'amount': Decimal('1500000'),
+                    'status': 'w',
+                },
         ]
 
         response = []
         for row in result.mappings().all():
             row_dict = dict(row)
-            # row_dict['core_tenant_data'] = core_tenants_map.get(row.core_tenant_id, {})
             row_dict['core_tenant_data'] = fake_plans_data
+            row_dict['plans_history'] = plans_history
             response.append(row_dict)
 
         return response
