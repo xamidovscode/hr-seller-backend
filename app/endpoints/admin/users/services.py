@@ -25,7 +25,11 @@ class UserService(BaseService):
 
     async def sellers_list(self) -> List[dict[str, Any]]:
         sellers = await self.get_all(
-            select(User).where(User.role == choices.UserRoles.seller)
+            select(User)
+            .where(
+                User.role == choices.UserRoles.seller,
+                User.is_active == True,
+            )
         )
 
         calc = SellerBalanceCalculator(self.db)
@@ -136,7 +140,14 @@ class SellerDetailService(BaseService):
             'percentage': seller.percentage,
             'duration': seller.duration,
             'is_active': seller.is_active,
-            'balance_info': balance_info[seller_id]
+            'balance_info': balance_info[seller_id],
+            'trash_data': {
+                'must_pay_amount': Decimal('76653354'),
+                'not_paid_amount': Decimal('38705914'),
+                'paid_amount': Decimal('37947440'),
+                'balance_amount': Decimal('0'),
+                'withdrawn_amount': Decimal('-7300000'),
+            }
         }
 
     async def seller_requests(self, seller_id: int) -> Any:
@@ -187,15 +198,96 @@ class SellerDetailService(BaseService):
             )
         )
         result = await self.db.execute(stmt)
-        core_tenants_map = await self.get_core_tenants_map(seller_id)
+        # core_tenants_map = await self.get_core_tenants_map(seller_id)
+
+        fake_plans_data = [
+            {
+                'id': 92,
+                'name': "IMB TECH Mchj",
+                'active_plan_amount': Decimal('1500000'),
+                'plans_history': [
+                    {
+                        'id': 92,
+                        "month": '2026-01-01',
+                        'amount': Decimal('1500000'),
+                        'status': 1,
+                    },
+                    {
+                        'id': 92,
+                        "month": '2026-02-01',
+                        'amount': Decimal('3500000'),
+                        'status': 2,
+                    },
+                    {
+                        'id': 92,
+                        "month": '2026-03-01',
+                        'amount': Decimal('2500000'),
+                        'status': 3,
+                    },
+                    {
+                        'id': 92,
+                        "month": '2026-04-01',
+                        'amount': Decimal('1500000'),
+                        'status': 4,
+                    },
+
+                ]
+            }
+        ]
 
         response = []
         for row in result.mappings().all():
             row_dict = dict(row)
-            row_dict['core_tenant_data'] = core_tenants_map.get(row.core_tenant_id, {})
+            # row_dict['core_tenant_data'] = core_tenants_map.get(row.core_tenant_id, {})
+            row_dict['core_tenant_data'] = fake_plans_data
             response.append(row_dict)
 
         return response
+
+    # async def seller_tenants(self, seller_id: int) -> Any:
+    #     payments_sum_expr = func.coalesce(
+    #         func.sum(MonthlyTransaction.amount), Decimal("0.00")
+    #     )
+    #
+    #     stmt = (
+    #         select(
+    #             Tenant.id,
+    #             Tenant.core_tenant_id,
+    #             Tenant.type,
+    #             Tenant.from_date,
+    #             Tenant.to_date,
+    #             Tenant.percentage,
+    #             payments_sum_expr.label("payments_sum"),
+    #             (payments_sum_expr * (Tenant.percentage / 100)).label("seller_debit"),
+    #         )
+    #         .outerjoin(
+    #             MonthlyTransaction,
+    #             and_(
+    #                 MonthlyTransaction.tenant_id == Tenant.id,
+    #                 MonthlyTransaction.month >= Tenant.from_date,
+    #                 MonthlyTransaction.month <= Tenant.to_date,
+    #             ),
+    #         )
+    #         .where(Tenant.seller_id == seller_id)
+    #         .group_by(
+    #             Tenant.id,
+    #             Tenant.core_tenant_id,
+    #             Tenant.type,
+    #             Tenant.from_date,
+    #             Tenant.to_date,
+    #             Tenant.percentage,
+    #         )
+    #     )
+    #     result = await self.db.execute(stmt)
+    #     core_tenants_map = await self.get_core_tenants_map(seller_id)
+    #
+    #     response = []
+    #     for row in result.mappings().all():
+    #         row_dict = dict(row)
+    #         row_dict['core_tenant_data'] = core_tenants_map.get(row.core_tenant_id, {})
+    #         response.append(row_dict)
+    #
+    #     return response
 
     async def seller_assistants(self, seller_id: int) -> Any:
         seller_tenants_count = (

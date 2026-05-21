@@ -38,6 +38,8 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:3001",
         "http://localhost:3002",
+        "http://192.168.1.226:3002",
+        'https://sotuvchi.pages.dev'
     ]
 
     # Redis / Celery

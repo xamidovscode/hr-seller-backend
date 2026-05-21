@@ -5,50 +5,48 @@ from app.resources.permissions.dependencies import require_roles
 from . import schemas
 from .services import user_service, seller_detail_service
 
-router = APIRouter(prefix="/sellers")
-
-_admin = [Depends(require_roles(UserRoles.admin, UserRoles.super_admin))]
+router = APIRouter(prefix="/sellers", dependencies=[Depends(require_roles(UserRoles.admin, UserRoles.super_admin))])
 
 seller_tag = ["Admin | Sellers"]
 seller_detail_tag = ["Admin | Sellers Detail"]
 
 
-@router.post('/create/', dependencies=_admin, tags=seller_tag)
+@router.post('/create/', tags=seller_tag)
 async def seller_create(schema: schemas.SellerCreateSchema, service: user_service):
     return await service.create_seller(schema)
 
 
-@router.get('/list/', dependencies=_admin, tags=seller_tag)
+@router.get('/list/', tags=seller_tag)
 async def get_all_sellers(service: user_service):
     return await service.sellers_list()
 
 
-@router.patch('/{seller_id}/', dependencies=_admin, tags=seller_tag)
+@router.patch('/{seller_id}/', tags=seller_tag)
 async def seller_update(seller_id: int, schema: schemas.SellerUpdateSchema, service: user_service):
     return await service.update_seller(seller_id=seller_id, schema=schema)
 
 
-@router.delete('/{seller_id}/', dependencies=_admin, tags=seller_tag)
+@router.delete('/{seller_id}/', tags=seller_tag)
 async def seller_delete(seller_id: int, service: user_service):
     return await service.delete_seller(seller_id=seller_id)
 
 
 # ---------- seller detail apis ---------
-@router.get('/{seller_id}/', dependencies=_admin, tags=seller_detail_tag)
+@router.get('/{seller_id}/', tags=seller_detail_tag)
 async def get_seller_detail(seller_id: int, service: seller_detail_service):
     return await service.seller_detail(seller_id=seller_id)
 
 
-@router.get('/{seller_id}/requests/', dependencies=_admin, tags=seller_detail_tag)
+@router.get('/{seller_id}/requests/', tags=seller_detail_tag)
 async def get_seller_requests(seller_id: int, service: seller_detail_service):
     return await service.seller_requests(seller_id=seller_id)
 
 
-@router.get('/{seller_id}/tenants/', dependencies=_admin, tags=seller_detail_tag)
+@router.get('/{seller_id}/tenants/', tags=seller_detail_tag)
 async def get_seller_tenants(seller_id: int, service: seller_detail_service):
     return await service.seller_tenants(seller_id=seller_id)
 
 
-@router.get('/{seller_id}/assistants/', dependencies=_admin, tags=seller_detail_tag)
-async def get_seller_assistants(seller_id: int, service: seller_detail_service):
-    return await service.seller_assistants(seller_id=seller_id)
+# @router.get('/{seller_id}/assistants/', tags=seller_detail_tag)
+# async def get_seller_assistants(seller_id: int, service: seller_detail_service):
+#     return await service.seller_assistants(seller_id=seller_id)
