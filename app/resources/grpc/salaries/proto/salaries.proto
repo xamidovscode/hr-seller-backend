@@ -1,0 +1,31 @@
+syntax = 'proto3';
+package salaries;
+
+
+service SalaryService {
+  rpc GetGroupedSalaries (GroupedSalariesRequest) returns (GroupedSalaryListResponse);
+}
+
+message GroupedSalariesRequest {}
+
+message GroupedSalaryResponse {
+  int32 id = 1;
+  string name = 2;
+  string from_date = 3;
+  string to_date = 4;
+  int32 empl_count = 5;
+  bool is_approved = 6;
+
+  double salaries_amount = 7;
+  int32 group_id = 8;
+
+  double advances = 9;
+  double bonuses = 10;
+  double fines = 11;
+  double final_salary = 12;
+}
+
+message GroupedSalaryListResponse {
+  repeated GroupedSalaryResponse results = 1;
+}
+
