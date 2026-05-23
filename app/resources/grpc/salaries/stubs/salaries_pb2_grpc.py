@@ -39,12 +39,23 @@ class SalaryServiceStub(object):
                 request_serializer=salaries__pb2.GroupedSalariesRequest.SerializeToString,
                 response_deserializer=salaries__pb2.GroupedSalaryListResponse.FromString,
                 _registered_method=True)
+        self.GetSalaryEmployees = channel.unary_unary(
+                '/salaries.SalaryService/GetSalaryEmployees',
+                request_serializer=salaries__pb2.SalaryEmployeesRequest.SerializeToString,
+                response_deserializer=salaries__pb2.SalaryEmployeeListResponse.FromString,
+                _registered_method=True)
 
 
 class SalaryServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetGroupedSalaries(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSalaryEmployees(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -57,6 +68,11 @@ def add_SalaryServiceServicer_to_server(servicer, server):
                     servicer.GetGroupedSalaries,
                     request_deserializer=salaries__pb2.GroupedSalariesRequest.FromString,
                     response_serializer=salaries__pb2.GroupedSalaryListResponse.SerializeToString,
+            ),
+            'GetSalaryEmployees': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSalaryEmployees,
+                    request_deserializer=salaries__pb2.SalaryEmployeesRequest.FromString,
+                    response_serializer=salaries__pb2.SalaryEmployeeListResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -86,6 +102,33 @@ class SalaryService(object):
             '/salaries.SalaryService/GetGroupedSalaries',
             salaries__pb2.GroupedSalariesRequest.SerializeToString,
             salaries__pb2.GroupedSalaryListResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetSalaryEmployees(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/salaries.SalaryService/GetSalaryEmployees',
+            salaries__pb2.SalaryEmployeesRequest.SerializeToString,
+            salaries__pb2.SalaryEmployeeListResponse.FromString,
             options,
             channel_credentials,
             insecure,

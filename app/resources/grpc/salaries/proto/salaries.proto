@@ -4,9 +4,14 @@ package salaries;
 
 service SalaryService {
   rpc GetGroupedSalaries (GroupedSalariesRequest) returns (GroupedSalaryListResponse);
+  rpc GetSalaryEmployees (SalaryEmployeesRequest) returns (SalaryEmployeeListResponse);
 }
 
 message GroupedSalariesRequest {}
+
+message SalaryEmployeesRequest {
+  int32 salary_id = 1;
+}
 
 message GroupedSalaryResponse {
   int32 id = 1;
@@ -27,5 +32,20 @@ message GroupedSalaryResponse {
 
 message GroupedSalaryListResponse {
   repeated GroupedSalaryResponse results = 1;
+}
+
+message SalaryEmployeeItem {
+  int32 id = 1;
+  int32 employee_id = 2;
+  string full_name = 3;
+  double salary = 4;
+  double advances = 5;
+  double bonuses = 6;
+  double fines = 7;
+  double final_salary = 8;
+}
+
+message SalaryEmployeeListResponse {
+  repeated SalaryEmployeeItem results = 1;
 }
 

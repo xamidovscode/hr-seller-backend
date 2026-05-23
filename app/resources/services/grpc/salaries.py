@@ -16,3 +16,8 @@ class SalaryGrpcClient(GrpcClient):
         stub = await self._get_stub()
         response = await stub.GetGroupedSalaries(salaries_pb2.GroupedSalariesRequest())
         return self._message_to_dict(response)
+
+    async def salary_employees(self, salary_id: int):
+        stub = await self._get_stub()
+        response = await stub.GetSalaryEmployees(salaries_pb2.SalaryEmployeesRequest(salary_id=salary_id))
+        return self._message_to_dict(response)

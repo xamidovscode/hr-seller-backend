@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0esalaries.proto\x12\x08salaries\"\x18\n\x16GroupedSalariesRequest\"\xf1\x01\n\x15GroupedSalaryResponse\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x11\n\tfrom_date\x18\x03 \x01(\t\x12\x0f\n\x07to_date\x18\x04 \x01(\t\x12\x12\n\nempl_count\x18\x05 \x01(\x05\x12\x13\n\x0bis_approved\x18\x06 \x01(\x08\x12\x17\n\x0fsalaries_amount\x18\x07 \x01(\x01\x12\x10\n\x08group_id\x18\x08 \x01(\x05\x12\x10\n\x08\x61\x64vances\x18\t \x01(\x01\x12\x0f\n\x07\x62onuses\x18\n \x01(\x01\x12\r\n\x05\x66ines\x18\x0b \x01(\x01\x12\x14\n\x0c\x66inal_salary\x18\x0c \x01(\x01\"M\n\x19GroupedSalaryListResponse\x12\x30\n\x07results\x18\x01 \x03(\x0b\x32\x1f.salaries.GroupedSalaryResponse2l\n\rSalaryService\x12[\n\x12GetGroupedSalaries\x12 .salaries.GroupedSalariesRequest\x1a#.salaries.GroupedSalaryListResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0esalaries.proto\x12\x08salaries\"\x18\n\x16GroupedSalariesRequest\"+\n\x16SalaryEmployeesRequest\x12\x11\n\tsalary_id\x18\x01 \x01(\x05\"\xf1\x01\n\x15GroupedSalaryResponse\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x11\n\tfrom_date\x18\x03 \x01(\t\x12\x0f\n\x07to_date\x18\x04 \x01(\t\x12\x12\n\nempl_count\x18\x05 \x01(\x05\x12\x13\n\x0bis_approved\x18\x06 \x01(\x08\x12\x17\n\x0fsalaries_amount\x18\x07 \x01(\x01\x12\x10\n\x08group_id\x18\x08 \x01(\x05\x12\x10\n\x08\x61\x64vances\x18\t \x01(\x01\x12\x0f\n\x07\x62onuses\x18\n \x01(\x01\x12\r\n\x05\x66ines\x18\x0b \x01(\x01\x12\x14\n\x0c\x66inal_salary\x18\x0c \x01(\x01\"M\n\x19GroupedSalaryListResponse\x12\x30\n\x07results\x18\x01 \x03(\x0b\x32\x1f.salaries.GroupedSalaryResponse\"\xa0\x01\n\x12SalaryEmployeeItem\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x13\n\x0b\x65mployee_id\x18\x02 \x01(\x05\x12\x11\n\tfull_name\x18\x03 \x01(\t\x12\x0e\n\x06salary\x18\x04 \x01(\x01\x12\x10\n\x08\x61\x64vances\x18\x05 \x01(\x01\x12\x0f\n\x07\x62onuses\x18\x06 \x01(\x01\x12\r\n\x05\x66ines\x18\x07 \x01(\x01\x12\x14\n\x0c\x66inal_salary\x18\x08 \x01(\x01\"K\n\x1aSalaryEmployeeListResponse\x12-\n\x07results\x18\x01 \x03(\x0b\x32\x1c.salaries.SalaryEmployeeItem2\xca\x01\n\rSalaryService\x12[\n\x12GetGroupedSalaries\x12 .salaries.GroupedSalariesRequest\x1a#.salaries.GroupedSalaryListResponse\x12\\\n\x12GetSalaryEmployees\x12 .salaries.SalaryEmployeesRequest\x1a$.salaries.SalaryEmployeeListResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,10 +33,16 @@ if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_GROUPEDSALARIESREQUEST']._serialized_start=28
   _globals['_GROUPEDSALARIESREQUEST']._serialized_end=52
-  _globals['_GROUPEDSALARYRESPONSE']._serialized_start=55
-  _globals['_GROUPEDSALARYRESPONSE']._serialized_end=296
-  _globals['_GROUPEDSALARYLISTRESPONSE']._serialized_start=298
-  _globals['_GROUPEDSALARYLISTRESPONSE']._serialized_end=375
-  _globals['_SALARYSERVICE']._serialized_start=377
-  _globals['_SALARYSERVICE']._serialized_end=485
+  _globals['_SALARYEMPLOYEESREQUEST']._serialized_start=54
+  _globals['_SALARYEMPLOYEESREQUEST']._serialized_end=97
+  _globals['_GROUPEDSALARYRESPONSE']._serialized_start=100
+  _globals['_GROUPEDSALARYRESPONSE']._serialized_end=341
+  _globals['_GROUPEDSALARYLISTRESPONSE']._serialized_start=343
+  _globals['_GROUPEDSALARYLISTRESPONSE']._serialized_end=420
+  _globals['_SALARYEMPLOYEEITEM']._serialized_start=423
+  _globals['_SALARYEMPLOYEEITEM']._serialized_end=583
+  _globals['_SALARYEMPLOYEELISTRESPONSE']._serialized_start=585
+  _globals['_SALARYEMPLOYEELISTRESPONSE']._serialized_end=660
+  _globals['_SALARYSERVICE']._serialized_start=663
+  _globals['_SALARYSERVICE']._serialized_end=865
 # @@protoc_insertion_point(module_scope)
