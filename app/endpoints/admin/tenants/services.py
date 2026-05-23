@@ -12,12 +12,12 @@ from app.models import (
     User,
 )
 from app.models.choices import TenantTypes
-from app.resources.services import BaseService, TenantGrpcClient, PlansGrpcClient
+from app.resources.services import BaseService, TenantGrpcClient, TenantPlansGrpcClient
 from app.utils.time import now
 from . import schemas
 
 _tenant_grpc = TenantGrpcClient()
-_plans_grpc = PlansGrpcClient()
+_tenant_plans_grpc = TenantPlansGrpcClient()
 
 
 class TenantService(BaseService):
@@ -101,14 +101,14 @@ class TenantDetailService(BaseService):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._tenant_grpc = _tenant_grpc
-        self._plans_grpc = _plans_grpc
+        self._tenant_plans_grpc = _tenant_plans_grpc
 
     async def tenant_detail(self, core_tenant_id: int):
         core_tenant_data = await self._tenant_grpc.get_tenant_by_id(pk=core_tenant_id)
         return core_tenant_data
 
     async def get_active_plans(self, core_tenant_id: int):
-        active_plans_data = await self._plans_grpc.get_tenant_active_plan(tenant_id=core_tenant_id)
+        active_plans_data = await self._tenant_plans_grpc.get_tenant_active_plan(tenant_id=core_tenant_id)
         return active_plans_data
 
     async def get_monthly_transactions(self, core_tenant_id: int):

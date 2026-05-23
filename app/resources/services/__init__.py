@@ -1,2 +1,2 @@
 from .base import *
-from .grpc import TenantGrpcClient, PlansGrpcClient
+from .grpc import TenantGrpcClient, TenantPlansGrpcClient

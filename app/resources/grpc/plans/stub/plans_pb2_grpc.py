@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from app.grpc.tenant_plans import plans_pb2 as plans__pb2
+from app.resources.grpc.plans.stub import plans_pb2 as plans__pb2
 
 GRPC_GENERATED_VERSION = '1.80.0'
 GRPC_VERSION = grpc.__version__
@@ -25,7 +25,7 @@ if _version_not_supported:
     )
 
 
-class TenantPlanServiceStub(object):
+class PlansServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -34,43 +34,43 @@ class TenantPlanServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.GetTenantActivePlan = channel.unary_unary(
-                '/plans.TenantPlanService/GetTenantActivePlan',
-                request_serializer=plans__pb2.GetTenantActivePlanRequest.SerializeToString,
-                response_deserializer=plans__pb2.GetTenantActivePlansResponse.FromString,
+        self.GetPlansList = channel.unary_unary(
+                '/plans.PlansService/GetPlansList',
+                request_serializer=plans__pb2.GetPlansRequest.SerializeToString,
+                response_deserializer=plans__pb2.PlansListResponse.FromString,
                 _registered_method=True)
 
 
-class TenantPlanServiceServicer(object):
+class PlansServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def GetTenantActivePlan(self, request, context):
+    def GetPlansList(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_TenantPlanServiceServicer_to_server(servicer, server):
+def add_PlansServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetTenantActivePlan': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetTenantActivePlan,
-                    request_deserializer=plans__pb2.GetTenantActivePlanRequest.FromString,
-                    response_serializer=plans__pb2.GetTenantActivePlansResponse.SerializeToString,
+            'GetPlansList': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetPlansList,
+                    request_deserializer=plans__pb2.GetPlansRequest.FromString,
+                    response_serializer=plans__pb2.PlansListResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'plans.TenantPlanService', rpc_method_handlers)
+            'plans.PlansService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('plans.TenantPlanService', rpc_method_handlers)
+    server.add_registered_method_handlers('plans.PlansService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class TenantPlanService(object):
+class PlansService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetTenantActivePlan(request,
+    def GetPlansList(request,
             target,
             options=(),
             channel_credentials=None,
@@ -83,9 +83,9 @@ class TenantPlanService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/plans.TenantPlanService/GetTenantActivePlan',
-            plans__pb2.GetTenantActivePlanRequest.SerializeToString,
-            plans__pb2.GetTenantActivePlansResponse.FromString,
+            '/plans.PlansService/GetPlansList',
+            plans__pb2.GetPlansRequest.SerializeToString,
+            plans__pb2.PlansListResponse.FromString,
             options,
             channel_credentials,
             insecure,

@@ -1,14 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
 from app.endpoints.seller.services import seller_service
-from app.models.choices import UserRoles
-from app.resources.permissions.dependencies import require_roles
 
-router = APIRouter(
-    tags=["Seller"],
-    dependencies=[Depends(require_roles(UserRoles.seller))]
-)
-
+router = APIRouter(tags=["Seller"])
 
 
 @router.get('/tenants/')

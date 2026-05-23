@@ -1,0 +1,28 @@
+syntax = 'proto3';
+package plans;
+
+service PlansService {
+  rpc GetPlansList (GetPlansRequest) returns (PlansListResponse);
+}
+
+
+message GetPlansRequest {}
+
+
+message PlanResponse {
+  int32 id = 1;
+  string module = 2;
+  int32 trial_users = 3;
+  int32 min_users = 4;
+  int32 max_users = 5;
+  double price = 6;
+  bool is_per_user = 7;
+  double per_user_price = 8;
+  bool is_active = 9;
+}
+
+message PlansListResponse {
+  repeated PlanResponse plans = 1;
+}
+
+

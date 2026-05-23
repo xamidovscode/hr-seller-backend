@@ -5,12 +5,10 @@ from app.resources.permissions.dependencies import require_roles
 from .schemas import TenantCreateSchema, TenantUpdateSchema, MonthlyTransactionCreateSchema, MonthlyTransactionUpdateSchema, TelegramChatCreateSchema, TelegramChatUpdateSchema
 from .services import tenant_service, monthly_trans_service, tenant_detail_service, telegram_chat_service
 
-_admin = [Depends(require_roles(UserRoles.admin, UserRoles.super_admin))]
-
-tenants_router = APIRouter(prefix="/tenants", tags=["Admin | Tenants"], dependencies=_admin)
-tenant_detail_router = APIRouter(prefix="/tenants", tags=["Admin | Tenant Detail"], dependencies=_admin)
-monthly_trans_router = APIRouter(prefix="/tenants", tags=["Admin | Monthly Transactions"], dependencies=_admin)
-telegram_chat_router = APIRouter(prefix="/telegram-chats", tags=["Admin | Telegram Chats"], dependencies=_admin)
+tenants_router = APIRouter(prefix="/tenants", tags=["Admin | Tenants"])
+tenant_detail_router = APIRouter(prefix="/tenants", tags=["Admin | Tenant Detail"])
+monthly_trans_router = APIRouter(prefix="/tenants", tags=["Admin | Monthly Transactions"])
+telegram_chat_router = APIRouter(prefix="/telegram-chats", tags=["Admin | Telegram Chats"])
 
 
 # ---------- tenants crud ----------

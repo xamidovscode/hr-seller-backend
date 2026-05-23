@@ -1,9 +1,9 @@
 from app.core.settings import settings
-from app.grpc.tenant_plans import plans_pb2, plans_pb2_grpc
+from app.resources.grpc.tenant_plans.stub import tenant_plans_pb2 as plans_pb2, tenant_plans_pb2_grpc as plans_pb2_grpc
 from app.resources.services.base.grpc_base import GrpcClient
 
 
-class PlansGrpcClient(GrpcClient):
+class TenantPlansGrpcClient(GrpcClient):
 
     @property
     def host(self) -> str:

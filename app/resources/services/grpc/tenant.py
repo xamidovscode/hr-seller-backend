@@ -1,5 +1,5 @@
 from app.core.settings import settings
-from app.grpc.tenant import tenant_pb2_grpc, tenant_pb2
+from app.resources.grpc.tenant.stub import tenant_pb2_grpc, tenant_pb2
 from app.resources.services.base.grpc_base import GrpcClient
 
 

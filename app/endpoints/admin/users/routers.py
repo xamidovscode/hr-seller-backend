@@ -1,14 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
-from app.models.choices import UserRoles
-from app.resources.permissions.dependencies import require_roles
 from . import schemas
 from .services import user_service, seller_detail_service
 
-router = APIRouter(
-    prefix="/sellers",
-    dependencies=[Depends(require_roles(UserRoles.admin, UserRoles.super_admin))],
-)
+router = APIRouter(prefix="/sellers")
 
 seller_tag = ["Admin | Sellers"]
 seller_detail_tag = ["Admin | Sellers Detail"]
