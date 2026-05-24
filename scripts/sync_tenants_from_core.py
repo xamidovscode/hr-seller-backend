@@ -8,7 +8,7 @@ Foydalanish:
 import asyncio
 import sys
 import os
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -20,6 +20,17 @@ from app.core.settings import settings
 from app.models.tenants.tenant import Tenant
 from app.models.choices import TenantTypes
 from app.resources.services.grpc.tenant import TenantGrpcClient
+
+
+def _parse_date(value: str | None) -> date | None:
+    if not value:
+        return None
+    for fmt in ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S"):
+        try:
+            return datetime.strptime(value, fmt).date()
+        except ValueError:
+            continue
+    return None
 
 
 async def sync():
@@ -47,16 +58,20 @@ async def sync():
                 continue
 
             today = date.today()
+            from_date = _parse_date(ct.get('activated_at')) or today
+            to_date = _parse_date(ct.get('deadline')) or today
+
             tenant = Tenant(
                 core_tenant_id=core_id,
                 type=TenantTypes.IMB_HR,
-                from_date=today,
-                to_date=today,
+                from_date=from_date,
+                to_date=to_date,
                 percentage=Decimal("0.00"),
                 seller_id=None,
             )
             session.add(tenant)
-            print(f"[OK] core_tenant_id={core_id} => yangi Tenant yaratildi.")
+            print(f"[OK] core_tenant_id={core_id} => yangi Tenant yaratildi "
+                  f"(from={from_date}, to={to_date}).")
             created += 1
 
         await session.commit()
