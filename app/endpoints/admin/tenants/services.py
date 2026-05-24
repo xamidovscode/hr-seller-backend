@@ -60,7 +60,8 @@ class TenantService(BaseService):
 
     async def create_tenant(self, schema: schemas.TenantCreateSchema):
         url = f'{settings.HR_CORE_URL}/api/v1/common/tenants/'
-        data = schema.model_dump()
+        data = schema.model_dump(mode='json')
+
         seller_id = data.pop('seller_id', None)
 
         async with self.atomic():
