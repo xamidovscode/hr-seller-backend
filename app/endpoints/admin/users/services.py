@@ -4,6 +4,7 @@ from typing import List, Any
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import select, func
 
+from app.core.settings import settings
 from app.models import (
     choices,
     SellerRequest,
@@ -205,6 +206,15 @@ class SellerDetailService(BaseService):
             core_tenant['seller_info'] = local_tenants_by_id[core_tenant['id']]
 
         return core_tenants
+
+    @property
+    def _auth_headers(self) -> dict:
+        return {'X-Api-Secret-Key': settings.HR_API_SECRET_KEY}
+
+    async def update_monthly_trans(self, pk: int, schema: schemas.MonthlyTransUpdateSchema) -> dict:
+        url = f'{settings.HR_CORE_URL}/api/v1/common/tenant-plans/monthly-trans/{pk}/'
+        data = schema.model_dump(exclude_none=True, mode='json')
+        return await self.httpx_patch(url=url, data=data, headers=self._auth_headers)
 
     async def seller_assistants(self, seller_id: int) -> Any:
         seller_tenants_count = (

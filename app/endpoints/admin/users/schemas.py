@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Optional
 
 from pydantic import BaseModel, Field
@@ -40,5 +41,11 @@ class SellerCreateResponseSchema(BaseModel):
     phone: str
     is_active: bool
     role: str
+
+
+class MonthlyTransUpdateSchema(BaseModel):
+    paid_amount: Optional[Decimal] = None
+    debt_amount: Optional[Decimal] = None
+    status: Optional[str] = None
 
 

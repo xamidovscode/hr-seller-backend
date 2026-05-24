@@ -30,6 +30,11 @@ async def seller_delete(seller_id: int, service: user_service):
 
 
 # ---------- seller detail apis ---------
+@router.patch('/monthly-trans/{pk}/', tags=seller_detail_tag)
+async def update_monthly_trans(pk: int, schema: schemas.MonthlyTransUpdateSchema, service: seller_detail_service):
+    return await service.update_monthly_trans(pk=pk, schema=schema)
+
+
 @router.get('/{seller_id}/', tags=seller_detail_tag)
 async def get_seller_detail(seller_id: int, service: seller_detail_service):
     return await service.seller_detail(seller_id=seller_id)
