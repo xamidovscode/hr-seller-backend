@@ -27,6 +27,7 @@ class SellerCreateSchema(BaseModel):
 
 
 class SellerUpdateSchema(BaseModel):
+    username: Optional[UsernameField] = None
     full_name: Optional[str] = None
     phone: Optional[str] = None
     percentage: Optional[float] = None

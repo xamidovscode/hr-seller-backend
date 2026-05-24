@@ -131,9 +131,6 @@ class SellerDetailService(BaseService):
             )
         )
 
-        calc = SellerBalanceCalculator(self.db)
-        balance_info = await calc.bulk_breakdown([seller_id])
-
         return {
             'id': seller.id,
             'username': seller.username,
@@ -142,7 +139,6 @@ class SellerDetailService(BaseService):
             'percentage': seller.percentage,
             'duration': seller.duration,
             'is_active': seller.is_active,
-            'balance_info': balance_info[seller_id],
             'trash_data': {
                 'must_pay_amount': Decimal('76653354'),
                 'not_paid_amount': Decimal('38705914'),

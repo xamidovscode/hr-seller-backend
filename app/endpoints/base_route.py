@@ -5,11 +5,8 @@ from app.endpoints.admin.users.routers import router as users_router
 from app.endpoints.admin.plans.routers import router as plans_router
 from app.endpoints.admin.salaries.routers import router as salaries_router
 from app.endpoints.admin.requests.routers import router as requests_router
-from app.endpoints.admin.tenants.routers import (
-    tenants_router,
-    tenant_detail_router,
-    telegram_chat_router,
-)
+from app.endpoints.admin.tenants.routers import tenants_router, tenant_detail_router
+from app.endpoints.admin.telegram_chats.routers import router as telegram_chat_router
 from app.endpoints.seller.routers import router as seller_router
 from app.models.choices import UserRoles
 from app.resources.permissions.dependencies import require_roles
