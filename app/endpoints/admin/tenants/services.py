@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from app.core.settings import settings
 from app.models import (
@@ -26,7 +27,9 @@ class TenantService(BaseService):
         self._tenant_grpc = _tenant_grpc
 
     async def get_all_tenants(self):
-        local_tenants = await self.get_all(select(Tenant))
+        local_tenants = await self.get_all(
+            select(Tenant).options(selectinload(Tenant.seller))
+        )
         core_tenants = await self._tenant_grpc.get_tenants()
 
         local_tenant_data = {
@@ -37,6 +40,7 @@ class TenantService(BaseService):
                 'to_date': tenant.to_date,
                 'percentage': tenant.percentage,
                 'seller_id': tenant.seller_id,
+                'seller_full_name': tenant.seller.full_name if tenant.seller else None,
             }
             for tenant in local_tenants
         }

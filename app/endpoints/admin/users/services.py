@@ -180,64 +180,31 @@ class SellerDetailService(BaseService):
             select(SellerRequest).where(SellerRequest.seller_id == seller_id)
         )
 
-    async def seller_tenants(self, seller_id: int) -> Any:
-        stmt = (
+    async def seller_tenants(self, seller_id: int) -> list[dict]:
+        result = await self.db.execute(
             select(
-                Tenant.id,
                 Tenant.core_tenant_id,
+                Tenant.id,
                 Tenant.type,
                 Tenant.from_date,
                 Tenant.to_date,
                 Tenant.percentage,
-            )
-            .where(Tenant.seller_id == seller_id)
+            ).where(Tenant.seller_id == seller_id)
         )
-        result = await self.db.execute(stmt)
 
-        fake_plans_data = [
-            {
-                'id': 92,
-                'name': "IMB TECH Mchj",
-                'active_plan_amount': Decimal('1500000'),
-                'employee_count': 88,
-            }
-        ]
+        local_tenants_by_id = {row['core_tenant_id']: dict(row) for row in result.mappings()}
 
-        plans_history = [
-                {
-                    'id': 92,
-                    "month": '2026-01-01',
-                    'amount': Decimal('1500000'),
-                    'status': 'paid',
-                },
-                {
-                    'id': 93,
-                    "month": '2026-02-01',
-                    'amount': Decimal('3500000'),
-                    'status': '',
-                },
-                {
-                    'id': 94,
-                    "month": '2026-03-01',
-                    'amount': Decimal('2500000'),
-                    'status': 'invoice',
-                },
-                {
-                    'id': 95,
-                    "month": '2026-04-01',
-                    'amount': Decimal('1500000'),
-                    'status': 'w',
-                },
-        ]
+        if not local_tenants_by_id:
+            return []
 
-        response = []
-        for row in result.mappings().all():
-            row_dict = dict(row)
-            row_dict['core_tenant_data'] = fake_plans_data
-            row_dict['plans_history'] = plans_history
-            response.append(row_dict)
+        core_tenants = await self._tenant_grpc.get_tenants_by_ids(
+            ids=list(local_tenants_by_id.keys())
+        )
 
-        return response
+        for core_tenant in core_tenants:
+            core_tenant['seller_info'] = local_tenants_by_id[core_tenant['id']]
+
+        return core_tenants
 
     async def seller_assistants(self, seller_id: int) -> Any:
         seller_tenants_count = (

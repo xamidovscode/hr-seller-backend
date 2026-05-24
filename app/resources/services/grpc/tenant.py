@@ -17,7 +17,7 @@ class TenantGrpcClient(GrpcClient):
         response = await stub.GetTenants(tenant_pb2.GetTenantsRequest())
         return [self._message_to_dict(t) for t in response.tenants]
 
-    async def get_tenants_by_ids(self, ids: list[int]):
+    async def get_tenants_by_ids(self, ids: list[int]) -> list[dict]:
         stub = await self._get_stub()
         response = await stub.GetTenantsByIds(tenant_pb2.GetTenantsByIdsRequest(ids=ids))
         return [self._message_to_dict(t) for t in response.tenants]

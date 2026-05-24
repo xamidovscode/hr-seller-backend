@@ -1,9 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
-from app.models.choices import UserRoles
-from app.resources.permissions.dependencies import require_roles
 from .schemas import TenantCreateSchema, TenantUpdateSchema, TelegramChatCreateSchema, TelegramChatUpdateSchema
-from .services import tenant_service, tenant_detail_service, telegram_chat_service
+from .services import tenant_service, telegram_chat_service
 
 tenants_router = APIRouter(prefix="/tenants", tags=["Admin | Tenants"])
 tenant_detail_router = APIRouter(prefix="/tenants", tags=["Admin | Tenant Detail"])

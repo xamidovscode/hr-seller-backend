@@ -73,38 +73,35 @@ class GetTenantByIdRequest(_message.Message):
 Global___GetTenantByIdRequest: _TypeAlias = GetTenantByIdRequest  # noqa: Y015
 
 @_typing.final
-class TenantPlansResponse(_message.Message):
+class MonthlyTransResponse(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
     ID_FIELD_NUMBER: _builtins.int
-    PLAN_PRICE_FIELD_NUMBER: _builtins.int
-    USERS_COUNT_FIELD_NUMBER: _builtins.int
-    PER_USER_PRICE_FIELD_NUMBER: _builtins.int
-    MODULE_FIELD_NUMBER: _builtins.int
-    CURRENT_USERS_COUNT_FIELD_NUMBER: _builtins.int
+    MONTH_FIELD_NUMBER: _builtins.int
+    DEBT_AMOUNT_FIELD_NUMBER: _builtins.int
+    PAID_AMOUNT_FIELD_NUMBER: _builtins.int
+    STATUS_FIELD_NUMBER: _builtins.int
     id: _builtins.int
-    plan_price: _builtins.float
-    users_count: _builtins.int
-    per_user_price: _builtins.float
-    module: _builtins.str
-    current_users_count: _builtins.int
+    month: _builtins.str
+    debt_amount: _builtins.float
+    paid_amount: _builtins.float
+    status: _builtins.str
     def __init__(
         self,
         *,
         id: _builtins.int = ...,
-        plan_price: _builtins.float = ...,
-        users_count: _builtins.int = ...,
-        per_user_price: _builtins.float = ...,
-        module: _builtins.str = ...,
-        current_users_count: _builtins.int = ...,
+        month: _builtins.str = ...,
+        debt_amount: _builtins.float = ...,
+        paid_amount: _builtins.float = ...,
+        status: _builtins.str = ...,
     ) -> None: ...
     _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
     def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["current_users_count", b"current_users_count", "id", b"id", "module", b"module", "per_user_price", b"per_user_price", "plan_price", b"plan_price", "users_count", b"users_count"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["debt_amount", b"debt_amount", "id", b"id", "month", b"month", "paid_amount", b"paid_amount", "status", b"status"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
     def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-Global___TenantPlansResponse: _TypeAlias = TenantPlansResponse  # noqa: Y015
+Global___MonthlyTransResponse: _TypeAlias = MonthlyTransResponse  # noqa: Y015
 
 @_typing.final
 class TenantResponse(_message.Message):
@@ -116,11 +113,12 @@ class TenantResponse(_message.Message):
     CREATED_ON_FIELD_NUMBER: _builtins.int
     ACTIVATED_AT_FIELD_NUMBER: _builtins.int
     DEADLINE_FIELD_NUMBER: _builtins.int
-    PERMISSIONS_FIELD_NUMBER: _builtins.int
     ON_TRIAL_FIELD_NUMBER: _builtins.int
     IS_ACTIVE_FIELD_NUMBER: _builtins.int
     IS_DELETED_FIELD_NUMBER: _builtins.int
-    PLANS_FIELD_NUMBER: _builtins.int
+    EMPL_COUNT_FIELD_NUMBER: _builtins.int
+    ACTIVE_PLAN_AMOUNT_FIELD_NUMBER: _builtins.int
+    MONTHLY_TRANS_FIELD_NUMBER: _builtins.int
     id: _builtins.int
     name: _builtins.str
     schema_name: _builtins.str
@@ -130,10 +128,10 @@ class TenantResponse(_message.Message):
     on_trial: _builtins.bool
     is_active: _builtins.bool
     is_deleted: _builtins.bool
+    empl_count: _builtins.int
+    active_plan_amount: _builtins.int
     @_builtins.property
-    def permissions(self) -> _containers.RepeatedScalarFieldContainer[_builtins.str]: ...
-    @_builtins.property
-    def plans(self) -> _containers.RepeatedCompositeFieldContainer[Global___TenantPlansResponse]: ...
+    def monthly_trans(self) -> _containers.RepeatedCompositeFieldContainer[Global___MonthlyTransResponse]: ...
     def __init__(
         self,
         *,
@@ -143,15 +141,16 @@ class TenantResponse(_message.Message):
         created_on: _builtins.str = ...,
         activated_at: _builtins.str = ...,
         deadline: _builtins.str = ...,
-        permissions: _abc.Iterable[_builtins.str] | None = ...,
         on_trial: _builtins.bool = ...,
         is_active: _builtins.bool = ...,
         is_deleted: _builtins.bool = ...,
-        plans: _abc.Iterable[Global___TenantPlansResponse] | None = ...,
+        empl_count: _builtins.int = ...,
+        active_plan_amount: _builtins.int = ...,
+        monthly_trans: _abc.Iterable[Global___MonthlyTransResponse] | None = ...,
     ) -> None: ...
     _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
     def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["activated_at", b"activated_at", "created_on", b"created_on", "deadline", b"deadline", "id", b"id", "is_active", b"is_active", "is_deleted", b"is_deleted", "name", b"name", "on_trial", b"on_trial", "permissions", b"permissions", "plans", b"plans", "schema_name", b"schema_name"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["activated_at", b"activated_at", "active_plan_amount", b"active_plan_amount", "created_on", b"created_on", "deadline", b"deadline", "empl_count", b"empl_count", "id", b"id", "is_active", b"is_active", "is_deleted", b"is_deleted", "monthly_trans", b"monthly_trans", "name", b"name", "on_trial", b"on_trial", "schema_name", b"schema_name"]  # noqa: Y015
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
     def WhichOneof(self, oneof_group: _Never) -> None: ...
 

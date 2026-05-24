@@ -15,13 +15,12 @@ message GetTenantByIdRequest {
   int32 id = 1;
 }
 
-message TenantPlansResponse {
+message MonthlyTransResponse {
   int32 id = 1;
-  double plan_price = 2;
-  int32 users_count = 3;
-  double per_user_price = 4;
-  string module = 5;
-  int32 current_users_count = 6;
+  string month = 2;
+  double debt_amount = 3;
+  double paid_amount = 4;
+  string status = 5;
 }
 
 message TenantResponse {
@@ -31,11 +30,12 @@ message TenantResponse {
   string created_on = 4;
   string activated_at = 5;
   string deadline = 6;
-  repeated string permissions = 7;
   bool on_trial = 8;
   bool is_active = 9;
   bool is_deleted = 10;
-  repeated TenantPlansResponse plans = 11;
+  int32 empl_count = 11;
+  int32 active_plan_amount = 12;
+  repeated MonthlyTransResponse monthly_trans = 13;
 }
 
 message GetTenantsResponse {
