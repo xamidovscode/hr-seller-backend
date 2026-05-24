@@ -6,7 +6,6 @@ from sqlalchemy import select
 from app.core.settings import settings
 from app.models import (
     Tenant,
-    MonthlyTransaction,
     TelegramChat,
     MessageHistory,
     User,
@@ -111,23 +110,6 @@ class TenantDetailService(BaseService):
         active_plans_data = await self._tenant_plans_grpc.get_tenant_active_plan(tenant_id=core_tenant_id)
         return active_plans_data
 
-    async def get_monthly_transactions(self, core_tenant_id: int):
-        local_tenant = await self.get_object_or_404(
-            select(Tenant).where(Tenant.core_tenant_id == core_tenant_id)
-        )
-        stmt = (
-            select(
-                MonthlyTransaction.id,
-                MonthlyTransaction.created_at,
-                MonthlyTransaction.service_id,
-                MonthlyTransaction.month,
-                MonthlyTransaction.amount,
-            )
-            .where(MonthlyTransaction.tenant_id == local_tenant.id)
-        )
-        result = await self.execute(stmt)
-        return result.mappings().all()
-
     async def get_telegram_chats(self, core_tenant_id: int):
         stmt = (
             select(TelegramChat)
@@ -149,33 +131,6 @@ class TenantDetailService(BaseService):
         return await self.get_all(stmt)
 
 
-class MonthlyTransactionService(BaseService):
-
-    async def create_transaction(self, schema: schemas.MonthlyTransactionCreateSchema) -> MonthlyTransaction:
-        local_tenant = await self.get_object_or_404(
-            select(Tenant).where(Tenant.core_tenant_id == schema.tenant_id)
-        )
-        data = {
-            'month': schema.month,
-            'amount': schema.amount,
-            'tenant_id': local_tenant.id,
-            'service_id': 0,
-        }
-        return await self.save(model=MonthlyTransaction, **data)
-
-    async def update_transaction(self, pk: int, schema: schemas.MonthlyTransactionUpdateSchema) -> MonthlyTransaction:
-        obj = await self.get_object_or_404(
-            select(MonthlyTransaction).where(MonthlyTransaction.id == pk)
-        )
-        return await self.update(obj=obj, schema=schema)
-
-    async def delete_transaction(self, pk: int) -> dict:
-        obj = await self.get_object_or_404(
-            select(MonthlyTransaction).where(MonthlyTransaction.id == pk)
-        )
-        return await self.remove(obj)
-
-
 class TelegramChatService(BaseService):
 
     async def create_chat(self, schema: schemas.TelegramChatCreateSchema) -> TelegramChat:
@@ -195,7 +150,6 @@ class TelegramChatService(BaseService):
         return self.success
 
 
-monthly_trans_service = MonthlyTransactionService.annotated('db')
 tenant_service = TenantService.annotated('db')
 tenant_detail_service = TenantDetailService.annotated('db')
 telegram_chat_service = TelegramChatService.annotated('db')

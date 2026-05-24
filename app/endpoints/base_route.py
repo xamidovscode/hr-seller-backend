@@ -7,7 +7,6 @@ from app.endpoints.admin.salaries.routers import router as salaries_router
 from app.endpoints.admin.tenants.routers import (
     tenants_router,
     tenant_detail_router,
-    monthly_trans_router,
     telegram_chat_router,
 )
 from app.endpoints.seller.routers import router as seller_router
@@ -21,7 +20,6 @@ admin_router = APIRouter(prefix="/admin", dependencies=_admin)
 admin_router.include_router(users_router)
 admin_router.include_router(tenants_router)
 admin_router.include_router(tenant_detail_router)
-admin_router.include_router(monthly_trans_router)
 admin_router.include_router(telegram_chat_router)
 admin_router.include_router(plans_router)
 admin_router.include_router(salaries_router)

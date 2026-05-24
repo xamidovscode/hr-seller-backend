@@ -15,7 +15,7 @@ from .. import choices
 
 
 if TYPE_CHECKING:
-    from app.models import User, MonthlyTransaction
+    from app.models import User
 
 
 class Tenant(BaseModel):
@@ -54,10 +54,6 @@ class Tenant(BaseModel):
     )
     seller: Mapped[Optional['User']] = relationship(
         back_populates="tenants",
-    )
-
-    monthly_transactions: Mapped[list['MonthlyTransaction']] = relationship(
-        back_populates="tenant",
     )
 
 

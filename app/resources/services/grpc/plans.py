@@ -1,5 +1,5 @@
 from app.core.settings import settings
-from app.resources.grpc.plans.stub import plans_pb2, plans_pb2_grpc
+from app.resources.grpc.plans.stubs import plans_pb2, plans_pb2_grpc
 from app.resources.services.base.grpc_base import GrpcClient
 
 

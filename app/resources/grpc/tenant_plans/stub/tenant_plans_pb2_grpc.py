@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from app.resources.grpc.tenant_plans.stub import tenant_plans_pb2 as tenant__plans__pb2
+from . import tenant_plans_pb2 as tenant__plans__pb2
 
 GRPC_GENERATED_VERSION = '1.80.0'
 GRPC_VERSION = grpc.__version__

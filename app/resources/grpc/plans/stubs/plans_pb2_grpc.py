@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from app.resources.grpc.plans.stub import plans_pb2 as plans__pb2
+from . import plans_pb2 as plans__pb2
 
 GRPC_GENERATED_VERSION = '1.80.0'
 GRPC_VERSION = grpc.__version__

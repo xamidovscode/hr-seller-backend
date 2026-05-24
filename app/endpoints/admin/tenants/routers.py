@@ -2,12 +2,11 @@ from fastapi import APIRouter, Depends
 
 from app.models.choices import UserRoles
 from app.resources.permissions.dependencies import require_roles
-from .schemas import TenantCreateSchema, TenantUpdateSchema, MonthlyTransactionCreateSchema, MonthlyTransactionUpdateSchema, TelegramChatCreateSchema, TelegramChatUpdateSchema
-from .services import tenant_service, monthly_trans_service, tenant_detail_service, telegram_chat_service
+from .schemas import TenantCreateSchema, TenantUpdateSchema, TelegramChatCreateSchema, TelegramChatUpdateSchema
+from .services import tenant_service, tenant_detail_service, telegram_chat_service
 
 tenants_router = APIRouter(prefix="/tenants", tags=["Admin | Tenants"])
 tenant_detail_router = APIRouter(prefix="/tenants", tags=["Admin | Tenant Detail"])
-monthly_trans_router = APIRouter(prefix="/tenants", tags=["Admin | Monthly Transactions"])
 telegram_chat_router = APIRouter(prefix="/telegram-chats", tags=["Admin | Telegram Chats"])
 
 
@@ -26,47 +25,6 @@ async def create_tenant(service: tenant_service, schema: TenantCreateSchema):
 async def update_tenant(core_tenant_id: int, service: tenant_service, schema: TenantUpdateSchema):
     return await service.tenant_update(core_tenant_id=core_tenant_id, schema=schema)
 
-
-# ---------- tenant detail ----------
-# @tenant_detail_router.get('/{core_tenant_id}/')
-# async def get_tenant_detail(core_tenant_id: int, service: tenant_detail_service):
-#     return await service.tenant_detail(core_tenant_id=core_tenant_id)
-#
-#
-# @tenant_detail_router.get('/{core_tenant_id}/active-plan/')
-# async def get_tenant_active_plans(core_tenant_id: int, service: tenant_detail_service):
-#     return await service.get_active_plans(core_tenant_id=core_tenant_id)
-#
-#
-# @tenant_detail_router.get('/{core_tenant_id}/monthly-transactions/')
-# async def get_tenant_monthly_transactions(core_tenant_id: int, service: tenant_detail_service):
-#     return await service.get_monthly_transactions(core_tenant_id=core_tenant_id)
-#
-#
-# @tenant_detail_router.get('/{core_tenant_id}/telegram-chats/')
-# async def get_tenant_telegram_chats(core_tenant_id: int, service: tenant_detail_service):
-#     return await service.get_telegram_chats(core_tenant_id=core_tenant_id)
-#
-#
-# @tenant_detail_router.get('/{core_tenant_id}/message-history/')
-# async def get_tenant_messages_history(core_tenant_id: int, service: tenant_detail_service):
-#     return await service.get_messages_history(core_tenant_id=core_tenant_id)
-
-
-# ---------- monthly transactions ----------
-# @monthly_trans_router.post('/monthly-transactions/create/')
-# async def create_monthly_transaction(schema: MonthlyTransactionCreateSchema, service: monthly_trans_service):
-#     return await service.create_transaction(schema=schema)
-#
-#
-# @monthly_trans_router.patch('/monthly-transactions/{pk}/')
-# async def update_monthly_transaction(pk: int, schema: MonthlyTransactionUpdateSchema, service: monthly_trans_service):
-#     return await service.update_transaction(pk=pk, schema=schema)
-#
-#
-# @monthly_trans_router.delete('/monthly-transactions/{pk}/')
-# async def delete_monthly_transaction(pk: int, service: monthly_trans_service):
-#     return await service.delete_transaction(pk=pk)
 
 
 # ---------- telegram chats ----------

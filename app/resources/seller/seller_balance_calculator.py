@@ -10,7 +10,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import (
     Tenant,
     Supervisor,
-    MonthlyTransaction,
     SellerRequest,
 )
 from app.models.choices import RequestConditions
@@ -36,59 +35,6 @@ class SellerBalanceCalculator:
         """
         if not seller_ids:
             return {}
-
-        # 1. O'z tenantlaridan ulush (har biri uchun)
-        earned_seller_stmt = (
-            select(
-                Tenant.seller_id.label('sid'),
-                func.coalesce(
-                    func.sum(
-                        MonthlyTransaction.amount * Tenant.percentage / Decimal('100')
-                    ),
-                    Decimal('0'),
-                ).label('amount'),
-            )
-            .select_from(MonthlyTransaction)
-            .join(Tenant, Tenant.id == MonthlyTransaction.tenant_id)
-            .where(
-                Tenant.seller_id.in_(seller_ids),
-                MonthlyTransaction.month >= Tenant.from_date,
-                MonthlyTransaction.month <= Tenant.to_date,
-            )
-            .group_by(Tenant.seller_id)
-        )
-        earned_seller = {
-            row.sid: row.amount
-            for row in await self.db.execute(earned_seller_stmt)
-        }
-
-        # 2. Supervisor sifatida
-        earned_super_stmt = (
-            select(
-                Supervisor.supervisor_id.label('sid'),
-                func.coalesce(
-                    func.sum(
-                        MonthlyTransaction.amount * Supervisor.percentage / Decimal('100')
-                    ),
-                    Decimal('0'),
-                ).label('amount'),
-            )
-            .select_from(MonthlyTransaction)
-            .join(Tenant, Tenant.id == MonthlyTransaction.tenant_id)
-            .join(Supervisor, Supervisor.seller_id == Tenant.seller_id)
-            .where(
-                Supervisor.supervisor_id.in_(seller_ids),
-                MonthlyTransaction.month >= Tenant.from_date,
-                MonthlyTransaction.month <= Tenant.to_date,
-                MonthlyTransaction.month >= Supervisor.from_date,
-                MonthlyTransaction.month <= Supervisor.to_date,
-            )
-            .group_by(Supervisor.supervisor_id)
-        )
-        earned_super = {
-            row.sid: row.amount
-            for row in await self.db.execute(earned_super_stmt)
-        }
 
         # 3. Withdrawn
         withdrawn_stmt = (
@@ -118,7 +64,7 @@ class SellerBalanceCalculator:
             for row in await self.db.execute(tenants_cnt_stmt)
         }
 
-        # 5. O'zi supervisor bo'lganlari (ixtiyoriy, kerak bo'lsa)
+        # 5. O'zi supervisor bo'lganlari
         supervised_cnt_stmt = (
             select(
                 Supervisor.supervisor_id.label('sid'),
@@ -132,17 +78,15 @@ class SellerBalanceCalculator:
             for row in await self.db.execute(supervised_cnt_stmt)
         }
 
-        # Yig'amiz
+        # as_seller va as_supervisor core service gRPC dan keladi
         result = {}
         for sid in seller_ids:
-            a = earned_seller.get(sid, Decimal('0'))
-            s = earned_super.get(sid, Decimal('0'))
             w = withdrawn.get(sid, Decimal('0'))
             result[sid] = {
-                'as_seller': a,
-                'as_supervisor': s,
+                'as_seller': Decimal('0'),
+                'as_supervisor': Decimal('0'),
                 'withdrawn': w,
-                'balance': a + s - w,
+                'balance': Decimal('0') - w,
                 'tenants_count': tenants_cnt.get(sid, 0),
                 'supervised_count': supervised_cnt.get(sid, 0),
             }

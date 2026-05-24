@@ -2,14 +2,13 @@ from decimal import Decimal
 from typing import List, Any
 
 from dateutil.relativedelta import relativedelta
-from sqlalchemy import select, func, and_
+from sqlalchemy import select, func
 
 from app.models import (
     choices,
     SellerRequest,
     User,
     Supervisor,
-    MonthlyTransaction,
     Tenant,
 )
 from app.resources import BaseService, TenantGrpcClient
@@ -151,38 +150,37 @@ class SellerDetailService(BaseService):
         }
 
     async def seller_requests(self, seller_id: int) -> Any:
-        return [
-            {
-                'id': 1,
-                'date': '2026-01-01',
-                'amount': Decimal('76543210.50'),
-                'balance': Decimal('152340000.75'),
-            },
-            {
-                'id': 2,
-                'date': '2026-02-01',
-                'amount': Decimal('81245000.00'),
-                'balance': Decimal('71115000.75'),
-            },
-            {
-                'id': 3,
-                'date': '2026-03-01',
-                'amount': Decimal('68990540.25'),
-                'balance': Decimal('21450000.50'),
-            },
-            {
-                'id': 4,
-                'date': '2026-04-01',
-                'amount': Decimal('21450000.50'),
-                'balance': Decimal('0.00'),
-            },
-        ]
-
-    async def seller_tenants(self, seller_id: int) -> Any:
-        payments_sum_expr = func.coalesce(
-            func.sum(MonthlyTransaction.amount), Decimal("0.00")
+        # return [
+        #     {
+        #         'id': 1,
+        #         'date': '2026-01-01',
+        #         'amount': Decimal('76543210.50'),
+        #         'balance': Decimal('152340000.75'),
+        #     },
+        #     {
+        #         'id': 2,
+        #         'date': '2026-02-01',
+        #         'amount': Decimal('81245000.00'),
+        #         'balance': Decimal('71115000.75'),
+        #     },
+        #     {
+        #         'id': 3,
+        #         'date': '2026-03-01',
+        #         'amount': Decimal('68990540.25'),
+        #         'balance': Decimal('21450000.50'),
+        #     },
+        #     {
+        #         'id': 4,
+        #         'date': '2026-04-01',
+        #         'amount': Decimal('21450000.50'),
+        #         'balance': Decimal('0.00'),
+        #     },
+        # ]
+        return await self.get_all(
+            select(SellerRequest).where(SellerRequest.seller_id == seller_id)
         )
 
+    async def seller_tenants(self, seller_id: int) -> Any:
         stmt = (
             select(
                 Tenant.id,
@@ -191,26 +189,8 @@ class SellerDetailService(BaseService):
                 Tenant.from_date,
                 Tenant.to_date,
                 Tenant.percentage,
-                payments_sum_expr.label("payments_sum"),
-                (payments_sum_expr * (Tenant.percentage / 100)).label("seller_debit"),
-            )
-            .outerjoin(
-                MonthlyTransaction,
-                and_(
-                    MonthlyTransaction.tenant_id == Tenant.id,
-                    MonthlyTransaction.month >= Tenant.from_date,
-                    MonthlyTransaction.month <= Tenant.to_date,
-                ),
             )
             .where(Tenant.seller_id == seller_id)
-            .group_by(
-                Tenant.id,
-                Tenant.core_tenant_id,
-                Tenant.type,
-                Tenant.from_date,
-                Tenant.to_date,
-                Tenant.percentage,
-            )
         )
         result = await self.db.execute(stmt)
 
@@ -259,67 +239,10 @@ class SellerDetailService(BaseService):
 
         return response
 
-    # async def seller_tenants(self, seller_id: int) -> Any:
-    #     payments_sum_expr = func.coalesce(
-    #         func.sum(MonthlyTransaction.amount), Decimal("0.00")
-    #     )
-    #
-    #     stmt = (
-    #         select(
-    #             Tenant.id,
-    #             Tenant.core_tenant_id,
-    #             Tenant.type,
-    #             Tenant.from_date,
-    #             Tenant.to_date,
-    #             Tenant.percentage,
-    #             payments_sum_expr.label("payments_sum"),
-    #             (payments_sum_expr * (Tenant.percentage / 100)).label("seller_debit"),
-    #         )
-    #         .outerjoin(
-    #             MonthlyTransaction,
-    #             and_(
-    #                 MonthlyTransaction.tenant_id == Tenant.id,
-    #                 MonthlyTransaction.month >= Tenant.from_date,
-    #                 MonthlyTransaction.month <= Tenant.to_date,
-    #             ),
-    #         )
-    #         .where(Tenant.seller_id == seller_id)
-    #         .group_by(
-    #             Tenant.id,
-    #             Tenant.core_tenant_id,
-    #             Tenant.type,
-    #             Tenant.from_date,
-    #             Tenant.to_date,
-    #             Tenant.percentage,
-    #         )
-    #     )
-    #     result = await self.db.execute(stmt)
-    #     core_tenants_map = await self.get_core_tenants_map(seller_id)
-    #
-    #     response = []
-    #     for row in result.mappings().all():
-    #         row_dict = dict(row)
-    #         row_dict['core_tenant_data'] = core_tenants_map.get(row.core_tenant_id, {})
-    #         response.append(row_dict)
-    #
-    #     return response
-
     async def seller_assistants(self, seller_id: int) -> Any:
         seller_tenants_count = (
             select(func.count(Tenant.id))
             .where(Tenant.seller_id == Supervisor.seller_id)
-            .correlate(Supervisor)
-            .scalar_subquery()
-        )
-
-        payments_sum = (
-            select(func.coalesce(func.sum(MonthlyTransaction.amount), 0))
-            .join(Tenant, Tenant.id == MonthlyTransaction.tenant_id)
-            .where(
-                Tenant.seller_id == Supervisor.seller_id,
-                MonthlyTransaction.month >= Supervisor.from_date,
-                MonthlyTransaction.month <= Supervisor.to_date,
-            )
             .correlate(Supervisor)
             .scalar_subquery()
         )
@@ -332,18 +255,12 @@ class SellerDetailService(BaseService):
                 Supervisor.percentage,
                 User.full_name,
                 seller_tenants_count.label("tenants_count"),
-                payments_sum.label("payments_sum"),
             )
             .join(User, User.id == Supervisor.seller_id)
             .where(Supervisor.supervisor_id == seller_id)
-            .subquery()
         )
 
-        final = select(
-            stmt,
-            (stmt.c.payments_sum * stmt.c.percentage / 100).label("supervisor_share"),
-        )
-        result = await self.db.execute(final)
+        result = await self.db.execute(stmt)
         return result.mappings().all()
 
 
