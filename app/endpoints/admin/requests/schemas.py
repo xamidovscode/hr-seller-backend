@@ -15,9 +15,9 @@ class SellerRequestCreateSchema(BaseModel):
 
 
 class SellerRequestUpdateSchema(BaseModel):
-    amount: Optional[Decimal] = None
-    date: Optional[date] = None
-    condition: Optional[RequestConditions] = None
+    amount: Decimal
+    date: date
+    condition: RequestConditions
 
 
 class SellerRequestFilterSchema(BaseModel):
