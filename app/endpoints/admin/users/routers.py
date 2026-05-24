@@ -45,6 +45,26 @@ async def get_seller_requests(seller_id: int, service: seller_detail_service):
     return await service.seller_requests(seller_id=seller_id)
 
 
+@router.post('/{seller_id}/requests/', tags=seller_detail_tag)
+async def create_seller_request(seller_id: int, schema: schemas.SellerRequestCreateSchema, service: seller_detail_service):
+    return await service.create_seller_request(seller_id=seller_id, schema=schema)
+
+
+@router.get('/{seller_id}/requests/{request_id}/', tags=seller_detail_tag)
+async def get_seller_request(seller_id: int, request_id: int, service: seller_detail_service):
+    return await service.get_seller_request(seller_id=seller_id, request_id=request_id)
+
+
+@router.patch('/{seller_id}/requests/{request_id}/', tags=seller_detail_tag)
+async def update_seller_request(seller_id: int, request_id: int, schema: schemas.SellerRequestUpdateSchema, service: seller_detail_service):
+    return await service.update_seller_request(seller_id=seller_id, request_id=request_id, schema=schema)
+
+
+@router.delete('/{seller_id}/requests/{request_id}/', tags=seller_detail_tag)
+async def delete_seller_request(seller_id: int, request_id: int, service: seller_detail_service):
+    return await service.delete_seller_request(seller_id=seller_id, request_id=request_id)
+
+
 @router.get('/{seller_id}/tenants/', tags=seller_detail_tag)
 async def get_seller_tenants(seller_id: int, service: seller_detail_service):
     return await service.seller_tenants(seller_id=seller_id)

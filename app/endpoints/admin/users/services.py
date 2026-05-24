@@ -151,35 +151,31 @@ class SellerDetailService(BaseService):
         }
 
     async def seller_requests(self, seller_id: int) -> Any:
-        # return [
-        #     {
-        #         'id': 1,
-        #         'date': '2026-01-01',
-        #         'amount': Decimal('76543210.50'),
-        #         'balance': Decimal('152340000.75'),
-        #     },
-        #     {
-        #         'id': 2,
-        #         'date': '2026-02-01',
-        #         'amount': Decimal('81245000.00'),
-        #         'balance': Decimal('71115000.75'),
-        #     },
-        #     {
-        #         'id': 3,
-        #         'date': '2026-03-01',
-        #         'amount': Decimal('68990540.25'),
-        #         'balance': Decimal('21450000.50'),
-        #     },
-        #     {
-        #         'id': 4,
-        #         'date': '2026-04-01',
-        #         'amount': Decimal('21450000.50'),
-        #         'balance': Decimal('0.00'),
-        #     },
-        # ]
         return await self.get_all(
             select(SellerRequest).where(SellerRequest.seller_id == seller_id)
         )
+
+    async def create_seller_request(self, seller_id: int, schema: schemas.SellerRequestCreateSchema) -> SellerRequest:
+        await self.get_object_or_404(
+            select(User).where(User.id == seller_id, User.role == choices.UserRoles.seller)
+        )
+        return await self.save(model=SellerRequest, schema=schema, seller_id=seller_id)
+
+    async def get_seller_request(self, seller_id: int, request_id: int) -> SellerRequest:
+        return await self.get_object_or_404(
+            select(SellerRequest).where(
+                SellerRequest.id == request_id,
+                SellerRequest.seller_id == seller_id,
+            )
+        )
+
+    async def update_seller_request(self, seller_id: int, request_id: int, schema: schemas.SellerRequestUpdateSchema) -> SellerRequest:
+        request = await self.get_seller_request(seller_id=seller_id, request_id=request_id)
+        return await self.update(obj=request, schema=schema)
+
+    async def delete_seller_request(self, seller_id: int, request_id: int) -> dict:
+        request = await self.get_seller_request(seller_id=seller_id, request_id=request_id)
+        return await self.remove(request)
 
     async def seller_tenants(self, seller_id: int) -> list[dict]:
         result = await self.db.execute(
