@@ -21,5 +21,9 @@ class TenantCreateSchema(BaseModel):
 
 class TenantUpdateSchema(BaseModel):
     is_active: bool
+    on_trial: bool
+    is_deleted: bool
+    deadline: date
+
 
 

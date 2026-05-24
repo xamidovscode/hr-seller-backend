@@ -95,7 +95,7 @@ class TenantService(BaseService):
 
     async def tenant_update(self, core_tenant_id: int, schema: schemas.TenantUpdateSchema):
         url = f'{settings.HR_CORE_URL}/api/v1/common/tenants/{core_tenant_id}/'
-        data = schema.model_dump()
+        data = schema.model_dump(mode='json')
         response = await self.httpx_patch(url=url, data=data, headers=self._auth_headers)
         return response
 
