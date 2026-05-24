@@ -1,11 +1,21 @@
-from typing import Optional
+from datetime import date
+from decimal import Decimal
+from typing import Optional, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+
+class TenantPlansCreateSchema(BaseModel):
+    module: int
+    users_count: int
 
 
 class TenantCreateSchema(BaseModel):
     domain: str
     name: str
+    deadline: date
+    plans: Optional[List[TenantPlansCreateSchema]] = None
+    personal_amount: Decimal = Field(default=Decimal("0"), max_digits=36, decimal_places=2)
     seller_id: Optional[int] = None
 
 
