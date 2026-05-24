@@ -32,6 +32,7 @@ class SellerUpdateSchema(BaseModel):
     percentage: Optional[float] = None
     duration: Optional[int] = None
     is_active: Optional[bool] = None
+    password: Optional[str] = Field(default=None, min_length=6, max_length=72)
 
 
 class SellerCreateResponseSchema(BaseModel):

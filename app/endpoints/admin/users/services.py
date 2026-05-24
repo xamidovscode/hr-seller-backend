@@ -91,7 +91,10 @@ class UserService(BaseService):
                 User.role == choices.UserRoles.seller,
             )
         )
-        return await self.update(obj=seller, schema=schema)
+        data = schema.model_dump(exclude_unset=True)
+        if password := data.pop('password', None):
+            data['password'] = hash_password(password)
+        return await self.update(obj=seller, **data)
 
     async def delete_seller(self, seller_id: int) -> dict:
         seller = await self.get_object_or_404(
