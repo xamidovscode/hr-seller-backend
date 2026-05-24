@@ -1,9 +1,7 @@
-from datetime import date
 from decimal import Decimal
 from typing import Optional
 
 from pydantic import BaseModel, Field
-from app.models.choices import RequestConditions
 from app.resources.fields import (
     UsernameField,
     PercentageField,
@@ -49,17 +47,5 @@ class MonthlyTransUpdateSchema(BaseModel):
     paid_amount: Optional[Decimal] = None
     debt_amount: Optional[Decimal] = None
     status: Optional[str] = None
-
-
-class SellerRequestCreateSchema(BaseModel):
-    amount: Decimal
-    date: date
-    condition: RequestConditions = RequestConditions.PENDING
-
-
-class SellerRequestUpdateSchema(BaseModel):
-    amount: Optional[Decimal] = None
-    date: Optional[date] = None
-    condition: Optional[RequestConditions] = None
 
 

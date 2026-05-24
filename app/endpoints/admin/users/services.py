@@ -7,7 +7,6 @@ from sqlalchemy import select, func
 from app.core.settings import settings
 from app.models import (
     choices,
-    SellerRequest,
     User,
     Supervisor,
     Tenant,
@@ -149,33 +148,6 @@ class SellerDetailService(BaseService):
                 'withdrawn_amount': Decimal('-7300000'),
             }
         }
-
-    async def seller_requests(self, seller_id: int) -> Any:
-        return await self.get_all(
-            select(SellerRequest).where(SellerRequest.seller_id == seller_id)
-        )
-
-    async def create_seller_request(self, seller_id: int, schema: schemas.SellerRequestCreateSchema) -> SellerRequest:
-        await self.get_object_or_404(
-            select(User).where(User.id == seller_id, User.role == choices.UserRoles.seller)
-        )
-        return await self.save(model=SellerRequest, schema=schema, seller_id=seller_id)
-
-    async def get_seller_request(self, seller_id: int, request_id: int) -> SellerRequest:
-        return await self.get_object_or_404(
-            select(SellerRequest).where(
-                SellerRequest.id == request_id,
-                SellerRequest.seller_id == seller_id,
-            )
-        )
-
-    async def update_seller_request(self, seller_id: int, request_id: int, schema: schemas.SellerRequestUpdateSchema) -> SellerRequest:
-        request = await self.get_seller_request(seller_id=seller_id, request_id=request_id)
-        return await self.update(obj=request, schema=schema)
-
-    async def delete_seller_request(self, seller_id: int, request_id: int) -> dict:
-        request = await self.get_seller_request(seller_id=seller_id, request_id=request_id)
-        return await self.remove(request)
 
     async def seller_tenants(self, seller_id: int) -> list[dict]:
         result = await self.db.execute(
