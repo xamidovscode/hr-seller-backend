@@ -5,6 +5,8 @@ service TenantService {
   rpc GetTenants (GetTenantsRequest) returns (GetTenantsResponse);
   rpc GetTenantsByIds (GetTenantsByIdsRequest) returns (GetTenantsResponse);
   rpc GetTenantById (GetTenantByIdRequest) returns (TenantResponse);
+  rpc GetTenantsBalanceStatus (GetTenantsBalanceStatusRequest) returns (TenantsBalanceStatusResponse);
+
 }
 
 message GetTenantsRequest {}
@@ -14,6 +16,10 @@ message GetTenantsByIdsRequest {
 message GetTenantByIdRequest {
   int32 id = 1;
 }
+message GetTenantsBalanceStatusRequest {
+  repeated int32 ids = 1;
+}
+
 
 message MonthlyTransResponse {
   int32 id = 1;
@@ -41,3 +47,10 @@ message TenantResponse {
 message GetTenantsResponse {
   repeated TenantResponse tenants = 1;
 }
+
+message TenantsBalanceStatusResponse {
+  double must_paid_amount = 1;
+  double not_paid_amount = 2;
+  double paid_amount = 3;
+}
+

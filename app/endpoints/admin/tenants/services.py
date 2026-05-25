@@ -100,12 +100,9 @@ class TenantService(BaseService):
         return response
 
     async def tenant_statistics(self):
+        hr_stats = await self._tenant_grpc.get_tenants_balance_status(ids=[])
         return {
-            'imb_hr': {
-                'must_paid_amount': Decimal('4000000'),
-                'not_paid_amount': Decimal('1500000'),
-                'paid_amount': Decimal('2500000'),
-            },
+            'imb_hr': hr_stats,
             'imb_edu': {
                 'must_paid_amount': Decimal('0.00'),
                 'not_paid_amount': Decimal('0.00'),

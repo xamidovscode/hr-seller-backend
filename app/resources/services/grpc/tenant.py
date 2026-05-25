@@ -26,3 +26,8 @@ class TenantGrpcClient(GrpcClient):
         stub = await self._get_stub()
         response = await stub.GetTenantById(tenant_pb2.GetTenantByIdRequest(id=pk))
         return self._message_to_dict(response)
+
+    async def get_tenants_balance_status(self, ids: list[int]):
+        stub = await self._get_stub()
+        response = await stub.GetTenantsBalanceStatus(tenant_pb2.GetTenantsBalanceStatusRequest(ids=ids))
+        return self._message_to_dict(response)

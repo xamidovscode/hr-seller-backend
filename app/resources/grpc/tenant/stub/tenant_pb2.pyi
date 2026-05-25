@@ -73,6 +73,26 @@ class GetTenantByIdRequest(_message.Message):
 Global___GetTenantByIdRequest: _TypeAlias = GetTenantByIdRequest  # noqa: Y015
 
 @_typing.final
+class GetTenantsBalanceStatusRequest(_message.Message):
+    DESCRIPTOR: _descriptor.Descriptor
+
+    IDS_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def ids(self) -> _containers.RepeatedScalarFieldContainer[_builtins.int]: ...
+    def __init__(
+        self,
+        *,
+        ids: _abc.Iterable[_builtins.int] | None = ...,
+    ) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["ids", b"ids"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
+
+Global___GetTenantsBalanceStatusRequest: _TypeAlias = GetTenantsBalanceStatusRequest  # noqa: Y015
+
+@_typing.final
 class MonthlyTransResponse(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
 
@@ -175,3 +195,28 @@ class GetTenantsResponse(_message.Message):
     def WhichOneof(self, oneof_group: _Never) -> None: ...
 
 Global___GetTenantsResponse: _TypeAlias = GetTenantsResponse  # noqa: Y015
+
+@_typing.final
+class TenantsBalanceStatusResponse(_message.Message):
+    DESCRIPTOR: _descriptor.Descriptor
+
+    MUST_PAID_AMOUNT_FIELD_NUMBER: _builtins.int
+    NOT_PAID_AMOUNT_FIELD_NUMBER: _builtins.int
+    PAID_AMOUNT_FIELD_NUMBER: _builtins.int
+    must_paid_amount: _builtins.float
+    not_paid_amount: _builtins.float
+    paid_amount: _builtins.float
+    def __init__(
+        self,
+        *,
+        must_paid_amount: _builtins.float = ...,
+        not_paid_amount: _builtins.float = ...,
+        paid_amount: _builtins.float = ...,
+    ) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["must_paid_amount", b"must_paid_amount", "not_paid_amount", b"not_paid_amount", "paid_amount", b"paid_amount"]  # noqa: Y015
+    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
+    def WhichOneof(self, oneof_group: _Never) -> None: ...
+
+Global___TenantsBalanceStatusResponse: _TypeAlias = TenantsBalanceStatusResponse  # noqa: Y015

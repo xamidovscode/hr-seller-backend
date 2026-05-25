@@ -34,6 +34,7 @@ class TenantServiceStub:
     GetTenants: _grpc.UnaryUnaryMultiCallable[_tenant_pb2.GetTenantsRequest, _tenant_pb2.GetTenantsResponse]
     GetTenantsByIds: _grpc.UnaryUnaryMultiCallable[_tenant_pb2.GetTenantsByIdsRequest, _tenant_pb2.GetTenantsResponse]
     GetTenantById: _grpc.UnaryUnaryMultiCallable[_tenant_pb2.GetTenantByIdRequest, _tenant_pb2.TenantResponse]
+    GetTenantsBalanceStatus: _grpc.UnaryUnaryMultiCallable[_tenant_pb2.GetTenantsBalanceStatusRequest, _tenant_pb2.TenantsBalanceStatusResponse]
 
 @_typing.type_check_only
 class TenantServiceAsyncStub(TenantServiceStub):
@@ -41,6 +42,7 @@ class TenantServiceAsyncStub(TenantServiceStub):
     GetTenants: _aio.UnaryUnaryMultiCallable[_tenant_pb2.GetTenantsRequest, _tenant_pb2.GetTenantsResponse]  # type: ignore[assignment]
     GetTenantsByIds: _aio.UnaryUnaryMultiCallable[_tenant_pb2.GetTenantsByIdsRequest, _tenant_pb2.GetTenantsResponse]  # type: ignore[assignment]
     GetTenantById: _aio.UnaryUnaryMultiCallable[_tenant_pb2.GetTenantByIdRequest, _tenant_pb2.TenantResponse]  # type: ignore[assignment]
+    GetTenantsBalanceStatus: _aio.UnaryUnaryMultiCallable[_tenant_pb2.GetTenantsBalanceStatusRequest, _tenant_pb2.TenantsBalanceStatusResponse]  # type: ignore[assignment]
 
 class TenantServiceServicer(metaclass=_abc_1.ABCMeta):
     @_abc_1.abstractmethod
@@ -63,5 +65,12 @@ class TenantServiceServicer(metaclass=_abc_1.ABCMeta):
         request: _tenant_pb2.GetTenantByIdRequest,
         context: _ServicerContext,
     ) -> _typing.Union[_tenant_pb2.TenantResponse, _abc.Awaitable[_tenant_pb2.TenantResponse]]: ...
+
+    @_abc_1.abstractmethod
+    def GetTenantsBalanceStatus(
+        self,
+        request: _tenant_pb2.GetTenantsBalanceStatusRequest,
+        context: _ServicerContext,
+    ) -> _typing.Union[_tenant_pb2.TenantsBalanceStatusResponse, _abc.Awaitable[_tenant_pb2.TenantsBalanceStatusResponse]]: ...
 
 def add_TenantServiceServicer_to_server(servicer: TenantServiceServicer, server: _typing.Union[_grpc.Server, _aio.Server]) -> None: ...

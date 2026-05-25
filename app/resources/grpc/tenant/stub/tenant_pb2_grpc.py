@@ -49,6 +49,11 @@ class TenantServiceStub(object):
                 request_serializer=tenant__pb2.GetTenantByIdRequest.SerializeToString,
                 response_deserializer=tenant__pb2.TenantResponse.FromString,
                 _registered_method=True)
+        self.GetTenantsBalanceStatus = channel.unary_unary(
+                '/tenant.TenantService/GetTenantsBalanceStatus',
+                request_serializer=tenant__pb2.GetTenantsBalanceStatusRequest.SerializeToString,
+                response_deserializer=tenant__pb2.TenantsBalanceStatusResponse.FromString,
+                _registered_method=True)
 
 
 class TenantServiceServicer(object):
@@ -72,6 +77,12 @@ class TenantServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetTenantsBalanceStatus(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_TenantServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -89,6 +100,11 @@ def add_TenantServiceServicer_to_server(servicer, server):
                     servicer.GetTenantById,
                     request_deserializer=tenant__pb2.GetTenantByIdRequest.FromString,
                     response_serializer=tenant__pb2.TenantResponse.SerializeToString,
+            ),
+            'GetTenantsBalanceStatus': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTenantsBalanceStatus,
+                    request_deserializer=tenant__pb2.GetTenantsBalanceStatusRequest.FromString,
+                    response_serializer=tenant__pb2.TenantsBalanceStatusResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -172,6 +188,33 @@ class TenantService(object):
             '/tenant.TenantService/GetTenantById',
             tenant__pb2.GetTenantByIdRequest.SerializeToString,
             tenant__pb2.TenantResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetTenantsBalanceStatus(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/tenant.TenantService/GetTenantsBalanceStatus',
+            tenant__pb2.GetTenantsBalanceStatusRequest.SerializeToString,
+            tenant__pb2.TenantsBalanceStatusResponse.FromString,
             options,
             channel_credentials,
             insecure,
