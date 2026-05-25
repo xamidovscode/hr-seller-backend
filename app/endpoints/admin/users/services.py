@@ -10,6 +10,7 @@ from app.models import (
     User,
     Supervisor,
     Tenant,
+    SellerRequest,
 )
 from app.resources import BaseService, TenantGrpcClient
 from app.resources.seller.seller_balance_calculator import SellerBalanceCalculator
@@ -140,6 +141,14 @@ class SellerDetailService(BaseService):
 
         balance_status = await self._tenant_grpc.get_tenants_balance_status(ids=tenant_ids)
 
+        withdrawn_amount = (await self.execute(
+            select(func.coalesce(func.sum(SellerRequest.amount), Decimal('0')))
+            .where(
+                SellerRequest.seller_id == seller_id,
+                SellerRequest.condition == choices.RequestConditions.CONFIRMED,
+            )
+        )).scalar()
+
         return {
             'id': seller.id,
             'username': seller.username,
@@ -153,7 +162,7 @@ class SellerDetailService(BaseService):
                 'not_paid_amount': balance_status['not_paid_amount'],
                 'paid_amount': balance_status['paid_amount'],
                 'balance_amount': Decimal('0'),
-                'withdrawn_amount': Decimal('-7300000'),
+                'withdrawn_amount': withdrawn_amount,
             },
         }
 
