@@ -99,6 +99,20 @@ class TenantService(BaseService):
         response = await self.httpx_patch(url=url, data=data, headers=self._auth_headers)
         return response
 
+    async def tenant_statistics(self):
+        return {
+            'imb_hr': {
+                'must_paid_amount': Decimal('4000000'),
+                'not_paid_amount': Decimal('1500000'),
+                'paid_amount': Decimal('2500000'),
+            },
+            'imb_edu': {
+                'must_paid_amount': Decimal('0.00'),
+                'not_paid_amount': Decimal('0.00'),
+                'paid_amount': Decimal('0.00'),
+            }
+        }
+
 
 class TenantDetailService(BaseService):
 
