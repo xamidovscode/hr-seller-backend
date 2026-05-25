@@ -131,6 +131,13 @@ class SellerDetailService(BaseService):
             )
         )
 
+        tenant_ids = self.execute(
+            select(Tenant.core_tenant_id)
+            .where(Tenant.seller_id == seller_id)
+        ).scalars().all()
+
+        balance_status = self._tenant_grpc.get_tenants_balance_status(ids=tenant_ids)
+
         return {
             'id': seller.id,
             'username': seller.username,
