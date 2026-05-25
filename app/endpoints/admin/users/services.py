@@ -152,7 +152,8 @@ class SellerDetailService(BaseService):
                 'paid_amount': Decimal('37947440'),
                 'balance_amount': Decimal('0'),
                 'withdrawn_amount': Decimal('-7300000'),
-            }
+            },
+            'balance_status': balance_status
         }
 
     async def seller_tenants(self, seller_id: int) -> list[dict]:
