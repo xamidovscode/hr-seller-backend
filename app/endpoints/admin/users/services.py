@@ -149,13 +149,12 @@ class SellerDetailService(BaseService):
             'duration': seller.duration,
             'is_active': seller.is_active,
             'trash_data': {
-                'must_pay_amount': Decimal('76653354'),
-                'not_paid_amount': Decimal('38705914'),
-                'paid_amount': Decimal('37947440'),
+                'must_pay_amount': balance_status['must_pay_amount'],
+                'not_paid_amount': balance_status['not_paid_amount'],
+                'paid_amount': balance_status['paid_amount'],
                 'balance_amount': Decimal('0'),
                 'withdrawn_amount': Decimal('-7300000'),
             },
-            'balance_status': balance_status
         }
 
     async def seller_tenants(self, seller_id: int) -> list[dict]:
