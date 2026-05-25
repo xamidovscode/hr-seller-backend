@@ -123,8 +123,16 @@ class TenantDetailService(BaseService):
         return core_tenant_data
 
     async def get_active_plans(self, core_tenant_id: int):
-        active_plans_data = await self._tenant_plans_grpc.get_tenant_active_plan(tenant_id=core_tenant_id)
-        return active_plans_data
+        return await self._tenant_plans_grpc.get_tenant_active_plan(tenant_id=core_tenant_id)
+
+    async def get_my_data(self, core_tenant_id: int):
+        return await self._tenant_plans_grpc.get_tenant_my_data(tenant_id=core_tenant_id)
+
+    async def get_transactions(self, core_tenant_id: int):
+        return await self._tenant_plans_grpc.get_tenant_transactions(tenant_id=core_tenant_id)
+
+    async def get_transactions_detail(self, core_tenant_id: int, date: str = ''):
+        return await self._tenant_plans_grpc.get_tenant_transactions_detail(tenant_id=core_tenant_id, date=date)
 
     async def get_telegram_chats(self, core_tenant_id: int):
         stmt = (

@@ -21,26 +21,51 @@ DESCRIPTOR: _descriptor.FileDescriptor
 @_typing.final
 class GetTenantActivePlanRequest(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
-
     TENANT_ID_FIELD_NUMBER: _builtins.int
     tenant_id: _builtins.int
-    def __init__(
-        self,
-        *,
-        tenant_id: _builtins.int = ...,
-    ) -> None: ...
-    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
+    def __init__(self, *, tenant_id: _builtins.int = ...) -> None: ...
+    _HasFieldArgType: _TypeAlias = _Never
     def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["tenant_id", b"tenant_id"]  # noqa: Y015
+    _ClearFieldArgType: _TypeAlias = _typing.Literal["tenant_id", b"tenant_id"]
     def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
     def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-Global___GetTenantActivePlanRequest: _TypeAlias = GetTenantActivePlanRequest  # noqa: Y015
+Global___GetTenantActivePlanRequest: _TypeAlias = GetTenantActivePlanRequest
+
+@_typing.final
+class PlanLimit(_message.Message):
+    DESCRIPTOR: _descriptor.Descriptor
+    ID_FIELD_NUMBER: _builtins.int
+    PRICE_FIELD_NUMBER: _builtins.int
+    PER_USER_PRICE_FIELD_NUMBER: _builtins.int
+    MIN_USERS_FIELD_NUMBER: _builtins.int
+    MAX_USERS_FIELD_NUMBER: _builtins.int
+    IS_PER_USER_FIELD_NUMBER: _builtins.int
+    TRIAL_USERS_FIELD_NUMBER: _builtins.int
+    id: _builtins.int
+    price: _builtins.float
+    per_user_price: _builtins.float
+    min_users: _builtins.int
+    max_users: _builtins.int
+    is_per_user: _builtins.bool
+    trial_users: _builtins.int
+    def __init__(
+        self,
+        *,
+        id: _builtins.int = ...,
+        price: _builtins.float = ...,
+        per_user_price: _builtins.float = ...,
+        min_users: _builtins.int = ...,
+        max_users: _builtins.int = ...,
+        is_per_user: _builtins.bool = ...,
+        trial_users: _builtins.int = ...,
+    ) -> None: ...
+
+Global___PlanLimit: _TypeAlias = PlanLimit
 
 @_typing.final
 class ActivePlanResponse(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
-
     ID_FIELD_NUMBER: _builtins.int
     DATE_FIELD_NUMBER: _builtins.int
     IS_ACTIVE_FIELD_NUMBER: _builtins.int
@@ -53,6 +78,7 @@ class ActivePlanResponse(_message.Message):
     PLAN_FIELD_NUMBER: _builtins.int
     TENANT_FIELD_NUMBER: _builtins.int
     CURRENT_USERS_COUNT_FIELD_NUMBER: _builtins.int
+    LIMITS_FIELD_NUMBER: _builtins.int
     id: _builtins.int
     date: _builtins.str
     is_active: _builtins.bool
@@ -65,6 +91,8 @@ class ActivePlanResponse(_message.Message):
     plan: _builtins.int
     tenant: _builtins.int
     current_users_count: _builtins.int
+    @_builtins.property
+    def limits(self) -> _containers.RepeatedCompositeFieldContainer[Global___PlanLimit]: ...
     def __init__(
         self,
         *,
@@ -80,19 +108,14 @@ class ActivePlanResponse(_message.Message):
         plan: _builtins.int = ...,
         tenant: _builtins.int = ...,
         current_users_count: _builtins.int = ...,
+        limits: _abc.Iterable[Global___PlanLimit] | None = ...,
     ) -> None: ...
-    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
-    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["current_users_count", b"current_users_count", "date", b"date", "id", b"id", "is_active", b"is_active", "is_per_user", b"is_per_user", "module", b"module", "per_user_price", b"per_user_price", "plan", b"plan", "plan_price", b"plan_price", "tenant", b"tenant", "trial_users", b"trial_users", "users_count", b"users_count"]  # noqa: Y015
-    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
-    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-Global___ActivePlanResponse: _TypeAlias = ActivePlanResponse  # noqa: Y015
+Global___ActivePlanResponse: _TypeAlias = ActivePlanResponse
 
 @_typing.final
 class GetTenantActivePlansResponse(_message.Message):
     DESCRIPTOR: _descriptor.Descriptor
-
     ACTIVE_PLANS_FIELD_NUMBER: _builtins.int
     @_builtins.property
     def active_plans(self) -> _containers.RepeatedCompositeFieldContainer[Global___ActivePlanResponse]: ...
@@ -101,10 +124,184 @@ class GetTenantActivePlansResponse(_message.Message):
         *,
         active_plans: _abc.Iterable[Global___ActivePlanResponse] | None = ...,
     ) -> None: ...
-    _HasFieldArgType: _TypeAlias = _Never  # noqa: Y015
-    def HasField(self, field_name: _HasFieldArgType) -> _builtins.bool: ...
-    _ClearFieldArgType: _TypeAlias = _typing.Literal["active_plans", b"active_plans"]  # noqa: Y015
-    def ClearField(self, field_name: _ClearFieldArgType) -> None: ...
-    def WhichOneof(self, oneof_group: _Never) -> None: ...
 
-Global___GetTenantActivePlansResponse: _TypeAlias = GetTenantActivePlansResponse  # noqa: Y015
+Global___GetTenantActivePlansResponse: _TypeAlias = GetTenantActivePlansResponse
+
+@_typing.final
+class GetTenantMyDataRequest(_message.Message):
+    DESCRIPTOR: _descriptor.Descriptor
+    TENANT_ID_FIELD_NUMBER: _builtins.int
+    tenant_id: _builtins.int
+    def __init__(self, *, tenant_id: _builtins.int = ...) -> None: ...
+
+Global___GetTenantMyDataRequest: _TypeAlias = GetTenantMyDataRequest
+
+@_typing.final
+class TenantMyDataResponse(_message.Message):
+    DESCRIPTOR: _descriptor.Descriptor
+    ID_FIELD_NUMBER: _builtins.int
+    SCHEMA_NAME_FIELD_NUMBER: _builtins.int
+    BALANCE_FIELD_NUMBER: _builtins.int
+    IS_ACTIVE_FIELD_NUMBER: _builtins.int
+    PLAN_AMOUNT_FIELD_NUMBER: _builtins.int
+    EMPL_COUNT_FIELD_NUMBER: _builtins.int
+    DEADLINE_FIELD_NUMBER: _builtins.int
+    id: _builtins.int
+    schema_name: _builtins.str
+    balance: _builtins.float
+    is_active: _builtins.bool
+    plan_amount: _builtins.float
+    empl_count: _builtins.int
+    deadline: _builtins.str
+    def __init__(
+        self,
+        *,
+        id: _builtins.int = ...,
+        schema_name: _builtins.str = ...,
+        balance: _builtins.float = ...,
+        is_active: _builtins.bool = ...,
+        plan_amount: _builtins.float = ...,
+        empl_count: _builtins.int = ...,
+        deadline: _builtins.str = ...,
+    ) -> None: ...
+
+Global___TenantMyDataResponse: _TypeAlias = TenantMyDataResponse
+
+@_typing.final
+class GetTenantTransactionsRequest(_message.Message):
+    DESCRIPTOR: _descriptor.Descriptor
+    TENANT_ID_FIELD_NUMBER: _builtins.int
+    tenant_id: _builtins.int
+    def __init__(self, *, tenant_id: _builtins.int = ...) -> None: ...
+
+Global___GetTenantTransactionsRequest: _TypeAlias = GetTenantTransactionsRequest
+
+@_typing.final
+class TransactionPlanItem(_message.Message):
+    DESCRIPTOR: _descriptor.Descriptor
+    ID_FIELD_NUMBER: _builtins.int
+    PLAN_PRICE_FIELD_NUMBER: _builtins.int
+    PER_USER_PRICE_FIELD_NUMBER: _builtins.int
+    USERS_COUNT_FIELD_NUMBER: _builtins.int
+    MONTH_FIELD_NUMBER: _builtins.int
+    MODULE_FIELD_NUMBER: _builtins.int
+    MIN_USERS_FIELD_NUMBER: _builtins.int
+    MAX_USERS_FIELD_NUMBER: _builtins.int
+    id: _builtins.int
+    plan_price: _builtins.float
+    per_user_price: _builtins.float
+    users_count: _builtins.int
+    month: _builtins.str
+    module: _builtins.str
+    min_users: _builtins.int
+    max_users: _builtins.int
+    def __init__(
+        self,
+        *,
+        id: _builtins.int = ...,
+        plan_price: _builtins.float = ...,
+        per_user_price: _builtins.float = ...,
+        users_count: _builtins.int = ...,
+        month: _builtins.str = ...,
+        module: _builtins.str = ...,
+        min_users: _builtins.int = ...,
+        max_users: _builtins.int = ...,
+    ) -> None: ...
+
+Global___TransactionPlanItem: _TypeAlias = TransactionPlanItem
+
+@_typing.final
+class TenantTransactionResponse(_message.Message):
+    DESCRIPTOR: _descriptor.Descriptor
+    CLIENT_FIELD_NUMBER: _builtins.int
+    MONTH_FIELD_NUMBER: _builtins.int
+    DEBTS_FIELD_NUMBER: _builtins.int
+    PAYMENTS_FIELD_NUMBER: _builtins.int
+    PLANS_FIELD_NUMBER: _builtins.int
+    client: _builtins.int
+    month: _builtins.str
+    debts: _builtins.float
+    payments: _builtins.float
+    @_builtins.property
+    def plans(self) -> _containers.RepeatedCompositeFieldContainer[Global___TransactionPlanItem]: ...
+    def __init__(
+        self,
+        *,
+        client: _builtins.int = ...,
+        month: _builtins.str = ...,
+        debts: _builtins.float = ...,
+        payments: _builtins.float = ...,
+        plans: _abc.Iterable[Global___TransactionPlanItem] | None = ...,
+    ) -> None: ...
+
+Global___TenantTransactionResponse: _TypeAlias = TenantTransactionResponse
+
+@_typing.final
+class GetTenantTransactionsResponse(_message.Message):
+    DESCRIPTOR: _descriptor.Descriptor
+    TRANSACTIONS_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def transactions(self) -> _containers.RepeatedCompositeFieldContainer[Global___TenantTransactionResponse]: ...
+    def __init__(
+        self,
+        *,
+        transactions: _abc.Iterable[Global___TenantTransactionResponse] | None = ...,
+    ) -> None: ...
+
+Global___GetTenantTransactionsResponse: _TypeAlias = GetTenantTransactionsResponse
+
+@_typing.final
+class GetTenantTransactionsDetailRequest(_message.Message):
+    DESCRIPTOR: _descriptor.Descriptor
+    TENANT_ID_FIELD_NUMBER: _builtins.int
+    DATE_FIELD_NUMBER: _builtins.int
+    tenant_id: _builtins.int
+    date: _builtins.str
+    def __init__(self, *, tenant_id: _builtins.int = ..., date: _builtins.str = ...) -> None: ...
+
+Global___GetTenantTransactionsDetailRequest: _TypeAlias = GetTenantTransactionsDetailRequest
+
+@_typing.final
+class TenantTransactionDetailItem(_message.Message):
+    DESCRIPTOR: _descriptor.Descriptor
+    ID_FIELD_NUMBER: _builtins.int
+    AMOUNT_FIELD_NUMBER: _builtins.int
+    USERS_COUNT_FIELD_NUMBER: _builtins.int
+    FROM_DATE_FIELD_NUMBER: _builtins.int
+    TO_DATE_FIELD_NUMBER: _builtins.int
+    PAY_DAYS_FIELD_NUMBER: _builtins.int
+    MODULE_FIELD_NUMBER: _builtins.int
+    id: _builtins.int
+    amount: _builtins.float
+    users_count: _builtins.int
+    from_date: _builtins.str
+    to_date: _builtins.str
+    pay_days: _builtins.int
+    module: _builtins.str
+    def __init__(
+        self,
+        *,
+        id: _builtins.int = ...,
+        amount: _builtins.float = ...,
+        users_count: _builtins.int = ...,
+        from_date: _builtins.str = ...,
+        to_date: _builtins.str = ...,
+        pay_days: _builtins.int = ...,
+        module: _builtins.str = ...,
+    ) -> None: ...
+
+Global___TenantTransactionDetailItem: _TypeAlias = TenantTransactionDetailItem
+
+@_typing.final
+class GetTenantTransactionsDetailResponse(_message.Message):
+    DESCRIPTOR: _descriptor.Descriptor
+    DETAILS_FIELD_NUMBER: _builtins.int
+    @_builtins.property
+    def details(self) -> _containers.RepeatedCompositeFieldContainer[Global___TenantTransactionDetailItem]: ...
+    def __init__(
+        self,
+        *,
+        details: _abc.Iterable[Global___TenantTransactionDetailItem] | None = ...,
+    ) -> None: ...
+
+Global___GetTenantTransactionsDetailResponse: _TypeAlias = GetTenantTransactionsDetailResponse

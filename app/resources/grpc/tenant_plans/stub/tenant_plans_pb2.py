@@ -24,19 +24,39 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12tenant_plans.proto\x12\x05plans\"/\n\x1aGetTenantActivePlanRequest\x12\x11\n\ttenant_id\x18\x01 \x01(\x05\"\xf7\x01\n\x12\x41\x63tivePlanResponse\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04\x64\x61te\x18\x02 \x01(\t\x12\x11\n\tis_active\x18\x03 \x01(\x08\x12\x12\n\nplan_price\x18\x04 \x01(\x01\x12\x13\n\x0busers_count\x18\x05 \x01(\x05\x12\x16\n\x0eper_user_price\x18\x06 \x01(\x01\x12\x0e\n\x06module\x18\x07 \x01(\t\x12\x13\n\x0bis_per_user\x18\x08 \x01(\x08\x12\x13\n\x0btrial_users\x18\t \x01(\x05\x12\x0c\n\x04plan\x18\n \x01(\x05\x12\x0e\n\x06tenant\x18\x0b \x01(\x05\x12\x1b\n\x13\x63urrent_users_count\x18\x0c \x01(\x05\"O\n\x1cGetTenantActivePlansResponse\x12/\n\x0c\x61\x63tive_plans\x18\x01 \x03(\x0b\x32\x19.plans.ActivePlanResponse2r\n\x11TenantPlanService\x12]\n\x13GetTenantActivePlan\x12!.plans.GetTenantActivePlanRequest\x1a#.plans.GetTenantActivePlansResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12tenant_plans.proto\x12\x0ctenant_plans\"/\n\x1aGetTenantActivePlanRequest\x12\x11\n\ttenant_id\x18\x01 \x01(\x05\"\x8e\x01\n\tPlanLimit\x12\n\n\x02id\x18\x01 \x01(\x05\x12\r\n\x05price\x18\x02 \x01(\x01\x12\x16\n\x0eper_user_price\x18\x03 \x01(\x01\x12\x11\n\tmin_users\x18\x04 \x01(\x05\x12\x11\n\tmax_users\x18\x05 \x01(\x05\x12\x13\n\x0bis_per_user\x18\x06 \x01(\x08\x12\x13\n\x0btrial_users\x18\x07 \x01(\x05\"\xa0\x02\n\x12\x41\x63tivePlanResponse\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04\x64\x61te\x18\x02 \x01(\t\x12\x11\n\tis_active\x18\x03 \x01(\x08\x12\x12\n\nplan_price\x18\x04 \x01(\x01\x12\x13\n\x0busers_count\x18\x05 \x01(\x05\x12\x16\n\x0eper_user_price\x18\x06 \x01(\x01\x12\x0e\n\x06module\x18\x07 \x01(\t\x12\x13\n\x0bis_per_user\x18\x08 \x01(\x08\x12\x13\n\x0btrial_users\x18\t \x01(\x05\x12\x0c\n\x04plan\x18\n \x01(\x05\x12\x0e\n\x06tenant\x18\x0b \x01(\x05\x12\x1b\n\x13\x63urrent_users_count\x18\x0c \x01(\x05\x12\'\n\x06limits\x18\r \x03(\x0b\x32\x17.tenant_plans.PlanLimit\"V\n\x1cGetTenantActivePlansResponse\x12\x36\n\x0c\x61\x63tive_plans\x18\x01 \x03(\x0b\x32 .tenant_plans.ActivePlanResponse\"+\n\x16GetTenantMyDataRequest\x12\x11\n\ttenant_id\x18\x01 \x01(\x05\"\x96\x01\n\x14TenantMyDataResponse\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x13\n\x0bschema_name\x18\x02 \x01(\t\x12\x0f\n\x07\x62\x61lance\x18\x03 \x01(\x01\x12\x11\n\tis_active\x18\x04 \x01(\x08\x12\x13\n\x0bplan_amount\x18\x05 \x01(\x01\x12\x12\n\nempl_count\x18\x06 \x01(\x05\x12\x10\n\x08\x64\x65\x61\x64line\x18\x07 \x01(\t\"1\n\x1cGetTenantTransactionsRequest\x12\x11\n\ttenant_id\x18\x01 \x01(\x05\"\xa7\x01\n\x13TransactionPlanItem\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x12\n\nplan_price\x18\x02 \x01(\x01\x12\x16\n\x0eper_user_price\x18\x03 \x01(\x01\x12\x13\n\x0busers_count\x18\x04 \x01(\x05\x12\r\n\x05month\x18\x05 \x01(\t\x12\x0e\n\x06module\x18\x06 \x01(\t\x12\x11\n\tmin_users\x18\x07 \x01(\x05\x12\x11\n\tmax_users\x18\x08 \x01(\x05\"\x8d\x01\n\x19TenantTransactionResponse\x12\x0e\n\x06\x63lient\x18\x01 \x01(\x05\x12\r\n\x05month\x18\x02 \x01(\t\x12\r\n\x05\x64\x65\x62ts\x18\x03 \x01(\x01\x12\x10\n\x08payments\x18\x04 \x01(\x01\x12\x30\n\x05plans\x18\x05 \x03(\x0b\x32!.tenant_plans.TransactionPlanItem\"^\n\x1dGetTenantTransactionsResponse\x12=\n\x0ctransactions\x18\x01 \x03(\x0b\x32\'.tenant_plans.TenantTransactionResponse\"E\n\"GetTenantTransactionsDetailRequest\x12\x11\n\ttenant_id\x18\x01 \x01(\x05\x12\x0c\n\x04\x64\x61te\x18\x02 \x01(\t\"\x94\x01\n\x1bTenantTransactionDetailItem\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0e\n\x06\x61mount\x18\x02 \x01(\x01\x12\x13\n\x0busers_count\x18\x03 \x01(\x05\x12\x11\n\tfrom_date\x18\x04 \x01(\t\x12\x0f\n\x07to_date\x18\x05 \x01(\t\x12\x10\n\x08pay_days\x18\x06 \x01(\x05\x12\x0e\n\x06module\x18\x07 \x01(\t\"a\n#GetTenantTransactionsDetailResponse\x12:\n\x07\x64\x65tails\x18\x01 \x03(\x0b\x32).tenant_plans.TenantTransactionDetailItem2\xd4\x03\n\x11TenantPlanService\x12k\n\x13GetTenantActivePlan\x12(.tenant_plans.GetTenantActivePlanRequest\x1a*.tenant_plans.GetTenantActivePlansResponse\x12[\n\x0fGetTenantMyData\x12$.tenant_plans.GetTenantMyDataRequest\x1a\".tenant_plans.TenantMyDataResponse\x12p\n\x15GetTenantTransactions\x12*.tenant_plans.GetTenantTransactionsRequest\x1a+.tenant_plans.GetTenantTransactionsResponse\x12\x82\x01\n\x1bGetTenantTransactionsDetail\x12\x30.tenant_plans.GetTenantTransactionsDetailRequest\x1a\x31.tenant_plans.GetTenantTransactionsDetailResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'tenant_plans_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_GETTENANTACTIVEPLANREQUEST']._serialized_start=29
-  _globals['_GETTENANTACTIVEPLANREQUEST']._serialized_end=76
-  _globals['_ACTIVEPLANRESPONSE']._serialized_start=79
-  _globals['_ACTIVEPLANRESPONSE']._serialized_end=326
-  _globals['_GETTENANTACTIVEPLANSRESPONSE']._serialized_start=328
-  _globals['_GETTENANTACTIVEPLANSRESPONSE']._serialized_end=407
-  _globals['_TENANTPLANSERVICE']._serialized_start=409
-  _globals['_TENANTPLANSERVICE']._serialized_end=523
+  _globals['_GETTENANTACTIVEPLANREQUEST']._serialized_start=36
+  _globals['_GETTENANTACTIVEPLANREQUEST']._serialized_end=83
+  _globals['_PLANLIMIT']._serialized_start=86
+  _globals['_PLANLIMIT']._serialized_end=228
+  _globals['_ACTIVEPLANRESPONSE']._serialized_start=231
+  _globals['_ACTIVEPLANRESPONSE']._serialized_end=519
+  _globals['_GETTENANTACTIVEPLANSRESPONSE']._serialized_start=521
+  _globals['_GETTENANTACTIVEPLANSRESPONSE']._serialized_end=607
+  _globals['_GETTENANTMYDATAREQUEST']._serialized_start=609
+  _globals['_GETTENANTMYDATAREQUEST']._serialized_end=652
+  _globals['_TENANTMYDATARESPONSE']._serialized_start=655
+  _globals['_TENANTMYDATARESPONSE']._serialized_end=805
+  _globals['_GETTENANTTRANSACTIONSREQUEST']._serialized_start=807
+  _globals['_GETTENANTTRANSACTIONSREQUEST']._serialized_end=856
+  _globals['_TRANSACTIONPLANITEM']._serialized_start=859
+  _globals['_TRANSACTIONPLANITEM']._serialized_end=1026
+  _globals['_TENANTTRANSACTIONRESPONSE']._serialized_start=1029
+  _globals['_TENANTTRANSACTIONRESPONSE']._serialized_end=1170
+  _globals['_GETTENANTTRANSACTIONSRESPONSE']._serialized_start=1172
+  _globals['_GETTENANTTRANSACTIONSRESPONSE']._serialized_end=1266
+  _globals['_GETTENANTTRANSACTIONSDETAILREQUEST']._serialized_start=1268
+  _globals['_GETTENANTTRANSACTIONSDETAILREQUEST']._serialized_end=1337
+  _globals['_TENANTTRANSACTIONDETAILITEM']._serialized_start=1340
+  _globals['_TENANTTRANSACTIONDETAILITEM']._serialized_end=1488
+  _globals['_GETTENANTTRANSACTIONSDETAILRESPONSE']._serialized_start=1490
+  _globals['_GETTENANTTRANSACTIONSDETAILRESPONSE']._serialized_end=1587
+  _globals['_TENANTPLANSERVICE']._serialized_start=1590
+  _globals['_TENANTPLANSERVICE']._serialized_end=2058
 # @@protoc_insertion_point(module_scope)

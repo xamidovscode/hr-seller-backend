@@ -1,31 +1,111 @@
 syntax = "proto3";
-package plans;
-
+package tenant_plans;
 
 service TenantPlanService {
     rpc GetTenantActivePlan (GetTenantActivePlanRequest) returns (GetTenantActivePlansResponse);
+    rpc GetTenantMyData (GetTenantMyDataRequest) returns (TenantMyDataResponse);
+    rpc GetTenantTransactions (GetTenantTransactionsRequest) returns (GetTenantTransactionsResponse);
+    rpc GetTenantTransactionsDetail (GetTenantTransactionsDetailRequest) returns (GetTenantTransactionsDetailResponse);
 }
+
+// --- GetTenantActivePlan ---
 
 message GetTenantActivePlanRequest {
     int32 tenant_id = 1;
 }
 
+message PlanLimit {
+    int32 id = 1;
+    double price = 2;
+    double per_user_price = 3;
+    int32 min_users = 4;
+    int32 max_users = 5;
+    bool is_per_user = 6;
+    int32 trial_users = 7;
+}
 
 message ActivePlanResponse {
-  int32 id = 1;
-  string date = 2;
-  bool is_active = 3;
-  double plan_price = 4;
-  int32 users_count = 5;
-  double per_user_price = 6;
-  string module = 7;
-  bool is_per_user = 8;
-  int32 trial_users = 9;
-  int32 plan = 10;
-  int32 tenant = 11;
-  int32 current_users_count = 12;
+    int32 id = 1;
+    string date = 2;
+    bool is_active = 3;
+    double plan_price = 4;
+    int32 users_count = 5;
+    double per_user_price = 6;
+    string module = 7;
+    bool is_per_user = 8;
+    int32 trial_users = 9;
+    int32 plan = 10;
+    int32 tenant = 11;
+    int32 current_users_count = 12;
+    repeated PlanLimit limits = 13;
 }
 
 message GetTenantActivePlansResponse {
     repeated ActivePlanResponse active_plans = 1;
+}
+
+// --- GetTenantMyData ---
+
+message GetTenantMyDataRequest {
+    int32 tenant_id = 1;
+}
+
+message TenantMyDataResponse {
+    int32 id = 1;
+    string schema_name = 2;
+    double balance = 3;
+    bool is_active = 4;
+    double plan_amount = 5;
+    int32 empl_count = 6;
+    string deadline = 7;
+}
+
+// --- GetTenantTransactions ---
+
+message GetTenantTransactionsRequest {
+    int32 tenant_id = 1;
+}
+
+message TransactionPlanItem {
+    int32 id = 1;
+    double plan_price = 2;
+    double per_user_price = 3;
+    int32 users_count = 4;
+    string month = 5;
+    string module = 6;
+    int32 min_users = 7;
+    int32 max_users = 8;
+}
+
+message TenantTransactionResponse {
+    int32 client = 1;
+    string month = 2;
+    double debts = 3;
+    double payments = 4;
+    repeated TransactionPlanItem plans = 5;
+}
+
+message GetTenantTransactionsResponse {
+    repeated TenantTransactionResponse transactions = 1;
+}
+
+// --- GetTenantTransactionsDetail ---
+
+message GetTenantTransactionsDetailRequest {
+    int32 tenant_id = 1;
+    string date = 2;
+}
+
+message TenantTransactionDetailItem {
+    int32 id = 1;
+    double amount = 2;
+    int32 users_count = 3;
+    string from_date = 4;
+    string to_date = 5;
+    int32 pay_days = 6;
+    string module = 7;
+}
+
+message GetTenantTransactionsDetailResponse {
+    repeated TenantTransactionDetailItem details = 1;
 }

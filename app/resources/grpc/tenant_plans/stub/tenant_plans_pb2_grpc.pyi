@@ -8,7 +8,7 @@ from grpc import aio as _aio
 import abc as _abc_1
 import grpc as _grpc
 import sys
-import tenant_plans_pb2 as _tenant_plans_pb2
+from . import tenant_plans_pb2 as _tenant_plans_pb2
 import typing as _typing
 
 if sys.version_info >= (3, 11):
@@ -32,11 +32,17 @@ class TenantPlanServiceStub:
     @_typing.overload
     def __new__(cls, channel: _aio.Channel) -> TenantPlanServiceAsyncStub: ...
     GetTenantActivePlan: _grpc.UnaryUnaryMultiCallable[_tenant_plans_pb2.GetTenantActivePlanRequest, _tenant_plans_pb2.GetTenantActivePlansResponse]
+    GetTenantMyData: _grpc.UnaryUnaryMultiCallable[_tenant_plans_pb2.GetTenantMyDataRequest, _tenant_plans_pb2.TenantMyDataResponse]
+    GetTenantTransactions: _grpc.UnaryUnaryMultiCallable[_tenant_plans_pb2.GetTenantTransactionsRequest, _tenant_plans_pb2.GetTenantTransactionsResponse]
+    GetTenantTransactionsDetail: _grpc.UnaryUnaryMultiCallable[_tenant_plans_pb2.GetTenantTransactionsDetailRequest, _tenant_plans_pb2.GetTenantTransactionsDetailResponse]
 
 @_typing.type_check_only
 class TenantPlanServiceAsyncStub(TenantPlanServiceStub):
     def __init__(self, channel: _aio.Channel) -> None: ...
     GetTenantActivePlan: _aio.UnaryUnaryMultiCallable[_tenant_plans_pb2.GetTenantActivePlanRequest, _tenant_plans_pb2.GetTenantActivePlansResponse]  # type: ignore[assignment]
+    GetTenantMyData: _aio.UnaryUnaryMultiCallable[_tenant_plans_pb2.GetTenantMyDataRequest, _tenant_plans_pb2.TenantMyDataResponse]  # type: ignore[assignment]
+    GetTenantTransactions: _aio.UnaryUnaryMultiCallable[_tenant_plans_pb2.GetTenantTransactionsRequest, _tenant_plans_pb2.GetTenantTransactionsResponse]  # type: ignore[assignment]
+    GetTenantTransactionsDetail: _aio.UnaryUnaryMultiCallable[_tenant_plans_pb2.GetTenantTransactionsDetailRequest, _tenant_plans_pb2.GetTenantTransactionsDetailResponse]  # type: ignore[assignment]
 
 class TenantPlanServiceServicer(metaclass=_abc_1.ABCMeta):
     @_abc_1.abstractmethod
@@ -45,5 +51,26 @@ class TenantPlanServiceServicer(metaclass=_abc_1.ABCMeta):
         request: _tenant_plans_pb2.GetTenantActivePlanRequest,
         context: _ServicerContext,
     ) -> _typing.Union[_tenant_plans_pb2.GetTenantActivePlansResponse, _abc.Awaitable[_tenant_plans_pb2.GetTenantActivePlansResponse]]: ...
+
+    @_abc_1.abstractmethod
+    def GetTenantMyData(
+        self,
+        request: _tenant_plans_pb2.GetTenantMyDataRequest,
+        context: _ServicerContext,
+    ) -> _typing.Union[_tenant_plans_pb2.TenantMyDataResponse, _abc.Awaitable[_tenant_plans_pb2.TenantMyDataResponse]]: ...
+
+    @_abc_1.abstractmethod
+    def GetTenantTransactions(
+        self,
+        request: _tenant_plans_pb2.GetTenantTransactionsRequest,
+        context: _ServicerContext,
+    ) -> _typing.Union[_tenant_plans_pb2.GetTenantTransactionsResponse, _abc.Awaitable[_tenant_plans_pb2.GetTenantTransactionsResponse]]: ...
+
+    @_abc_1.abstractmethod
+    def GetTenantTransactionsDetail(
+        self,
+        request: _tenant_plans_pb2.GetTenantTransactionsDetailRequest,
+        context: _ServicerContext,
+    ) -> _typing.Union[_tenant_plans_pb2.GetTenantTransactionsDetailResponse, _abc.Awaitable[_tenant_plans_pb2.GetTenantTransactionsDetailResponse]]: ...
 
 def add_TenantPlanServiceServicer_to_server(servicer: TenantPlanServiceServicer, server: _typing.Union[_grpc.Server, _aio.Server]) -> None: ...

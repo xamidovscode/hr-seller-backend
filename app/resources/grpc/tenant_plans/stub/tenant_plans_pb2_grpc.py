@@ -35,9 +35,24 @@ class TenantPlanServiceStub(object):
             channel: A grpc.Channel.
         """
         self.GetTenantActivePlan = channel.unary_unary(
-                '/plans.TenantPlanService/GetTenantActivePlan',
+                '/tenant_plans.TenantPlanService/GetTenantActivePlan',
                 request_serializer=tenant__plans__pb2.GetTenantActivePlanRequest.SerializeToString,
                 response_deserializer=tenant__plans__pb2.GetTenantActivePlansResponse.FromString,
+                _registered_method=True)
+        self.GetTenantMyData = channel.unary_unary(
+                '/tenant_plans.TenantPlanService/GetTenantMyData',
+                request_serializer=tenant__plans__pb2.GetTenantMyDataRequest.SerializeToString,
+                response_deserializer=tenant__plans__pb2.TenantMyDataResponse.FromString,
+                _registered_method=True)
+        self.GetTenantTransactions = channel.unary_unary(
+                '/tenant_plans.TenantPlanService/GetTenantTransactions',
+                request_serializer=tenant__plans__pb2.GetTenantTransactionsRequest.SerializeToString,
+                response_deserializer=tenant__plans__pb2.GetTenantTransactionsResponse.FromString,
+                _registered_method=True)
+        self.GetTenantTransactionsDetail = channel.unary_unary(
+                '/tenant_plans.TenantPlanService/GetTenantTransactionsDetail',
+                request_serializer=tenant__plans__pb2.GetTenantTransactionsDetailRequest.SerializeToString,
+                response_deserializer=tenant__plans__pb2.GetTenantTransactionsDetailResponse.FromString,
                 _registered_method=True)
 
 
@@ -45,6 +60,24 @@ class TenantPlanServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetTenantActivePlan(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetTenantMyData(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetTenantTransactions(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetTenantTransactionsDetail(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -58,11 +91,26 @@ def add_TenantPlanServiceServicer_to_server(servicer, server):
                     request_deserializer=tenant__plans__pb2.GetTenantActivePlanRequest.FromString,
                     response_serializer=tenant__plans__pb2.GetTenantActivePlansResponse.SerializeToString,
             ),
+            'GetTenantMyData': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTenantMyData,
+                    request_deserializer=tenant__plans__pb2.GetTenantMyDataRequest.FromString,
+                    response_serializer=tenant__plans__pb2.TenantMyDataResponse.SerializeToString,
+            ),
+            'GetTenantTransactions': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTenantTransactions,
+                    request_deserializer=tenant__plans__pb2.GetTenantTransactionsRequest.FromString,
+                    response_serializer=tenant__plans__pb2.GetTenantTransactionsResponse.SerializeToString,
+            ),
+            'GetTenantTransactionsDetail': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTenantTransactionsDetail,
+                    request_deserializer=tenant__plans__pb2.GetTenantTransactionsDetailRequest.FromString,
+                    response_serializer=tenant__plans__pb2.GetTenantTransactionsDetailResponse.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'plans.TenantPlanService', rpc_method_handlers)
+            'tenant_plans.TenantPlanService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('plans.TenantPlanService', rpc_method_handlers)
+    server.add_registered_method_handlers('tenant_plans.TenantPlanService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
@@ -83,9 +131,90 @@ class TenantPlanService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/plans.TenantPlanService/GetTenantActivePlan',
+            '/tenant_plans.TenantPlanService/GetTenantActivePlan',
             tenant__plans__pb2.GetTenantActivePlanRequest.SerializeToString,
             tenant__plans__pb2.GetTenantActivePlansResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetTenantMyData(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/tenant_plans.TenantPlanService/GetTenantMyData',
+            tenant__plans__pb2.GetTenantMyDataRequest.SerializeToString,
+            tenant__plans__pb2.TenantMyDataResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetTenantTransactions(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/tenant_plans.TenantPlanService/GetTenantTransactions',
+            tenant__plans__pb2.GetTenantTransactionsRequest.SerializeToString,
+            tenant__plans__pb2.GetTenantTransactionsResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetTenantTransactionsDetail(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/tenant_plans.TenantPlanService/GetTenantTransactionsDetail',
+            tenant__plans__pb2.GetTenantTransactionsDetailRequest.SerializeToString,
+            tenant__plans__pb2.GetTenantTransactionsDetailResponse.FromString,
             options,
             channel_credentials,
             insecure,
