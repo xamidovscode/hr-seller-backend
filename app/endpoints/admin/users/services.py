@@ -139,15 +139,24 @@ class SellerDetailService(BaseService):
             )
         ).scalars().all()
 
-        balance_status = await self._tenant_grpc.get_tenants_balance_status(ids=tenant_ids)
+        if tenant_ids:
+            balance_status = await self._tenant_grpc.get_tenants_balance_status(ids=tenant_ids)
+        else:
+            balance_status = {'must_paid_amount': Decimal('0'), 'not_paid_amount': Decimal('0'), 'paid_amount': Decimal('0')}
 
-        withdrawn_amount = (await self.execute(
-            select(func.coalesce(func.sum(SellerRequest.amount), Decimal('0')))
-            .where(
-                SellerRequest.seller_id == seller_id,
-                SellerRequest.condition == choices.RequestConditions.CONFIRMED,
+        withdrawn_amount = (
+            await self.execute(
+                select(
+                    func.coalesce(
+                        func.sum(SellerRequest.amount), Decimal('0')
+                    )
+                )
+                .where(
+                    SellerRequest.seller_id == seller_id,
+                    SellerRequest.condition == choices.RequestConditions.CONFIRMED
+                )
             )
-        )).scalar()
+        ).scalar()
 
         return {
             'id': seller.id,
