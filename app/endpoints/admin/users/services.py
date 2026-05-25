@@ -157,8 +157,6 @@ class SellerDetailService(BaseService):
                 'must_pay_amount': balance_status['must_paid_amount'],
                 'not_paid_amount': balance_status['not_paid_amount'],
                 'paid_amount': balance_status['paid_amount'],
-                'withdrawn_amount': 0,
-                'balance_amount': 0,
             },
             'balance': balance,
         }
