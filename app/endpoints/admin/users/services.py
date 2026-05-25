@@ -12,13 +12,14 @@ from app.models import (
     Tenant,
     SellerRequest,
 )
-from app.resources import BaseService, TenantGrpcClient
+from app.resources import BaseService, TenantGrpcClient, TenantPlansGrpcClient
 from app.resources.seller.seller_balance_calculator import SellerBalanceCalculator
 from app.utils import hash_password
 from app.utils.time import now
 from . import schemas
 
 _tenant_grpc = TenantGrpcClient()
+_tenant_plans_grpc = TenantPlansGrpcClient()
 
 
 class UserService(BaseService):
@@ -32,9 +33,6 @@ class UserService(BaseService):
             )
         )
 
-        calc = SellerBalanceCalculator(self.db)
-        stats = await calc.bulk_breakdown([s.id for s in sellers])
-
         return [
             {
                 'id': s.id,
@@ -44,7 +42,6 @@ class UserService(BaseService):
                 'percentage': s.percentage,
                 'duration': s.duration,
                 'is_active': s.is_active,
-                **stats[s.id],
             }
             for s in sellers
         ]
@@ -113,6 +110,7 @@ class SellerDetailService(BaseService):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._tenant_grpc = _tenant_grpc
+        self._tenant_plans_grpc = _tenant_plans_grpc
 
 
     async def get_core_tenants_map(self, seller_id: int) -> dict:
@@ -144,19 +142,8 @@ class SellerDetailService(BaseService):
         else:
             balance_status = {'must_paid_amount': Decimal('0'), 'not_paid_amount': Decimal('0'), 'paid_amount': Decimal('0')}
 
-        withdrawn_amount = (
-            await self.execute(
-                select(
-                    func.coalesce(
-                        func.sum(SellerRequest.amount), Decimal('0')
-                    )
-                )
-                .where(
-                    SellerRequest.seller_id == seller_id,
-                    SellerRequest.condition == choices.RequestConditions.CONFIRMED
-                )
-            )
-        ).scalar()
+        calc = SellerBalanceCalculator(self.db, self._tenant_plans_grpc)
+        balance = await calc.get_balance(seller_id)
 
         return {
             'id': seller.id,
@@ -170,9 +157,8 @@ class SellerDetailService(BaseService):
                 'must_pay_amount': balance_status['must_paid_amount'],
                 'not_paid_amount': balance_status['not_paid_amount'],
                 'paid_amount': balance_status['paid_amount'],
-                'balance_amount': Decimal('0'),
-                'withdrawn_amount': withdrawn_amount,
             },
+            'balance': balance,
         }
 
     async def seller_tenants(self, seller_id: int) -> list[dict]:

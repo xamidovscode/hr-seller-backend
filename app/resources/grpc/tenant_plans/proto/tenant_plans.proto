@@ -6,6 +6,7 @@ service TenantPlanService {
     rpc GetTenantMyData (GetTenantMyDataRequest) returns (TenantMyDataResponse);
     rpc GetTenantTransactions (GetTenantTransactionsRequest) returns (GetTenantTransactionsResponse);
     rpc GetTenantTransactionsDetail (GetTenantTransactionsDetailRequest) returns (GetTenantTransactionsDetailResponse);
+    rpc GetTenantPaidAmountSum (TenantPaidSumRequest) returns (TenantPaidSumResponse);
 }
 
 // --- GetTenantActivePlan ---
@@ -108,4 +109,16 @@ message TenantTransactionDetailItem {
 
 message GetTenantTransactionsDetailResponse {
     repeated TenantTransactionDetailItem details = 1;
+}
+
+// --- GetTenantPaidAmountSum ---
+
+message TenantPaidSumRequest {
+    int32 tenant_id = 1;
+    string from_date = 2;
+    string to_date   = 3;
+}
+
+message TenantPaidSumResponse {
+    double paid_amount_sum = 1;
 }

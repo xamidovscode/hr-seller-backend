@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from . import tenant_plans_pb2 as tenant__plans__pb2
+from ..stub import tenant_plans_pb2 as tenant__plans__pb2
 
 GRPC_GENERATED_VERSION = '1.80.0'
 GRPC_VERSION = grpc.__version__
@@ -54,6 +54,11 @@ class TenantPlanServiceStub(object):
                 request_serializer=tenant__plans__pb2.GetTenantTransactionsDetailRequest.SerializeToString,
                 response_deserializer=tenant__plans__pb2.GetTenantTransactionsDetailResponse.FromString,
                 _registered_method=True)
+        self.GetTenantPaidAmountSum = channel.unary_unary(
+                '/tenant_plans.TenantPlanService/GetTenantPaidAmountSum',
+                request_serializer=tenant__plans__pb2.TenantPaidSumRequest.SerializeToString,
+                response_deserializer=tenant__plans__pb2.TenantPaidSumResponse.FromString,
+                _registered_method=True)
 
 
 class TenantPlanServiceServicer(object):
@@ -83,6 +88,12 @@ class TenantPlanServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetTenantPaidAmountSum(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_TenantPlanServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -105,6 +116,11 @@ def add_TenantPlanServiceServicer_to_server(servicer, server):
                     servicer.GetTenantTransactionsDetail,
                     request_deserializer=tenant__plans__pb2.GetTenantTransactionsDetailRequest.FromString,
                     response_serializer=tenant__plans__pb2.GetTenantTransactionsDetailResponse.SerializeToString,
+            ),
+            'GetTenantPaidAmountSum': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTenantPaidAmountSum,
+                    request_deserializer=tenant__plans__pb2.TenantPaidSumRequest.FromString,
+                    response_serializer=tenant__plans__pb2.TenantPaidSumResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -215,6 +231,33 @@ class TenantPlanService(object):
             '/tenant_plans.TenantPlanService/GetTenantTransactionsDetail',
             tenant__plans__pb2.GetTenantTransactionsDetailRequest.SerializeToString,
             tenant__plans__pb2.GetTenantTransactionsDetailResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetTenantPaidAmountSum(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/tenant_plans.TenantPlanService/GetTenantPaidAmountSum',
+            tenant__plans__pb2.TenantPaidSumRequest.SerializeToString,
+            tenant__plans__pb2.TenantPaidSumResponse.FromString,
             options,
             channel_credentials,
             insecure,

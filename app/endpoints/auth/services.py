@@ -1,11 +1,13 @@
 from sqlalchemy import select
 
-from app.resources import BaseService
+from app.resources import BaseService, TenantPlansGrpcClient
 from . import schemas
 from app.models import User
 from app.utils import BadRequest, verify_password, create_access_token
 from ...models.choices import UserRoles
 from ...resources.seller.seller_balance_calculator import SellerBalanceCalculator
+
+_tenant_plans_grpc = TenantPlansGrpcClient()
 
 
 class AuthService(BaseService):
@@ -48,13 +50,5 @@ class AuthService(BaseService):
             'is_active': user.is_active,
             'role': user.role,
         }
-
-        if user.role == UserRoles.seller:
-            seller_cal = SellerBalanceCalculator(self.db)
-            balance_info = await seller_cal.bulk_breakdown(seller_ids=[user.id])
-
-            data.update({
-                'balance_info': balance_info.get(user.id, None),
-            })
         return data
 

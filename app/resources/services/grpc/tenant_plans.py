@@ -33,3 +33,16 @@ class TenantPlansGrpcClient(GrpcClient):
             pb2.GetTenantTransactionsDetailRequest(tenant_id=tenant_id, date=date)
         )
         return [self._message_to_dict(d) for d in response.details]
+
+    async def get_tenant_paid_amount_sum(
+        self, tenant_id: int, from_date: str, to_date: str
+    ) -> float:
+        stub = await self._get_stub()
+        response = await stub.GetTenantPaidAmountSum(
+            pb2.TenantPaidSumRequest(
+                tenant_id=tenant_id,
+                from_date=from_date,
+                to_date=to_date,
+            )
+        )
+        return response.paid_amount_sum
