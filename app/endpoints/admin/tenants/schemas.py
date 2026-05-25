@@ -26,4 +26,14 @@ class TenantUpdateSchema(BaseModel):
     deadline: date
 
 
+class ActivePlanItemSchema(BaseModel):
+    users_count: int
+    is_active: bool
+    module: str
+
+
+class ActivePlanUpdateSchema(BaseModel):
+    plans: List[ActivePlanItemSchema]
+
+
 

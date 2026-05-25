@@ -154,6 +154,18 @@ class TenantDetailService(BaseService):
         )
         return await self.get_all(stmt)
 
+    @property
+    def _auth_headers(self) -> dict:
+        return {'X-Api-Secret-Key': settings.HR_API_SECRET_KEY}
+
+    async def update_active_plan(self, core_tenant_id: int, schema: schemas.ActivePlanUpdateSchema) -> dict:
+        tenant_data = await self._tenant_grpc.get_tenant_by_id(pk=core_tenant_id)
+        schema_name = tenant_data['schema_name']
+        url = f'{settings.HR_CORE_URL}/api/v1/common/tenant-plans/active-plan/update/'
+        headers = {**self._auth_headers, 'Tenant': schema_name}
+        data = schema.model_dump(mode='json')
+        return await self.httpx_post(url=url, data=data, headers=headers)
+
 
 tenant_service = TenantService.annotated('db')
 tenant_detail_service = TenantDetailService.annotated('db')

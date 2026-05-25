@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query
 from typing import Optional
 
-from .schemas import TenantCreateSchema, TenantUpdateSchema
+from .schemas import TenantCreateSchema, TenantUpdateSchema, ActivePlanUpdateSchema
 from .services import tenant_service, tenant_detail_service
 
 tenants_router = APIRouter(prefix="/tenants", tags=["Admin | Tenants"])
@@ -55,3 +55,12 @@ async def get_tenant_transactions_detail(
     date: Optional[str] = Query(default=None, description="Filter by month: YYYY-MM-DD"),
 ):
     return await service.get_transactions_detail(core_tenant_id=core_tenant_id, date=date or '')
+
+
+@tenant_detail_router.post('/{core_tenant_id}/active-plan/update/')
+async def update_tenant_active_plan(
+    core_tenant_id: int,
+    service: tenant_detail_service,
+    schema: ActivePlanUpdateSchema,
+):
+    return await service.update_active_plan(core_tenant_id=core_tenant_id, schema=schema)
