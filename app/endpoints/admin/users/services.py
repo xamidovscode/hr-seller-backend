@@ -112,15 +112,6 @@ class SellerDetailService(BaseService):
         self._tenant_grpc = _tenant_grpc
         self._tenant_plans_grpc = _tenant_plans_grpc
 
-
-    async def get_core_tenants_map(self, seller_id: int) -> dict:
-        tenants_id_stmt = await self.db.execute(
-            select(Tenant.core_tenant_id).where(Tenant.seller_id == seller_id)
-        )
-        tenants_id = tenants_id_stmt.scalars().all()
-        core_tenants_data = await self._tenant_grpc.get_tenants_by_ids(ids=tenants_id)
-        return {t['id']: t for t in core_tenants_data}
-
     async def seller_detail(self, seller_id: int) -> Any:
 
         seller = await self.get_object_or_404(
@@ -157,6 +148,8 @@ class SellerDetailService(BaseService):
                 'must_pay_amount': balance_status['must_paid_amount'],
                 'not_paid_amount': balance_status['not_paid_amount'],
                 'paid_amount': balance_status['paid_amount'],
+                'withdrawn_amount': balance['withdrawn'],
+                'balance_amount': balance['balance'],
             },
             'balance': balance,
         }
