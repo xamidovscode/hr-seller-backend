@@ -164,6 +164,8 @@ class TenantDetailService(BaseService):
         url = f'{settings.HR_CORE_URL}/api/v1/common/tenant-plans/active-plan/update/'
         headers = {**self._auth_headers, 'Tenant': schema_name}
         data = schema.model_dump(mode='json')
+        data.setdefault('tenant', core_tenant_id)
+
         return await self.httpx_post(url=url, data=data, headers=headers)
 
 
