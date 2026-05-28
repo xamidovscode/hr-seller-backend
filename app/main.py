@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -6,6 +8,11 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.core.settings import settings
 from app.endpoints.base_route import base_v1_router
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
 
 app = FastAPI(
     title='HR SELLER APP',
