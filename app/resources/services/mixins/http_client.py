@@ -25,7 +25,7 @@ class HttpMixin:
                 )
                 return HttpMixin._handle_response(response)
         except httpx.TimeoutException:
-            raise HTTPException(status_code=408, detail="Tashqi server javob bermadi (timeout)")
+            raise HTTPException(status_code=400, detail="Tashqi server javob bermadi (timeout)")
         except httpx.ConnectError:
             raise HTTPException(status_code=400, detail="Tashqi serverga ulanib bo'lmadi")
         except httpx.RequestError as e:
@@ -49,7 +49,7 @@ class HttpMixin:
                 )
                 return HttpMixin._handle_response(response)
         except httpx.TimeoutException:
-            raise HTTPException(status_code=408, detail="Tashqi server javob bermadi (timeout)")
+            raise HTTPException(status_code=400, detail="Tashqi server javob bermadi (timeout)")
         except httpx.ConnectError:
             raise HTTPException(status_code=400, detail="Tashqi serverga ulanib bo'lmadi")
         except httpx.RequestError as e:
@@ -73,7 +73,7 @@ class HttpMixin:
                 )
                 return HttpMixin._handle_response(response)
         except httpx.TimeoutException:
-            raise HTTPException(status_code=408, detail="Tashqi server javob bermadi (timeout)")
+            raise HTTPException(status_code=400, detail="Tashqi server javob bermadi (timeout)")
         except httpx.ConnectError:
             raise HTTPException(status_code=400, detail="Tashqi serverga ulanib bo'lmadi")
         except httpx.RequestError as e:
@@ -90,6 +90,6 @@ class HttpMixin:
             error_detail = response.text
 
         raise HTTPException(
-            status_code=response.status_code,
+            status_code=400,
             detail=error_detail
         )
