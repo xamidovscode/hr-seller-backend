@@ -12,10 +12,10 @@ celery_app = Celery(
 
 
 BEAT_SCHEDULES = {
-    "health": {
-        "task": "app.jobs.health",
-        "schedule": 5.0,
-    },
+    # "health": {
+    #     "task": "app.jobs.health",
+    #     "schedule": 5.0,
+    # },
     "db-backup-hourly": {
         "task": "app.jobs.send_db_backup",
         "schedule": crontab(minute=0),
