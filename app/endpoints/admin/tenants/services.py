@@ -1,3 +1,4 @@
+import logging
 from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
@@ -15,6 +16,8 @@ from app.models.choices import TenantTypes
 from app.resources.services import BaseService, TenantGrpcClient, TenantPlansGrpcClient
 from app.utils.time import now
 from . import schemas
+
+logger = logging.getLogger(__name__)
 
 _tenant_grpc = TenantGrpcClient()
 _tenant_plans_grpc = TenantPlansGrpcClient()
@@ -166,6 +169,9 @@ class TenantDetailService(BaseService):
         data = schema.model_dump(mode='json')
         data.setdefault('tenant', core_tenant_id)
 
+        logger.info(f'URL ENDPOINT: {url}')
+        logger.info(f'HEADERS: {headers}')
+        logger.info(f'DATA: {data}')
         return await self.httpx_post(url=url, data=data, headers=headers)
 
 
