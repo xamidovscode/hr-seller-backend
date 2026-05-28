@@ -41,6 +41,7 @@ class TenantService(BaseService):
                 'percentage': tenant.percentage,
                 'seller_id': tenant.seller_id,
                 'seller_full_name': tenant.seller.full_name if tenant.seller else None,
+                'core_tenant_id': tenant.core_tenant_id
             }
             for tenant in local_tenants
         }
@@ -159,10 +160,9 @@ class TenantDetailService(BaseService):
         return {'X-Api-Secret-Key': settings.HR_API_SECRET_KEY}
 
     async def update_active_plan(self, core_tenant_id: int, schema: schemas.ActivePlanUpdateSchema) -> dict:
-        tenant_data = await self._tenant_grpc.get_tenant_by_id(pk=core_tenant_id)
-        schema_name = tenant_data['schema_name']
+
         url = f'{settings.HR_CORE_URL}/api/v1/common/tenant-plans/active-plan/update/'
-        headers = {**self._auth_headers, 'Tenant': schema_name}
+        headers = {**self._auth_headers}
         data = schema.model_dump(mode='json')
         data.setdefault('tenant', core_tenant_id)
 
