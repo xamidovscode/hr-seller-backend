@@ -143,6 +143,7 @@ class SellerDetailService(BaseService):
             'phone': seller.phone,
             'percentage': seller.percentage,
             'duration': seller.duration,
+
             'is_active': seller.is_active,
             'trash_data': {
                 'must_pay_amount': balance_status['must_paid_amount'],
