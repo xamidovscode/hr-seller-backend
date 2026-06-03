@@ -23,5 +23,11 @@ class TelegramChatService(BaseService):
         await self.update(obj=obj, is_active=False)
         return self.success
 
+    async def tenant_chats(self, core_tenant_id: int) -> list:
+        return await self.get_all(
+            select(TelegramChat)
+            .where(TelegramChat.core_tenant_id == core_tenant_id)
+        )
+
 
 telegram_chat_service = TelegramChatService.annotated('db')
