@@ -21,7 +21,7 @@ async def delete_telegram_chat(pk: int, service: telegram_chat_service):
     return await service.delete_chat(pk=pk)
 
 
-@router.delete('/{pk}/')
+@router.get('/{pk}/')
 async def tenant_telegram_chat(core_tenant_id: int, service: telegram_chat_service):
     return await service.tenant_chats(core_tenant_id=core_tenant_id)
 
