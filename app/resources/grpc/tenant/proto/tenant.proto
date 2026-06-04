@@ -42,6 +42,8 @@ message TenantResponse {
   int32 empl_count = 11;
   int32 active_plan_amount = 12;
   repeated MonthlyTransResponse monthly_trans = 13;
+  bool is_personal = 14;
+  double personal_amount = 15;
 }
 
 message GetTenantsResponse {

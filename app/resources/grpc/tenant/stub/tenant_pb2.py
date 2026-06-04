@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0ctenant.proto\x12\x06tenant\"\x13\n\x11GetTenantsRequest\"%\n\x16GetTenantsByIdsRequest\x12\x0b\n\x03ids\x18\x01 \x03(\x05\"\"\n\x14GetTenantByIdRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"-\n\x1eGetTenantsBalanceStatusRequest\x12\x0b\n\x03ids\x18\x01 \x03(\x05\"k\n\x14MonthlyTransResponse\x12\n\n\x02id\x18\x01 \x01(\x05\x12\r\n\x05month\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65\x62t_amount\x18\x03 \x01(\x01\x12\x13\n\x0bpaid_amount\x18\x04 \x01(\x01\x12\x0e\n\x06status\x18\x05 \x01(\t\"\x99\x02\n\x0eTenantResponse\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0bschema_name\x18\x03 \x01(\t\x12\x12\n\ncreated_on\x18\x04 \x01(\t\x12\x14\n\x0c\x61\x63tivated_at\x18\x05 \x01(\t\x12\x10\n\x08\x64\x65\x61\x64line\x18\x06 \x01(\t\x12\x10\n\x08on_trial\x18\x08 \x01(\x08\x12\x11\n\tis_active\x18\t \x01(\x08\x12\x12\n\nis_deleted\x18\n \x01(\x08\x12\x12\n\nempl_count\x18\x0b \x01(\x05\x12\x1a\n\x12\x61\x63tive_plan_amount\x18\x0c \x01(\x05\x12\x33\n\rmonthly_trans\x18\r \x03(\x0b\x32\x1c.tenant.MonthlyTransResponse\"=\n\x12GetTenantsResponse\x12\'\n\x07tenants\x18\x01 \x03(\x0b\x32\x16.tenant.TenantResponse\"f\n\x1cTenantsBalanceStatusResponse\x12\x18\n\x10must_paid_amount\x18\x01 \x01(\x01\x12\x17\n\x0fnot_paid_amount\x18\x02 \x01(\x01\x12\x13\n\x0bpaid_amount\x18\x03 \x01(\x01\x32\xd3\x02\n\rTenantService\x12\x43\n\nGetTenants\x12\x19.tenant.GetTenantsRequest\x1a\x1a.tenant.GetTenantsResponse\x12M\n\x0fGetTenantsByIds\x12\x1e.tenant.GetTenantsByIdsRequest\x1a\x1a.tenant.GetTenantsResponse\x12\x45\n\rGetTenantById\x12\x1c.tenant.GetTenantByIdRequest\x1a\x16.tenant.TenantResponse\x12g\n\x17GetTenantsBalanceStatus\x12&.tenant.GetTenantsBalanceStatusRequest\x1a$.tenant.TenantsBalanceStatusResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0ctenant.proto\x12\x06tenant\"\x13\n\x11GetTenantsRequest\"%\n\x16GetTenantsByIdsRequest\x12\x0b\n\x03ids\x18\x01 \x03(\x05\"\"\n\x14GetTenantByIdRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"-\n\x1eGetTenantsBalanceStatusRequest\x12\x0b\n\x03ids\x18\x01 \x03(\x05\"k\n\x14MonthlyTransResponse\x12\n\n\x02id\x18\x01 \x01(\x05\x12\r\n\x05month\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65\x62t_amount\x18\x03 \x01(\x01\x12\x13\n\x0bpaid_amount\x18\x04 \x01(\x01\x12\x0e\n\x06status\x18\x05 \x01(\t\"\xc7\x02\n\x0eTenantResponse\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0bschema_name\x18\x03 \x01(\t\x12\x12\n\ncreated_on\x18\x04 \x01(\t\x12\x14\n\x0c\x61\x63tivated_at\x18\x05 \x01(\t\x12\x10\n\x08\x64\x65\x61\x64line\x18\x06 \x01(\t\x12\x10\n\x08on_trial\x18\x08 \x01(\x08\x12\x11\n\tis_active\x18\t \x01(\x08\x12\x12\n\nis_deleted\x18\n \x01(\x08\x12\x12\n\nempl_count\x18\x0b \x01(\x05\x12\x1a\n\x12\x61\x63tive_plan_amount\x18\x0c \x01(\x05\x12\x33\n\rmonthly_trans\x18\r \x03(\x0b\x32\x1c.tenant.MonthlyTransResponse\x12\x13\n\x0bis_personal\x18\x0e \x01(\x08\x12\x17\n\x0fpersonal_amount\x18\x0f \x01(\x01\"=\n\x12GetTenantsResponse\x12\'\n\x07tenants\x18\x01 \x03(\x0b\x32\x16.tenant.TenantResponse\"f\n\x1cTenantsBalanceStatusResponse\x12\x18\n\x10must_paid_amount\x18\x01 \x01(\x01\x12\x17\n\x0fnot_paid_amount\x18\x02 \x01(\x01\x12\x13\n\x0bpaid_amount\x18\x03 \x01(\x01\x32\xd3\x02\n\rTenantService\x12\x43\n\nGetTenants\x12\x19.tenant.GetTenantsRequest\x1a\x1a.tenant.GetTenantsResponse\x12M\n\x0fGetTenantsByIds\x12\x1e.tenant.GetTenantsByIdsRequest\x1a\x1a.tenant.GetTenantsResponse\x12\x45\n\rGetTenantById\x12\x1c.tenant.GetTenantByIdRequest\x1a\x16.tenant.TenantResponse\x12g\n\x17GetTenantsBalanceStatus\x12&.tenant.GetTenantsBalanceStatusRequest\x1a$.tenant.TenantsBalanceStatusResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -42,11 +42,11 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_MONTHLYTRANSRESPONSE']._serialized_start=167
   _globals['_MONTHLYTRANSRESPONSE']._serialized_end=274
   _globals['_TENANTRESPONSE']._serialized_start=277
-  _globals['_TENANTRESPONSE']._serialized_end=558
-  _globals['_GETTENANTSRESPONSE']._serialized_start=560
-  _globals['_GETTENANTSRESPONSE']._serialized_end=621
-  _globals['_TENANTSBALANCESTATUSRESPONSE']._serialized_start=623
-  _globals['_TENANTSBALANCESTATUSRESPONSE']._serialized_end=725
-  _globals['_TENANTSERVICE']._serialized_start=728
-  _globals['_TENANTSERVICE']._serialized_end=1067
+  _globals['_TENANTRESPONSE']._serialized_end=604
+  _globals['_GETTENANTSRESPONSE']._serialized_start=606
+  _globals['_GETTENANTSRESPONSE']._serialized_end=667
+  _globals['_TENANTSBALANCESTATUSRESPONSE']._serialized_start=669
+  _globals['_TENANTSBALANCESTATUSRESPONSE']._serialized_end=771
+  _globals['_TENANTSERVICE']._serialized_start=774
+  _globals['_TENANTSERVICE']._serialized_end=1113
 # @@protoc_insertion_point(module_scope)
